@@ -1,2 +1,4 @@
-all:
-	echo "I don't know if we should have a Makefile or something else"
+all: game
+
+game: src/game.cpp src/game.h
+	g++ src/game.cpp -o game

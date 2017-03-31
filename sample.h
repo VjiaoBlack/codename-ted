@@ -52,7 +52,7 @@ public:
 	void setAge(int age) { fAge = age; }
 
 	/**
-	 * doSomethingComplicated (install SublimeLinter plugin to get this automatically)
+	 * doSomethingComplicated (install SublimeLinter plugin to get this style automatically)
 	 * takes in an int and double and does some math with them, but returns nothing
 	 * @param wowInput     any int
 	 * @param wowMoreInput any double
