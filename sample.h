@@ -7,6 +7,8 @@
  * File description goes here. This file is to give a generic sample to the style used in our 
  * project. File lines should be capped at 100 characters long (80 feels too short to me tbh).
  *
+ * NOTE: Remember to use capital letters for actual file names
+ * 
  * Please feel free to make changes as needed, although it'd be nice to talk about them face to 
  * face, over instant messenger, or even through a github issues thing (if it's a bigger, more 
  * formal issue). 

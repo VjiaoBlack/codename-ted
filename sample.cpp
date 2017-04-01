@@ -4,6 +4,7 @@
  * Victor Jiao & Whomever Else Worked A Lot on This File
  *
  * Shorter file description goes here.
+ * NOTE: Remember to use capital letters for actual file names
  */
 
 #include <alphabetical>
