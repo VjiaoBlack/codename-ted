@@ -79,22 +79,12 @@ int main(int argv, char* argc[]) {
         }
 
 
-
+        // TODO make sure the angles don't just keep increasing infinitely
         if (keysDown.count(SDLK_LEFT)) {
         	bike.wheel += 0.02;
-        	// if (bike.wheel > PI * 2.0) {
-        	// 	bike.wheel -= PI * 2.0;
-        	// } else if (bike.wheel < 0) {
-        	// 	bike.wheel += PI * 2.0;
-        	// }
         }
         if (keysDown.count(SDLK_RIGHT)) {
         	bike.wheel -= 0.02;
-        	// if (bike.wheel > PI * 2.0) {
-        	// 	bike.wheel -= PI * 2.0;
-        	// } else if (bike.wheel < 0) {
-        	// 	bike.wheel += PI * 2.0;
-        	// }
         }
 
         if (keysDown.count(SDLK_UP)) {
@@ -112,9 +102,6 @@ int main(int argv, char* argc[]) {
         		bike.vel -= 0.0095;
         	}
         }
-
-
-
 
         /** Clear screen */
     	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -134,9 +121,6 @@ int main(int argv, char* argc[]) {
 	    /** Update the surface */
 	    SDL_UpdateWindowSurface(window);
     }
-
-
-
 
     return 0;
 }

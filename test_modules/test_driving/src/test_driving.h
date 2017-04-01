@@ -45,35 +45,12 @@ public:
 	}
 
 	void update() {
-
-
-
-
-		// vel *= (10.0f - fabs(wheel));
-		// vel /= 10.0f;
-
-		printf("%f\n", vel);
-
-
-
+		printf("vel: %f\n", vel);
 		float change = 0.02 * wheel * vel;
-
 		dir += change;
 		wheel -= change;
 
-		// if (wheel > PI * 2.0) {
-  //   		wheel -= PI * 2.0;
-  //   	} else if (wheel < 0) {
-  //   		wheel += PI * 2.0;
-  //   	}
-
-  //   	if (dir > PI * 2.0) {
-  //   		dir -= PI * 2.0;
-  //   	} else if (dir < 0) {
-  //   		dir += PI * 2.0;
-  //   	}
-
-		printf("%f, %f\n", dir, wheel);
+		printf("dir, wheel: %f, %f\n", dir, wheel);
 		this->x += vel * (sin(dir + wheel));
 		this->y += vel * (cos(dir + wheel));
 	}
