@@ -81,10 +81,14 @@ int main(int argv, char* argc[]) {
 
         // TODO make sure the angles don't just keep increasing infinitely
         if (keysDown.count(SDLK_LEFT)) {
-        	bike.wheel += 0.02;
+        	if (bike.wheel < 1.0f) {
+        		bike.wheel += 0.02;
+        	}
         }
         if (keysDown.count(SDLK_RIGHT)) {
-        	bike.wheel -= 0.02;
+        	if (bike.wheel > -1.0f) {
+        		bike.wheel -= 0.02;
+        	}
         }
 
         if (keysDown.count(SDLK_UP)) {

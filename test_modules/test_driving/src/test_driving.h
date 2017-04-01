@@ -46,7 +46,9 @@ public:
 
 	void update() {
 		printf("vel: %f\n", vel);
+
 		float change = 0.02 * wheel * vel;
+		vel -= 0.5f * fabs(change);
 		dir += change;
 		wheel -= change;
 
