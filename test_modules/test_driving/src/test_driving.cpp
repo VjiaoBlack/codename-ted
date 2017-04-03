@@ -6,8 +6,7 @@
  * a test file for testing driving.
  */
 
-#include "test_driving.h"
-
+#include "TdBike.h"
 
 int main(int argv, char* argc[]) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -55,7 +54,7 @@ int main(int argv, char* argc[]) {
 
     bool quit = false;
 
-    Bike bike = Bike(200.0, 200.0, 500.0);
+    TdBike bike = TdBike(200.0, 200.0, 500.0);
 
     while(!quit) {
         while (SDL_PollEvent(&e) != 0) {
@@ -81,12 +80,12 @@ int main(int argv, char* argc[]) {
 
         // TODO make sure the angles don't just keep increasing infinitely
         if (keysDown.count(SDLK_LEFT)) {
-        	if (bike.wheel < 1.0f) {
+        	if (bike.wheel < 1.6f) {
         		bike.wheel += 0.02;
         	}
         }
         if (keysDown.count(SDLK_RIGHT)) {
-        	if (bike.wheel > -1.0f) {
+        	if (bike.wheel > -1.6f) {
         		bike.wheel -= 0.02;
         	}
         }
@@ -96,9 +95,11 @@ int main(int argv, char* argc[]) {
         		bike.vel += 0.01;
         	}
         } else {
-        	if (bike.vel > 0.0) {
+        	if (bike.vel > 0.0005) {
         		bike.vel -= 0.0005;
-        	}
+        	} else {
+                bike.vel = 0;
+            }
         }
 
         if (keysDown.count(SDLK_DOWN)) {
@@ -124,6 +125,8 @@ int main(int argv, char* argc[]) {
 
 	    /** Update the surface */
 	    SDL_UpdateWindowSurface(window);
+
+        // usleep(3000);
     }
 
     return 0;
