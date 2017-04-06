@@ -15,8 +15,23 @@ void TdBike::update() {
 	dir += change;
 	wheel -= change;
 
-	this->x += vel * (sin(dir + wheel));
-	this->y += vel * (cos(dir + wheel));
+	float vx = vel * sin(dir + wheel);
+	float vy = vel * cos(dir + wheel);
+
+	/** check if head of bike is in bounds */
+	if (x + vx >= 25.0 && x + vx <= 1024.0 - 25.0) {
+		x += vx;
+	} else {
+		vel = fabs(vy);
+	}
+
+	if (y + vy >= 25.0 && y + vy <= 768.0 - 25.0) {
+		y += vy;
+	} else {
+		vel = fabs(vx);
+	}
+
+	printf("%f, %f\n", x, y);
 }
 
 void TdBike::draw(SDL_Renderer* renderer) {
