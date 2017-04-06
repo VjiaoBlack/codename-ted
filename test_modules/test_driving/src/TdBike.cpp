@@ -30,8 +30,6 @@ void TdBike::update() {
 	} else {
 		vel = fabs(vx);
 	}
-
-	printf("%f, %f\n", x, y);
 }
 
 void TdBike::draw(SDL_Renderer* renderer) {
