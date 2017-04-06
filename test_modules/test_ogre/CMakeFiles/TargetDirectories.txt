@@ -1,0 +1,7 @@
+/home/vjiaoblack/Classes/CMSC-23800/codename-ted/test_modules/test_ogre/CMakeFiles/install.dir
+/home/vjiaoblack/Classes/CMSC-23800/codename-ted/test_modules/test_ogre/CMakeFiles/list_install_components.dir
+/home/vjiaoblack/Classes/CMSC-23800/codename-ted/test_modules/test_ogre/CMakeFiles/rebuild_cache.dir
+/home/vjiaoblack/Classes/CMSC-23800/codename-ted/test_modules/test_ogre/CMakeFiles/OgreApp.dir
+/home/vjiaoblack/Classes/CMSC-23800/codename-ted/test_modules/test_ogre/CMakeFiles/install/strip.dir
+/home/vjiaoblack/Classes/CMSC-23800/codename-ted/test_modules/test_ogre/CMakeFiles/install/local.dir
+/home/vjiaoblack/Classes/CMSC-23800/codename-ted/test_modules/test_ogre/CMakeFiles/edit_cache.dir
