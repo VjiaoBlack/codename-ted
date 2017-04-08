@@ -187,8 +187,22 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent& evt) {
 	mKeyboard->capture();
 	mMouse->capture();
 
+
+	Ogre::Light* light = mSceneMgr->getLight("MainLight");
+
+	// push X / Y
+
+
 	if (mKeyboard->isKeyDown(OIS::KC_ESCAPE)) {
 		return false;
+	} 
+
+	if (mKeyboard->isKeyDown(OIS::KC_X)) {
+		light->setPosition(30, 80, 50);
+	}
+
+	if (mKeyboard->isKeyDown(OIS::KC_Y)) {
+		light->setPosition(10, 80, 50);
 	}
 
 	return true;
