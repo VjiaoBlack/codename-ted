@@ -24,8 +24,7 @@ The server uses and requires [Boost](http://www.boost.org/), specifically
 The echo server and echo client binaries were compiled with boost_1_61_0.
 
 I recommend taking a look at the [udp client tutorial](http://www.boost.org/doc/libs/1_63_0/doc/html/boost_asio/tutorial.html#boost_asio.tutorial.tutdaytime4)
-and the [udp server tutorial]
-(http://www.boost.org/doc/libs/1_63_0/doc/html/boost_asio/tutorial.html#boost_asio.tutorial.tutdaytime5)
+and the [udp server tutorial](http://www.boost.org/doc/libs/1_63_0/doc/html/boost_asio/tutorial.html#boost_asio.tutorial.tutdaytime5)
 to get an idea for how the game loop will work.
 
 The registration stage makes sense to do via standard TCP/HTTP rather than the
