@@ -32,6 +32,8 @@ UDP/Web Socket Protocol employed for the game loop, so it would also be a good
 idea to take a look at the [tcp client tutorial](http://www.boost.org/doc/libs/1_63_0/doc/html/boost_asio/tutorial.html#boost_asio.tutorial.tutdaytime1)
 and the [tcp server tutorial](http://www.boost.org/doc/libs/1_63_0/doc/html/boost_asio/tutorial.html#boost_asio.tutorial.tutdaytime2)
 
+We will be heavily relying on automated testing for this server. [Boost.Test](http://www.boost.org/doc/libs/1_61_0/libs/test/doc/html/) looks promising.
+
 
 ## Style Guide
 Check `sample.cpp` and `sample.h` for generic style guidelines.
