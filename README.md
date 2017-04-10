@@ -6,6 +6,10 @@
 3. [Networking/Server](#server)
 
 ## Overview
+To use:
+cmake .
+make
+
 We are working with the idea of sailboats racing to an objective.
 
 One of the sailboats is a pirate ship who is tasked with stealing the booty of
