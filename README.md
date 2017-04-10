@@ -21,7 +21,7 @@ Hit jabois up in the #server channel on slack if you have any Qs.
 
 The server uses and requires [Boost](http://www.boost.org/), specifically
 [Boost.Asio](http://www.boost.org/doc/libs/1_61_0/doc/html/boost_asio/overview.html).
-The echo server and echo client binaries were compiled with boost_1_61_0.
+The echo server and echo client binaries were compiled with boost_1_63_0.
 
 I recommend taking a look at the [udp client tutorial](http://www.boost.org/doc/libs/1_63_0/doc/html/boost_asio/tutorial.html#boost_asio.tutorial.tutdaytime4)
 and the [udp server tutorial](http://www.boost.org/doc/libs/1_63_0/doc/html/boost_asio/tutorial.html#boost_asio.tutorial.tutdaytime5)
