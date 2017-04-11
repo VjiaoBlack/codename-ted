@@ -1,6 +1,8 @@
 # codename-ted/pirate panic
 ### For CMSC-23800: Game Construction, Spring '17 @UChicago
 
+# [Design Document](https://docs.google.com/a/uchicago.edu/document/d/1wBawLiBmQMs8m4by3KD9eTLeXxsniuZ1WKAc_Fwqrco/edit?usp=sharing)
+
 1. [Project Overview](#overview)
 2. [Style Guide](#style-guide)
 3. [Networking/Server](#server)
