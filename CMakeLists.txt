@@ -17,6 +17,8 @@
 cmake_minimum_required(VERSION 2.6)
  
 project(OgreApp)
+
+include(cmake/FindCEGUI.cmake)
  
 if(WIN32)
 	set(CMAKE_MODULE_PATH "$ENV{OGRE_HOME}/CMake/;${CMAKE_MODULE_PATH}")
@@ -26,6 +28,9 @@ if(WIN32)
 endif(WIN32)
  
 if(UNIX)
+  	set(CMAKE_MODULE_PATH "/home/vjiaoblack/Compsci/;${CMAKE_MODULE_PATH}")
+	
+
 	if(EXISTS "/usr/local/lib/OGRE/cmake")
 
 	  set(CMAKE_MODULE_PATH "/usr/local/lib/OGRE/cmake/;${CMAKE_MODULE_PATH}")
@@ -38,8 +43,12 @@ if(UNIX)
 
 	else ()
 	  message(SEND_ERROR "Failed to find module path.")
-	endif(EXISTS "/usr/local/lib/OGRE")
+	endif()
 endif(UNIX)
+ 
+
+
+
  
 if (CMAKE_BUILD_TYPE STREQUAL "")
   # CMake defaults to leaving CMAKE_BUILD_TYPE empty. This screws up
@@ -95,12 +104,10 @@ if (NOT OGRE_BUILD_PLATFORM_IPHONE)
 endif()
  
 set(HDRS
-	./src/BaseApplication.h
 	./src/TutorialApplication.h
 )
  
 set(SRCS
-	./src/BaseApplication.cpp
 	./src/TutorialApplication.cpp
 )
  
@@ -108,19 +115,26 @@ include_directories(
 	${OIS_INCLUDE_DIRS}
 	${OGRE_INCLUDE_DIRS}
 	${OGRE_SAMPLES_INCLUDEPATH}
-	${OGRE_Overlay_INCLUDE_DIRS})
+	${OGRE_Overlay_INCLUDE_DIRS}
+    ${CEGUI_INCLUDE_DIRS})
+
  
 add_executable(OgreApp WIN32 ${HDRS} ${SRCS})
  
 set_target_properties(OgreApp PROPERTIES DEBUG_POSTFIX _d)
+find_package(CEGUI REQUIRED OGRE)
  
+
+
 target_link_libraries(
   OgreApp
   ${OGRE_LIBRARIES}
   ${OIS_LIBRARIES}
   ${OGRE_Overlay_LIBRARIES}
-  ${OGRE_Terrain_LIBRARIES})
- 
+  ${OGRE_Terrain_LIBRARIES}
+  ${CEGUI_LIBRARIES}
+  ${CEGUI_OgreRenderer_LIBRARIES})
+
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/res)
  
