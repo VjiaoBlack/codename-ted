@@ -12,11 +12,19 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
+#include <map>
 #include "definitions.h"
+#include "TdBike.h"
 #include <boost/asio.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 using boost::asio::ip::udp; //for the game loop
 using boost::asio::ip::tcp; //for registration
+using boost::property_tree::ptree;
+using boost::property_tree::read_json;
+using boost::property_tree::write_json;
 
 enum { max_length = 1024 };
 
@@ -30,15 +38,66 @@ void server(boost::asio::io_service& io_service, unsigned short port)
   //register(io_service, port);  
 
   udp::socket sock(io_service, udp::endpoint(udp::v4(), port));
-  for (;;)
+
+  bool quit = false;
+  int code = 0;
+  TdBike bike = TdBike(200.0, 200.0, 500.0);
+
+  while (true)
   {
+    code = 0;
+
     char data[max_length];
     udp::endpoint sender_endpoint;
     size_t length = sock.receive_from(
         boost::asio::buffer(data, max_length), sender_endpoint);
-    data[length] = '!';
-    data[length + 1] = '\0';
-    sock.send_to(boost::asio::buffer(data, length + 2), sender_endpoint);
+
+    char input = data[0];
+
+    switch(input) {
+        case 'W' :
+          if (bike.vel < 2.0) {
+            bike.vel += 0.01;
+          }
+          break;
+        case 'A' :
+          if (bike.wheel < 1.6f) {
+            bike.wheel += 0.02;
+          }
+          break;
+        case 'S'  :
+          if (bike.vel > 0.0) {
+            bike.vel -= 0.0095;
+          }
+          break;
+        case 'D' :
+          if (bike.wheel > -1.6f) {
+            bike.wheel -= 0.02;
+          }
+          break;
+        default : 
+          code = 1;
+      }
+
+      if (bike.vel > 0.0005) {
+        bike.vel -= 0.0005;
+      } else {
+        bike.vel = 0;
+      }
+
+      ptree response;
+      response.put("code", code);
+      response.put("vel", bike.vel);
+      response.put("wheel", bike.wheel);
+      std::ostringstream buf; 
+      write_json (buf, response, false);
+      std::string json = buf.str();
+      length = json.length();
+
+      std::cout << "JSON:" << json << "\n";
+
+
+    sock.send_to(boost::asio::buffer(json, length), sender_endpoint);
   }
 }
 

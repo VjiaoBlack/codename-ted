@@ -20,6 +20,11 @@ struct player_t {
 	std::string name;
 };
 
+struct vec2 {
+	float mag;
+	float dir;
+};
+
 struct ship {
     vec2 position;
     vec2 velocity;
@@ -29,7 +34,7 @@ struct ship {
     //Angular velocity?
     int goldAmount;
     bool AI;
-} ;
+};
 
 struct pirate {
     vec2 position;
@@ -40,7 +45,7 @@ struct pirate {
     //Angular velocity?
     int goldAmount;
     bool AI;
-}
+};
 
 struct lobby_t {
 	int uID;
@@ -52,17 +57,17 @@ struct mapTile {
   float currentStrength;
   vec2 windDirection;
   float windStrength;
-  ENUM start_finish;
-  ENUM land_water;
+  //ENUM start_finish;
+  //ENUM land_water;
   int **heightMap;  //idk how this will be represented
-} ;
+};
 
-struct gameMap {
-  vector<mapTile> mapTiles;
-} ;
+struct game_map {
+  std::unordered_map<int, mapTile> mapTiles;
+};
 
 struct gamestate {
-	map gameMap;
+	game_map gameMap;
 	pirate Pirate;
 	std::unordered_map<int, player_t> players;
 	std::unordered_map<int, lobby_t> lobbies;
