@@ -14,7 +14,7 @@
 #include <iostream>
 #include <sstream>
 #include <map>
-#include "definitions.h"
+//#include "definitions.h"
 #include "TdBike.h"
 #include <boost/asio.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -139,6 +139,7 @@ int main(int argc, char* argv[])
           boost::asio::buffer(reply, max_length), sender_endpoint);
       std::cout << "Returned Values: ";
       std::cout.write(reply, reply_length);
+      std::cout << "Length: " << reply_length << std::endl;
 
       ptree response;
       std::istringstream is (reply);

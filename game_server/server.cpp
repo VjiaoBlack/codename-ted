@@ -14,7 +14,7 @@
 #include <iostream>
 #include <sstream>
 #include <map>
-#include "definitions.h"
+//#include "definitions.h"
 #include "TdBike.h"
 #include <boost/asio.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -85,11 +85,13 @@ void server(boost::asio::io_service& io_service, unsigned short port)
         bike.vel = 0;
       }
 
+      std::cout << input << std::endl;
+
       ptree response;
       response.put("code", code);
-      response.put("vel", bike.vel);
-      response.put("wheel", bike.wheel);
-      std::ostringstream buf; 
+      response.put("vel", (int)bike.vel);
+      response.put("wheel", (int)bike.wheel);
+      std::ostringstream buf;
       write_json (buf, response, false);
       std::string json = buf.str();
       length = json.length();
