@@ -16,10 +16,6 @@
 
 using namespace std;
 
-//METHODS
-mapTile create_blank_tile();
-gameMap create_blank_map(); 
-
 // CLASSES
 class vec2 {
     public: 
@@ -113,4 +109,9 @@ class gamestate {
         unordered_map<int, lobby_t> lobbies;
         float **heightMap; 
 };
+
+//METHODS
+mapTile create_blank_tile();
+gameMap create_blank_map(); 
+
 
