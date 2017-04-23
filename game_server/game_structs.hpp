@@ -67,13 +67,16 @@ class mapTile {
         float currentStrength;
         vec2 windDirection;
         float windStrength;
+        int is_ship; // 1 if ship, 0 if not
         //ENUM start_finish;
         //ENUM land_water;
 };
 
 class gameMap {
     public:
-        vector<mapTile> mapTiles;
+        vector< vector<mapTile> > mapTiles;
+        int x_size; 
+        int y_size;
 };
 
 class gamestate {
