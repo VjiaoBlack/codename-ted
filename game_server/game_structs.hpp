@@ -16,10 +16,12 @@
 
 using namespace std;
 
-// Adding this in so it doesn't break code for right now. 
 class vec2 {
     public: 
+        // Attributes
         float x, y;
+        // Constructor
+        vec2(float a, float b) : x(a), y(b) {};
 };
 
 class player_t {
@@ -63,13 +65,22 @@ class lobby_t {
 
 class mapTile {
     public:   
+        // ATTRIBUTES
         vec2 currentDirection;
         float currentStrength;
         vec2 windDirection;
         float windStrength;
+        // Convert these to enums later
         int is_ship; // 1 if ship, 0 if not
-        //ENUM start_finish;
-        //ENUM land_water;
+        int start_finish; // 1 if start, 0 if finish
+        int land_water; // 1 if land, 0 if water
+        
+        // CONSTRUCTOR 
+        mapTile(vec2 a, float b, vec2 c, float d, int e) : 
+                currentDirection(a), currentStrength(b), 
+                windDirection(a), windStrength(b), is_ship(e) {};
+        
+        // METHODS
 };
 
 class gameMap {
