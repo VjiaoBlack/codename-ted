@@ -24,6 +24,7 @@ class vec2 {
         // Constructor
         vec2(float a, float b) : x(a), y(b) {};
         // Methods
+        void print_vec2();
 };
 
 class player_t {
@@ -97,7 +98,6 @@ class gameMap {
             x_size = b; 
             y_size = c;
         }; 
-
         // METHODS 
 };
 

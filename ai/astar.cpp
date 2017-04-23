@@ -18,7 +18,8 @@
 using namespace std;
 
 void astar_main() {
-
+    vec2::vec2 pair(3, 5); 
+    pair.print_vec2();
 }
 
 

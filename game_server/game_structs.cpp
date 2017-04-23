@@ -1,5 +1,6 @@
 #include "game_structs.hpp"
 #include <vector>
+#include <iostream>
 
 /* 
  *
@@ -15,6 +16,14 @@
 
 using namespace std;
 
+// CLASS METHODS 
+
+void vec2::print_vec2() {
+    cout << "{" << x << ", " << y << "}"; 
+} 
+
+
+// HELPER FUNCTIONS
 mapTile create_blank_tile() {
     vec2 wind_dir = vec2(0, 0);
     vec2 curr_dir = vec2(0, 0);
