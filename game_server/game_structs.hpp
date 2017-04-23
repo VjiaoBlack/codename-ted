@@ -16,12 +16,18 @@
 
 using namespace std;
 
+//METHODS
+mapTile create_blank_tile();
+gameMap create_blank_map(); 
+
+// CLASSES
 class vec2 {
     public: 
         // Attributes
         float x, y;
         // Constructor
         vec2(float a, float b) : x(a), y(b) {};
+        // Methods
 };
 
 class player_t {
@@ -85,9 +91,18 @@ class mapTile {
 
 class gameMap {
     public:
+        // ATTRIBUTES
         vector< vector<mapTile> > mapTiles;
         int x_size; 
         int y_size;
+        //CONSTRUCTOR 
+        gameMap(vector< vector<mapTile> > a, int b, int c) {
+            mapTiles = a;
+            x_size = b; 
+            y_size = c;
+        }; 
+
+        // METHODS 
 };
 
 class gamestate {
