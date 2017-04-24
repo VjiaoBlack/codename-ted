@@ -1,6 +1,5 @@
 *.o
 test_modules/test_driving/test_driving
-Makefile
 CMakeCache.txt
 CMakeFiles
 cmake_install.cmake
