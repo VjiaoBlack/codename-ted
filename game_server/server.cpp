@@ -95,11 +95,12 @@ void server(boost::asio::io_service& io_service, unsigned short port)
       write_json (buf, response, false);
       std::string json = buf.str();
       length = json.length();
+      json += '\0';
 
       std::cout << "JSON:" << json << "\n";
 
 
-    sock.send_to(boost::asio::buffer(json, length), sender_endpoint);
+    sock.send_to(boost::asio::buffer(json, length+1), sender_endpoint);
   }
 }
 
