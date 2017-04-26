@@ -16,7 +16,10 @@ using namespace std;
 void astar_main() {
     vec2 pair(3, 5); 
     pair.print_vec2();
+    gameMap map = create_blank_map();
+    map.print_game_map();
 }
+
 
 
 int main() {

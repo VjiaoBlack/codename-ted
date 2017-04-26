@@ -19,9 +19,25 @@ using namespace std;
 // CLASS METHODS 
 
 void vec2::print_vec2() {
-    cout << "{" << x << ", " << y << "}"; 
+    cout << "{" << x << ", " << y << "}\n"; 
 } 
 
+void mapTile::print_map_tile() {
+    if (is_ship) {
+        cout << "[x]";
+    } else {
+        cout << "[ ]";
+    } 
+}  
+
+void gameMap::print_game_map() {
+    for (vector<mapTile> xs: mapTiles) {
+        for (mapTile x : xs) { 
+            x.print_map_tile();
+        }
+        cout << "\n";
+    } 
+}
 
 // HELPER FUNCTIONS
 mapTile create_blank_tile() {
@@ -35,8 +51,8 @@ mapTile create_blank_tile() {
 } 
 
 gameMap create_blank_map() {
-    int x_len = 500; 
-    int y_len = 500;
+    int x_len = 25; 
+    int y_len = 25;
     vector< vector<mapTile> > tiles;
     for(int i = 0; i < x_len; i++) {
         vector<mapTile> curr_row; 
@@ -47,6 +63,22 @@ gameMap create_blank_map() {
     }
     gameMap blank_map(tiles, x_len, y_len);
     return blank_map;;
-}  
+}
+
+gameMap create_random_map() {
+    int x_len = 25; 
+    int y_len = 25;
+    vector< vector<mapTile> > tiles;
+    for(int i = 0; i < x_len; i++) {
+        vector<mapTile> curr_row; 
+        for (int j = 0; j < y_len; j++) {
+            curr_row.push_back(create_blank_tile());
+        }
+        tiles.push_back(curr_row);
+    }
+    gameMap blank_map(tiles, x_len, y_len);
+    return blank_map;;   
+}
+
 
 

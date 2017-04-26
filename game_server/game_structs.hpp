@@ -84,6 +84,7 @@ class mapTile {
                 windDirection(a), windStrength(b), is_ship(e) {};
         
         // METHODS
+        void print_map_tile();
 };
 
 class gameMap {
@@ -98,7 +99,8 @@ class gameMap {
             x_size = b; 
             y_size = c;
         }; 
-        // METHODS 
+        // METHODS
+        void print_game_map();
 };
 
 class gamestate {
@@ -113,5 +115,6 @@ class gamestate {
 //METHODS
 mapTile create_blank_tile();
 gameMap create_blank_map(); 
-
+gameMap create_random_map();
+gameMap create_random_tile();
 
