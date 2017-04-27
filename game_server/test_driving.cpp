@@ -56,7 +56,7 @@ int main(int argv, char* argc[]) {
 
     TdBike bike = TdBike(200.0, 200.0, 500.0);
 
-    while(!quit) {
+    while (!quit) {
         while (SDL_PollEvent(&e) != 0) {
             /* user requests QUIT */
             if (e.type == SDL_QUIT) {
