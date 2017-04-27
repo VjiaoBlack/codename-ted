@@ -1,7 +1,3 @@
-#include "game_structs.hpp"
-#include <vector>
-#include <iostream>
-
 /* 
  *
  * game_structs.cpp - codename-ted (2017)
@@ -13,6 +9,9 @@
  *
  */
 
+#include "game_structs.hpp"
+#include <vector>
+#include <iostream>
 
 using namespace std;
 
