@@ -5,7 +5,7 @@
  * Definitions for necessary structs
  * including player, lobby, gamestate, etc
  *
- * Worked on by Chris, David, Victor, Jigar, and Charlie
+ * Worked on by Jigar, Charlie, Chris, David, and Victor 
  *
  */
 
@@ -52,12 +52,28 @@ class ship {
                 position(a), velocity(b), acceleration(c),
                 orientation(d), rudderRot(e), goldAmount(f), 
                 AI(g) {}; 
+        // Methods 
 };
 
 class pirate : public ship {
     public:
-        float boost;
+        // Attributes
+        string pirate_name;
+        // Constructor
+        pirate(string a, vec2 b, vec2 c, vec2 d, 
+                float e, float f, int g, bool h) : 
+                pirate_name(a), ship(b, c, d, e, f, g, h) {};
 };
+
+class merchant : public ship {
+    public: 
+        // Attributes
+        string merchant_name;
+        // Constructor
+        merchant(string a, vec2 b, vec2 c, vec2 d, 
+                float e, float f, int g, bool h) : 
+                merchant_name(a), ship(b, c, d, e, f, g, h) {};
+}; 
 
 class lobby_t {
     public:
@@ -92,11 +108,16 @@ class gameMap {
         vector< vector<mapTile> > mapTiles;
         int x_size; 
         int y_size;
+        vector<pirate> pirates; 
+        vector<merchant> merchants;
         //CONSTRUCTOR 
-        gameMap(vector< vector<mapTile> > a, int b, int c) {
+        gameMap(vector< vector<mapTile> > a, int b, int c,
+                vector<pirate> d, vector <merchant> e) {
             mapTiles = a;
             x_size = b; 
             y_size = c;
+            pirates = d; 
+            merchants = e;
         }; 
         // METHODS
         void print_game_map();
@@ -111,8 +132,11 @@ class gamestate {
         float **heightMap; 
 };
 
-//METHODS
+// HELPER FUNCTIONS
 mapTile create_blank_tile();
 gameMap create_blank_map(); 
 gameMap create_random_map();
 mapTile create_random_tile(int pirate);
+pirate create_basic_pirate(vec2 loc);
+
+

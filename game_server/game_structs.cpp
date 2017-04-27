@@ -42,7 +42,23 @@ void gameMap::print_game_map() {
     } 
 }
 
+
 // HELPER FUNCTIONS
+pirate create_basic_pirate(vec2 loc) {
+    string name = "Vader";
+    vec2 position = loc; 
+    vec2 velocity(0, 0);
+    vec2 acceleration(0, 0);
+    float orientation = 0;
+    float rudderRot = 0; 
+    int goldAmount = 0; 
+    bool AI = true; 
+    pirate basic(name, position, velocity, acceleration, 
+                orientation, rudderRot, goldAmount, AI);
+    return basic; 
+}
+
+
 mapTile create_blank_tile() {
     vec2 wind_dir = vec2(0, 0);
     vec2 curr_dir = vec2(0, 0);
@@ -80,6 +96,8 @@ gameMap create_blank_map() {
     int x_len = 25; 
     int y_len = 25;
     vector< vector<mapTile> > tiles;
+    vector<pirate> pirates; 
+    vector<merchant> merchants;
     for(int i = 0; i < x_len; i++) {
         vector<mapTile> curr_row; 
         for (int j = 0; j < y_len; j++) {
@@ -87,7 +105,7 @@ gameMap create_blank_map() {
         }
         tiles.push_back(curr_row);
     }
-    gameMap blank_map(tiles, x_len, y_len);
+    gameMap blank_map(tiles, x_len, y_len, pirates, merchants);
     return blank_map;;
 }
 
@@ -97,6 +115,8 @@ gameMap create_random_map() {
     int rand_i = rand() % 25;
     int rand_j = rand() % 25;
     vector< vector<mapTile> > tiles;
+    vector<pirate> pirates; 
+    vector<merchant> merchants;
     for(int i = 0; i < x_len; i++) {
         vector<mapTile> curr_row; 
         for (int j = 0; j < y_len; j++) {
@@ -110,7 +130,7 @@ gameMap create_random_map() {
         }
         tiles.push_back(curr_row);
     }
-    gameMap blank_map(tiles, x_len, y_len);
-    return blank_map;;   
+    gameMap random_map(tiles, x_len, y_len, pirates, merchants);
+    return random_map;;   
 }
 
