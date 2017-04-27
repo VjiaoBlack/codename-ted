@@ -58,6 +58,20 @@ pirate create_basic_pirate(vec2 loc) {
     return basic; 
 }
 
+merchant create_basic_merchant(vec2 loc) {
+    string name = "Clone";
+    vec2 position = loc; 
+    vec2 velocity(0, 0);
+    vec2 acceleration(0, 0);
+    float orientation = 0;
+    float rudderRot = 0; 
+    int goldAmount = 0; 
+    bool AI = true; 
+    merchant basic(name, position, velocity, acceleration, 
+                orientation, rudderRot, goldAmount, AI);
+    return basic; 
+}
+
 
 mapTile create_blank_tile() {
     vec2 wind_dir = vec2(0, 0);
@@ -123,9 +137,15 @@ gameMap create_random_map() {
             if (i == rand_i && j == rand_j) {
                 mapTile curr_tile = create_random_tile(1);
                 curr_row.push_back(curr_tile);
+                pirate curr_pirate = create_basic_pirate(vec2(i, j));
+                pirates.push_back(curr_pirate);
             } else {
                 mapTile curr_tile = create_random_tile(0);
                 curr_row.push_back(curr_tile);
+                if (curr_tile.is_ship) {
+                    merchant curr_merch = create_basic_merchant(vec2(i, j));
+                    merchants.push_back(curr_merch);
+                }
             }
         }
         tiles.push_back(curr_row);
