@@ -74,7 +74,7 @@ class mapTile {
         vec2 windDirection;
         float windStrength;
         // Convert these to enums later
-        int is_ship; // 1 if ship, 0 if not
+        int is_ship; // 2 if pirate, 1 if merchant, 0 if nothing
         int start_finish; // 1 if start, 0 if finish
         int land_water; // 1 if land, 0 if water
         
@@ -116,5 +116,4 @@ class gamestate {
 mapTile create_blank_tile();
 gameMap create_blank_map(); 
 gameMap create_random_map();
-gameMap create_random_tile();
-
+mapTile create_random_tile(int pirate);
