@@ -100,10 +100,13 @@ gameMap create_random_map() {
     for(int i = 0; i < x_len; i++) {
         vector<mapTile> curr_row; 
         for (int j = 0; j < y_len; j++) {
-            if (i == rand_i && j == rand_j)
-                curr_row.push_back(create_random_tile(1));
-            else
-                curr_row.push_back(create_random_tile(0));
+            if (i == rand_i && j == rand_j) {
+                mapTile curr_tile = create_random_tile(1);
+                curr_row.push_back(curr_tile);
+            } else {
+                mapTile curr_tile = create_random_tile(0);
+                curr_row.push_back(curr_tile);
+            }
         }
         tiles.push_back(curr_row);
     }

@@ -38,26 +38,25 @@ class player_t {
 
 class ship {
     public:
+        //Attributes
         vec2 position;
         vec2 velocity;
         vec2 acceleration;
         float orientation;
         float rudderRot;
-        //Angular velocity?
         int goldAmount;
         bool AI;
+        // Constructor
+        ship(vec2 a, vec2 b, vec2 c, float d, 
+                float e, int f, bool g) :
+                position(a), velocity(b), acceleration(c),
+                orientation(d), rudderRot(e), goldAmount(f), 
+                AI(g) {}; 
 };
 
-class pirate {
+class pirate : public ship {
     public:
-        vec2 position;
-        vec2 velocity;
-        vec2 acceleration;
-        float orientation;
-        float rudderRot;
-        //Angular velocity?
-        int goldAmount;
-        bool AI;
+        float boost;
 };
 
 class lobby_t {

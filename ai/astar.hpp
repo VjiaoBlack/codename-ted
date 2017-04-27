@@ -8,14 +8,10 @@
 using namespace std;
 
 // DATA STRUCTURES 
-typedef struct loc {
-    int x; 
-    int y; 
-} loc; 
 
 // FUNCTION HEADERS
 void astar_main(); 
-vector<loc> retrieve_ship_positions(); 
+vector<vec2> retrieve_ship_positions(); 
      
 
 

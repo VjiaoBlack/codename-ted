@@ -15,9 +15,8 @@ using namespace std;
 
 void astar_main() {
     gameMap map = create_random_map(); 
-    map.print_game_map();
+    map.print_game_map(); 
 }
-
 
 
 int main() {
