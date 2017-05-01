@@ -30,6 +30,24 @@ vector<vec2> retrieve_ship_positions(gameMap gm) {
     return positions; 
 }
 
+vector<vec2> retrieve_next_positions(vec2 curr, int max_x, int max_y) {
+    vector<vec2> next; 
+    int x; 
+    int y; 
+    for (x = -1; x < 2; x++) {
+        for(y = -1; y < 2; y++) {
+            int new_x = curr.x + x; 
+            int new_y = curr.y + y; 
+            if (new_x > 0 && new_y > 0 && 
+                new_x < max_x && new_y < max_y && 
+                (new_x != curr.x || new_y != curr.y)) {
+                next.push_back(vec2(new_x, new_y));        
+            }
+        }
+    }
+    return next; 
+}
+
 
 int main() {
     cout << "Staring A Star Algorithm\n";
