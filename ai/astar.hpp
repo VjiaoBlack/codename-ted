@@ -11,7 +11,5 @@ using namespace std;
 
 // FUNCTION HEADERS
 void astar_main(); 
-vector<vec2> retrieve_ship_positions(); 
-     
-
+vector<vec2> retrieve_ship_positions(gameMap gm); 
 
