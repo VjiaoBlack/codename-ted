@@ -8,10 +8,25 @@
 using namespace std;
 
 // DATA STRUCTURES 
+class q_elem {
+    public:
+        vec2 pos; 
+        int priority;
+        q_elem(vec2 a, int b) : 
+            pos(a), priority(b) {};
+};
+
+struct PriorityComp
+{
+    bool operator()(const q_elem& lhs, const q_elem& rhs) const {
+        return lhs.priority < rhs.priority;
+    }
+};
 
 // FUNCTION HEADERS
 void astar_main(); 
 vector<vec2> retrieve_ship_positions(gameMap gm); 
 vector<vec2> retrieve_next_positions(vec2 curr, int max_x, int max_y);
 float distance(vec2 pos1, vec2 pos2);
+bool q_elem_compare(q_elem a, q_elem b);
 

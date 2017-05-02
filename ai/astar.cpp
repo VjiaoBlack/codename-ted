@@ -10,16 +10,18 @@
 #include "astar.hpp"
 #include <math.h>
 
-
 using namespace std;
 
 void astar_main() {
-    gameMap map = create_random_map(); 
+    gameMap map = create_random_map();
+    priority_queue<q_elem, vector<q_elem>, PriorityComp> main_q; 
+
     vector<vec2> positions = retrieve_ship_positions(map);
     vec2 pirate_pos = positions[0]; // Hacky way to get pirate position
     vector<vec2> next_positions = retrieve_next_positions(pirate_pos, 25, 25);
     for (vec2 pos : next_positions) {
-        cout << pos.x << " " << pos.y << "\n";
+        q_elem new_elem(pos, 0);
+        main_q.push(new_elem);
     }
     map.print_game_map(); 
 }
