@@ -169,3 +169,20 @@ void move_pirate(gameMap& m, vec2 pos1, vec2 pos2) {
     m.mapTiles[pos1.x][pos1.y].is_ship = 0;
     m.mapTiles[pos2.x][pos2.y].is_ship = 2;
 }
+
+void move_merchant(gameMap& map, vec2 pos1, vec2 pos2) {
+    vector<merchant> merchants;
+    for(merchant m : map.merchants) {
+        if (compare_vec(m.position, pos1)) 
+            m.position = pos2;
+        merchants.push_back(m);
+    }
+    map.merchants = merchants;
+    map.mapTiles[pos1.x][pos1.y].is_ship = 0;
+    map.mapTiles[pos2.x][pos2.y].is_ship = 2;
+}
+
+
+
+
+

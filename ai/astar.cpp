@@ -15,7 +15,7 @@ using namespace std;
 void astar_main() {
     gameMap map = create_random_map();
     int ticks = 0;
-    for (ticks = 0; ticks < 70; ticks++) {
+    for (ticks = 0; ticks < 10; ticks++) {
         map.print_game_map(); 
         priority_queue<q_elem, vector<q_elem>, PriorityComp> main_q; 
         bool goal_reached = false;
