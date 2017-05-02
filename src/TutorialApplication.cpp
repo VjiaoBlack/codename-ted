@@ -62,8 +62,6 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
         dx = 100.0f;
     }
 
-
-
     if (mKeyboard->isKeyDown(OIS::KC_J)) {
         if (mBike.wheel < 1.6f) {
             mBike.wheel += 0.02;
@@ -133,25 +131,8 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
 }
  
 bool BasicApp::keyPressed(const OIS::KeyEvent& ke) {
-    // CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    // context.injectKeyDown((CEGUI::Key::Scan)ke.key);
-    // context.injectChar((CEGUI::Key::Scan)ke.text);
- 
     mCameraMan->injectKeyDown(ke);
 
-
-        //     CEGUI::Vector2f mousePos = context.getMouseCursor().getPosition();
- 
-        // Ogre::Ray mouseRay =
-        //     mCamera->getCameraToViewportRay(
-        // mousePos.d_x / float(me.state.width),
-        // mousePos.d_y / float(me.state.height));
- 
-        // Ogre::TerrainGroup::RayResult result = mTerrainGroup->rayIntersects(mouseRay);
- 
-        // if (result.terrain)
-        //     mCurObject->setPosition(result.position + Ogre::Vector3(0.0, 20.0, 0.0));
- 
     return true;
 }
  
@@ -482,7 +463,7 @@ void BasicApp::setupTerrain(Ogre::Light* light) {
  
 // Terrain helper function
 void getTerrainImage(bool flip_x, bool flip_y, Ogre::Image& img) {
-    img.load("terrain.png", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    img.load("victor_terrain.png", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
  
     if (flip_x)
         img.flipAroundY();
@@ -509,35 +490,35 @@ void BasicApp::defineTerrain(long x, long y) {
 }
  
 void BasicApp::initBlendMaps(Ogre::Terrain* terrain) {
-    Ogre::TerrainLayerBlendMap* blendMap0 = terrain->getLayerBlendMap(1);
-    Ogre::TerrainLayerBlendMap* blendMap1 = terrain->getLayerBlendMap(2);
-    Ogre::Real minHeight0 = 70;
-    Ogre::Real fadeDist0 = 40;
-    Ogre::Real minHeight1 = 70;
-    Ogre::Real fadeDist1 = 15;
-    float* blend0 = blendMap0->getBlendPointer();
-    float* blend1 = blendMap1->getBlendPointer();
+    // Ogre::TerrainLayerBlendMap* blendMap0 = terrain->getLayerBlendMap(1);
+    // Ogre::TerrainLayerBlendMap* blendMap1 = terrain->getLayerBlendMap(2);
+    // Ogre::Real minHeight0 = 70;
+    // Ogre::Real fadeDist0 = 40;
+    // Ogre::Real minHeight1 = 70;
+    // Ogre::Real fadeDist1 = 15;
+    // float* blend0 = blendMap0->getBlendPointer();
+    // float* blend1 = blendMap1->getBlendPointer();
  
-    for (Ogre::uint16 y = 0; y < terrain->getLayerBlendMapSize(); ++y) {
-        for (Ogre::uint16 x = 0; x < terrain->getLayerBlendMapSize(); ++x) {
-            Ogre::Real tx, ty;
+    // for (Ogre::uint16 y = 0; y < terrain->getLayerBlendMapSize(); ++y) {
+    //     for (Ogre::uint16 x = 0; x < terrain->getLayerBlendMapSize(); ++x) {
+    //         Ogre::Real tx, ty;
  
-            blendMap0->convertImageToTerrainSpace(x, y, &tx, &ty);
-            Ogre::Real height = terrain->getHeightAtTerrainPosition(tx, ty);
-            Ogre::Real val = (height - minHeight0) / fadeDist0;
-            val = Ogre::Math::Clamp(val, (Ogre::Real)0, (Ogre::Real)1);
-            *blend0++ = val;
+    //         blendMap0->convertImageToTerrainSpace(x, y, &tx, &ty);
+    //         Ogre::Real height = terrain->getHeightAtTerrainPosition(tx, ty);
+    //         Ogre::Real val = (height - minHeight0) / fadeDist0;
+    //         val = Ogre::Math::Clamp(val, (Ogre::Real)0, (Ogre::Real)1);
+    //         *blend0++ = val;
  
-            val = (height - minHeight1) / fadeDist1;
-            val = Ogre::Math::Clamp(val, (Ogre::Real)0, (Ogre::Real)1);
-            *blend1++ = val;
-        }
-    }
+    //         val = (height - minHeight1) / fadeDist1;
+    //         val = Ogre::Math::Clamp(val, (Ogre::Real)0, (Ogre::Real)1);
+    //         *blend1++ = val;
+    //     }
+    // }
  
-    blendMap0->dirty();
-    blendMap1->dirty();
-    blendMap0->update();
-    blendMap1->update();
+    // blendMap0->dirty();
+    // blendMap1->dirty();
+    // blendMap0->update();
+    // blendMap1->update();
 }
  
 void BasicApp::configureTerrainDefaults(Ogre::Light* light) {
@@ -550,26 +531,42 @@ void BasicApp::configureTerrainDefaults(Ogre::Light* light) {
     Ogre::Terrain::ImportData& importData = mTerrainGroup->getDefaultImportSettings();
     importData.terrainSize = 513;
     importData.worldSize = 12000.0f;
-    importData.inputScale = 600;
+    importData.inputScale = 2000;
     importData.minBatchSize = 33;
     importData.maxBatchSize = 65;
  
     importData.layerList.resize(3);
-    importData.layerList[0].worldSize = 100;
+    // importData.layerList[0].worldSize = 100;
+    // importData.layerList[0].textureNames.push_back(
+    //     "dirt_grayrocky_diffusespecular.dds");
+    // importData.layerList[0].textureNames.push_back(
+    //     "dirt_grayrocky_normalheight.dds");
+    // importData.layerList[1].worldSize = 30;
+    // importData.layerList[1].textureNames.push_back(
+    //     "grass_green-01_diffusespecular.dds");
+    // importData.layerList[1].textureNames.push_back(
+    //     "grass_green-01_normalheight.dds");
+    // importData.layerList[2].worldSize = 200;
+    // importData.layerList[2].textureNames.push_back(
+    //     "growth_weirdfungus-03_diffusespecular.dds");
+    // importData.layerList[2].textureNames.push_back(
+    //     "growth_weirdfungus-03_normalheight.dds");
+    
+    importData.layerList[0].worldSize = 12000;
     importData.layerList[0].textureNames.push_back(
-        "dirt_grayrocky_diffusespecular.dds");
+        "victor_diffusespecular.dds");
     importData.layerList[0].textureNames.push_back(
-        "dirt_grayrocky_normalheight.dds");
-    importData.layerList[1].worldSize = 30;
+        "victor_normalheight.dds");
+    importData.layerList[1].worldSize = 12000;
     importData.layerList[1].textureNames.push_back(
-        "grass_green-01_diffusespecular.dds");
+        "victor_diffusespecular.dds");
     importData.layerList[1].textureNames.push_back(
-        "grass_green-01_normalheight.dds");
-    importData.layerList[2].worldSize = 200;
+        "victor_normalheight.dds");
+    importData.layerList[2].worldSize = 12000;
     importData.layerList[2].textureNames.push_back(
-        "growth_weirdfungus-03_diffusespecular.dds");
+        "victor_diffusespecular.dds");
     importData.layerList[2].textureNames.push_back(
-        "growth_weirdfungus-03_normalheight.dds");
+        "victor_normalheight.dds");
 }
  
 void BasicApp::handleCameraCollision() {
