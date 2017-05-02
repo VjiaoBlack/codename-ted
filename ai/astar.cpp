@@ -14,15 +14,17 @@ using namespace std;
 
 void astar_main() {
     gameMap map = create_random_map();
-    priority_queue<q_elem, vector<q_elem>, PriorityComp> main_q; 
-    vector<vec2> positions = retrieve_ship_positions(map);
-    vec2 pirate_pos = positions[0]; // Hacky way to get pirate position
-    vec2 target_pos = get_target(positions);
-    vec2 selected_pos = pirate_pos;
-    main_q.push(q_elem(selected_pos, vec2(-1, -1), 0));
     int ticks = 0;
-    for (ticks = 0; ticks < 10; ticks++) {
+    for (ticks = 0; ticks < 70; ticks++) {
+        map.print_game_map(); 
+        priority_queue<q_elem, vector<q_elem>, PriorityComp> main_q; 
         bool goal_reached = false;
+        vector<vec2> positions = retrieve_ship_positions(map);
+        vec2 pirate_pos = positions[0]; // Hacky way to get pirate position
+        pirate_pos.print_vec2();
+        vec2 target_pos = get_target(positions);
+        vec2 selected_pos = pirate_pos;
+        main_q.push(q_elem(selected_pos, vec2(-1, -1), 0));
         while (!goal_reached) {
             q_elem selected_q = main_q.top();
             selected_pos = selected_q.pos;
@@ -31,14 +33,16 @@ void astar_main() {
                                             map.x_size, map.y_size);
             for (vec2 pos : next_positions) {
                 // f(n) = g(n) + h(n)
-                float g = 0.0; // Slower: distance(pirate_pos, selected_pos);
+                float g = distance(pirate_pos, selected_pos);
                 float h = distance(selected_pos, target_pos);
                 float priority = g + h;
                 vec2 start = (selected_q.start.x == -1) ? pos : selected_q.start; 
                 main_q.push(q_elem(pos, start, priority));
             }
-            selected_pos.print_vec2();
             goal_reached = compare_vec(selected_pos, target_pos);
+            if (goal_reached) {
+                move_pirate(map, pirate_pos, selected_q.start);
+            }
         }
     }
     map.print_game_map(); 
@@ -85,8 +89,6 @@ vec2 get_target(vector<vec2> positions) {
             min_pos = pos;
         }
     }
-    cout << "Min Pos ";
-    min_pos.print_vec2();
     return min_pos;
 }
 
