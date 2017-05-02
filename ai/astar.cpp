@@ -19,12 +19,13 @@ void astar_main() {
     vec2 pirate_pos = positions[0]; // Hacky way to get pirate position
     vec2 target_pos = get_target(positions);
     vec2 selected_pos = pirate_pos;
-    main_q.push(q_elem(selected_pos, 0));
+    main_q.push(q_elem(selected_pos, vec2(-1, -1), 0));
     int ticks = 0;
     for (ticks = 0; ticks < 10; ticks++) {
         bool goal_reached = false;
         while (!goal_reached) {
-            selected_pos = main_q.top().pos;
+            q_elem selected_q = main_q.top();
+            selected_pos = selected_q.pos;
             main_q.pop();
             vector<vec2> next_positions = retrieve_next_positions(selected_pos, 
                                             map.x_size, map.y_size);
@@ -33,7 +34,8 @@ void astar_main() {
                 float g = 0.0; // Slower: distance(pirate_pos, selected_pos);
                 float h = distance(selected_pos, target_pos);
                 float priority = g + h;
-                main_q.push(q_elem(pos, priority));
+                vec2 start = (selected_q.start.x == -1) ? pos : selected_q.start; 
+                main_q.push(q_elem(pos, start, priority));
             }
             selected_pos.print_vec2();
             goal_reached = compare_vec(selected_pos, target_pos);

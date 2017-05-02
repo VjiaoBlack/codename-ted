@@ -10,10 +10,11 @@ using namespace std;
 // DATA STRUCTURES 
 class q_elem {
     public:
-        vec2 pos; 
+        vec2 pos;
+        vec2 start;
         float priority;
-        q_elem(vec2 a, int b) : 
-            pos(a), priority(b) {};
+        q_elem(vec2 a, vec2 b, int c) : 
+            pos(a), start(b), priority(c) {};
 };
 
 struct PriorityComp
