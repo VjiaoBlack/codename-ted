@@ -158,3 +158,14 @@ gameMap create_random_map() {
     return random_map;;   
 }
 
+void move_pirate(gameMap& m, vec2 pos1, vec2 pos2) {
+    vector<pirate> pirates;
+    for(pirate p : m.pirates) {
+        if (compare_vec(p.position, pos1)) 
+            p.position = pos2;
+        pirates.push_back(p);
+    }
+    m.pirates = pirates;
+    m.mapTiles[pos1.x][pos1.y].is_ship = 0;
+    m.mapTiles[pos2.x][pos2.y].is_ship = 2;
+}

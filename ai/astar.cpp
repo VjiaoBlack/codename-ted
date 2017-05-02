@@ -15,26 +15,29 @@ using namespace std;
 void astar_main() {
     gameMap map = create_random_map();
     priority_queue<q_elem, vector<q_elem>, PriorityComp> main_q; 
-    bool goal_reached = false;
     vector<vec2> positions = retrieve_ship_positions(map);
     vec2 pirate_pos = positions[0]; // Hacky way to get pirate position
     vec2 target_pos = get_target(positions);
     vec2 selected_pos = pirate_pos;
     main_q.push(q_elem(selected_pos, 0));
-    while (!goal_reached) {
-        selected_pos = main_q.top().pos;
-        main_q.pop();
-        vector<vec2> next_positions = retrieve_next_positions(selected_pos, 
-                                        map.x_size, map.y_size);
-        for (vec2 pos : next_positions) {
-            // f(n) = g(n) + h(n)
-            float g = 0.0; // Slower: distance(pirate_pos, selected_pos);
-            float h = distance(selected_pos, target_pos);
-            float priority = g + h;
-            main_q.push(q_elem(pos, priority));
+    int ticks = 0;
+    for (ticks = 0; ticks < 10; ticks++) {
+        bool goal_reached = false;
+        while (!goal_reached) {
+            selected_pos = main_q.top().pos;
+            main_q.pop();
+            vector<vec2> next_positions = retrieve_next_positions(selected_pos, 
+                                            map.x_size, map.y_size);
+            for (vec2 pos : next_positions) {
+                // f(n) = g(n) + h(n)
+                float g = 0.0; // Slower: distance(pirate_pos, selected_pos);
+                float h = distance(selected_pos, target_pos);
+                float priority = g + h;
+                main_q.push(q_elem(pos, priority));
+            }
+            selected_pos.print_vec2();
+            goal_reached = compare_vec(selected_pos, target_pos);
         }
-        selected_pos.print_vec2();
-        goal_reached = compare_vec(selected_pos, target_pos);
     }
     map.print_game_map(); 
 }
