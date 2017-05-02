@@ -11,7 +11,7 @@ using namespace std;
 class q_elem {
     public:
         vec2 pos; 
-        int priority;
+        float priority;
         q_elem(vec2 a, int b) : 
             pos(a), priority(b) {};
 };
@@ -29,4 +29,5 @@ vector<vec2> retrieve_ship_positions(gameMap gm);
 vector<vec2> retrieve_next_positions(vec2 curr, int max_x, int max_y);
 float distance(vec2 pos1, vec2 pos2);
 bool q_elem_compare(q_elem a, q_elem b);
+vec2 get_target(vector<vec2> positions);
 

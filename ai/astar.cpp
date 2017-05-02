@@ -15,15 +15,19 @@ using namespace std;
 void astar_main() {
     gameMap map = create_random_map();
     priority_queue<q_elem, vector<q_elem>, PriorityComp> main_q; 
-
+    int goal_reached = 0;
     vector<vec2> positions = retrieve_ship_positions(map);
     vec2 pirate_pos = positions[0]; // Hacky way to get pirate position
-    vector<vec2> next_positions = retrieve_next_positions(pirate_pos, 25, 25);
-    for (vec2 pos : next_positions) {
-        q_elem new_elem(pos, 0);
-        main_q.push(new_elem);
+    vec2 target_pos = get_target(positions);
+    while (!goal_reached) {
+        vector<vec2> next_positions = retrieve_next_positions(pirate_pos, 25, 25);
+        for (vec2 pos : next_positions) {
+            q_elem new_elem(pos, 0);
+            main_q.push(new_elem);
+        }
+        map.print_game_map(); 
+        goal_reached = 1;
     }
-    map.print_game_map(); 
 }
 
 vector<vec2> retrieve_ship_positions(gameMap gm) {
@@ -53,6 +57,21 @@ vector<vec2> retrieve_next_positions(vec2 curr, int max_x, int max_y) {
         }
     }
     return next; 
+}
+
+
+vec2 get_target(vector<vec2> positions) {
+    vec2 start_pos = positions[0]; // hacky way to get pirate
+    vec2 min_pos = start_pos; 
+    float min_dist = 0;
+    for (vec2 pos : positions) {
+        float curr_dist = distance(start_pos, pos);
+        if (curr_dist < min_dist) {
+            min_dist = curr_dist; 
+            min_pos = pos;
+        }
+    }
+    return min_pos;
 }
 
 // Basic distance, add better physics later
