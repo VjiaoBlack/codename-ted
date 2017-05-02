@@ -12,5 +12,6 @@ using namespace std;
 // FUNCTION HEADERS
 void astar_main(); 
 vector<vec2> retrieve_ship_positions(gameMap gm); 
-vector<vec2> retrieve_next_positions(vec2 curr, int max_x, int max_y); 
+vector<vec2> retrieve_next_positions(vec2 curr, int max_x, int max_y);
+float distance(vec2 pos1, vec2 pos2);
 
