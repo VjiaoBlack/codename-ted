@@ -15,7 +15,7 @@ using namespace std;
 void astar_main() {
     gameMap map = create_random_map();
     int ticks = 0;
-    for (ticks = 0; ticks < 10; ticks++) {
+    for (ticks = 0; ticks < 5; ticks++) {
         map.print_game_map(); 
         priority_queue<q_elem, vector<q_elem>, PriorityComp> main_q; 
         bool goal_reached = false;
@@ -42,10 +42,17 @@ void astar_main() {
             goal_reached = compare_vec(selected_pos, target_pos);
             if (goal_reached) {
                 move_pirate(map, pirate_pos, selected_q.start);
+                merchant_moves(map);
             }
         }
     }
     map.print_game_map(); 
+}
+
+void merchant_moves(gameMap& gm) {
+    for (merchant m : gm.merchants) {
+        move_merchant(gm, m.position, vec2(m.position.x - 1, m.position.y));
+    } 
 }
 
 vector<vec2> retrieve_ship_positions(gameMap gm) {

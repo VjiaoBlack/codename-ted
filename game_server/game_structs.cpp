@@ -179,7 +179,7 @@ void move_merchant(gameMap& map, vec2 pos1, vec2 pos2) {
     }
     map.merchants = merchants;
     map.mapTiles[pos1.x][pos1.y].is_ship = 0;
-    map.mapTiles[pos2.x][pos2.y].is_ship = 2;
+    map.mapTiles[pos2.x][pos2.y].is_ship = 1;
 }
 
 
