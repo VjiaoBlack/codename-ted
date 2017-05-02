@@ -139,4 +139,4 @@ gameMap create_random_map();
 mapTile create_random_tile(int pirate);
 pirate create_basic_pirate(vec2 loc);
 merchant create_basic_merchant(vec2 loc); 
-
+bool compare_vec(vec2 a, vec2 b);

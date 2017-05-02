@@ -44,6 +44,10 @@ void gameMap::print_game_map() {
 
 
 // HELPER FUNCTIONS
+bool compare_vec(vec2 a, vec2 b) {
+    return (a.x == b.x && a.y == b.y);
+}
+
 pirate create_basic_pirate(vec2 loc) {
     string name = "Vader";
     vec2 position = loc; 
