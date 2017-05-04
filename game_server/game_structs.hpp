@@ -27,6 +27,16 @@ class vec2 {
         void print_vec2();
 };
 
+class vec3 {
+    public: 
+        //Attributes 
+        float x, y, z; 
+        //Constructor 
+        vec3(float a, float b, float c) : x(a), y(b), z(c) {};
+        // Methods
+        void print_vec3();
+};
+
 class player_t {
     public:
         int uID;
@@ -110,15 +120,14 @@ class gameMap {
         int y_size;
         vector<pirate> pirates; 
         vector<merchant> merchants;
+        vec3 size;
+        
         //CONSTRUCTOR 
         gameMap(vector< vector<mapTile> > a, int b, int c,
-                vector<pirate> d, vector <merchant> e) {
-            mapTiles = a;
-            x_size = b; 
-            y_size = c;
-            pirates = d; 
-            merchants = e;
-        }; 
+                vector<pirate> d, vector <merchant> e,
+                vec3 f) : mapTiles(a), x_size(b), y_size(c), 
+                pirates(d), merchants(e), size(f) {}; 
+        
         // METHODS
         void print_game_map();
 };

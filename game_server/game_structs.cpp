@@ -22,6 +22,10 @@ void vec2::print_vec2() {
     cout << "{" << x << ", " << y << "}\n"; 
 } 
 
+void vec3::print_vec3() {
+    cout << "{" << x << ", " << y << ", " << z <<  "}\n"; 
+}
+
 void mapTile::print_map_tile() {
     if (is_ship == 1) {
         cout << "[x]";
@@ -116,6 +120,7 @@ gameMap create_blank_map() {
     vector< vector<mapTile> > tiles;
     vector<pirate> pirates; 
     vector<merchant> merchants;
+    vec3 size(250, 250, 250);
     for(int i = 0; i < x_len; i++) {
         vector<mapTile> curr_row; 
         for (int j = 0; j < y_len; j++) {
@@ -123,7 +128,7 @@ gameMap create_blank_map() {
         }
         tiles.push_back(curr_row);
     }
-    gameMap blank_map(tiles, x_len, y_len, pirates, merchants);
+    gameMap blank_map(tiles, x_len, y_len, pirates, merchants, size);
     return blank_map;;
 }
 
@@ -135,6 +140,7 @@ gameMap create_random_map() {
     vector< vector<mapTile> > tiles;
     vector<pirate> pirates; 
     vector<merchant> merchants;
+    vec3 size(250, 250, 250);
     for(int i = 0; i < x_len; i++) {
         vector<mapTile> curr_row; 
         for (int j = 0; j < y_len; j++) {
@@ -154,7 +160,7 @@ gameMap create_random_map() {
         }
         tiles.push_back(curr_row);
     }
-    gameMap random_map(tiles, x_len, y_len, pirates, merchants);
+    gameMap random_map(tiles, x_len, y_len, pirates, merchants, size);
     return random_map;;   
 }
 

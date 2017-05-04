@@ -51,7 +51,7 @@ void astar_main() {
 
 void merchant_moves(gameMap& gm) {
     for (merchant m : gm.merchants) {
-        move_merchant(gm, m.position, vec2(m.position.x - 1, m.position.y));
+        move_merchant(gm, m.position, vec2(m.position.x - 2, m.position.y));
     } 
 }
 
