@@ -6,8 +6,6 @@ INCLUDE=-I/$(BOOST_ROOT)  -L/$(BOOST_ROOT)/stage/lib -lboost_system -I/usr/local
 
 all: server client
 
-all_echo: echo_server udp_echo_client
-
 server.o: server.cpp
 	$(CC) $(CFLAGS) -c server.cpp $(INCLUDE) -o build/server.o
 
