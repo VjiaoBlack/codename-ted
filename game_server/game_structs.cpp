@@ -55,6 +55,7 @@ bool compare_vec(vec2 a, vec2 b) {
 pirate create_basic_pirate(vec2 loc) {
     string name = "Vader";
     vec2 position = loc; 
+    vec2 coord_pos = vec2(0, 0);
     vec2 velocity(0, 0);
     vec2 acceleration(0, 0);
     float orientation = 0;
@@ -62,13 +63,14 @@ pirate create_basic_pirate(vec2 loc) {
     int goldAmount = 0; 
     bool AI = true; 
     pirate basic(name, position, velocity, acceleration, 
-                orientation, rudderRot, goldAmount, AI);
+                orientation, rudderRot, goldAmount, AI, coord_pos);
     return basic; 
 }
 
 merchant create_basic_merchant(vec2 loc) {
     string name = "Clone";
-    vec2 position = loc; 
+    vec2 position = loc;
+    vec2 coord_pos = vec2(0, 0);
     vec2 velocity(0, 0);
     vec2 acceleration(0, 0);
     float orientation = 0;
@@ -76,7 +78,7 @@ merchant create_basic_merchant(vec2 loc) {
     int goldAmount = 0; 
     bool AI = true; 
     merchant basic(name, position, velocity, acceleration, 
-                orientation, rudderRot, goldAmount, AI);
+                orientation, rudderRot, goldAmount, AI, coord_pos);
     return basic; 
 }
 

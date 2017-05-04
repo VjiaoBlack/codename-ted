@@ -49,7 +49,8 @@ class player_t {
 class ship {
     public:
         //Attributes
-        vec2 position;
+        vec2 position; // map tile position
+        vec2 coord_pos; // coordinate position
         vec2 velocity;
         vec2 acceleration;
         float orientation;
@@ -58,10 +59,10 @@ class ship {
         bool AI;
         // Constructor
         ship(vec2 a, vec2 b, vec2 c, float d, 
-                float e, int f, bool g) :
+                float e, int f, bool g, vec2 h) :
                 position(a), velocity(b), acceleration(c),
                 orientation(d), rudderRot(e), goldAmount(f), 
-                AI(g) {}; 
+                AI(g), coord_pos(h) {}; 
         // Methods 
 };
 
@@ -71,8 +72,8 @@ class pirate : public ship {
         string pirate_name;
         // Constructor
         pirate(string a, vec2 b, vec2 c, vec2 d, 
-                float e, float f, int g, bool h) : 
-                pirate_name(a), ship(b, c, d, e, f, g, h) {};
+                float e, float f, int g, bool h, vec2 i) : 
+                pirate_name(a), ship(b, c, d, e, f, g, h, i) {};
 };
 
 class merchant : public ship {
@@ -81,8 +82,8 @@ class merchant : public ship {
         string merchant_name;
         // Constructor
         merchant(string a, vec2 b, vec2 c, vec2 d, 
-                float e, float f, int g, bool h) : 
-                merchant_name(a), ship(b, c, d, e, f, g, h) {};
+                float e, float f, int g, bool h, vec2 i) : 
+                merchant_name(a), ship(b, c, d, e, f, g, h, i) {};
 }; 
 
 class lobby_t {
