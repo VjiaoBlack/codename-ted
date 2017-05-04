@@ -1,7 +1,7 @@
 # Set BOOST_ROOT globally somwhere, like in .profile or .bash_profile. You could also just set it temproarly on the command line
 
 CC=g++
-CFLAGS=-std=c++11 
+CFLAGS=-std=c++11
 INCLUDE=-I/$(BOOST_ROOT)  -L/$(BOOST_ROOT)/stage/lib -lboost_system -I/usr/local/include -L/usr/local/lib -lSDL2 -lpthread
 
 all: server client
@@ -22,14 +22,6 @@ server: server.o TdBike.o
 
 client: client.o TdBike.o
 	$(CC) $(CFLAGS) build/TdBike.o build/client.o $(INCLUDE) -o client
-
-#
-#echo_server:
-#	$(CC) $(CFLAGS) udp_echo_server.cpp -o echo_server
-#
-#echo_client:
-#	$(CC) $(CFLAGS) udp_echo_client.cpp -o echo_client
-#
 
 clean:
 	rm -rf *.o
