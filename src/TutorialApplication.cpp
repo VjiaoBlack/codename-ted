@@ -74,12 +74,12 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
     }
 
     if (mKeyboard->isKeyDown(OIS::KC_I)) {
-        if (mBike.vel < 2.0) {
-            mBike.vel += 0.01;
+        if (mBike.vel < 4.0) {
+            mBike.vel += 0.04;
         }
     } else {
-        if (mBike.vel > 0.0005) {
-            mBike.vel -= 0.0005;
+        if (mBike.vel > 0.005) {
+            mBike.vel -= 0.005;
         } else {
             mBike.vel = 0;
         }
@@ -87,13 +87,15 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
 
     if (mKeyboard->isKeyDown(OIS::KC_K)) {
         if (mBike.vel > 0.0) {
-            mBike.vel -= 0.0095;
+            mBike.vel -= 0.0195;
         }
     }
 
     mBike.update();
 
 
+    // Update Hydrax
+    mHydrax->update(fe.timeSinceLastFrame);
 
  
     mKeyboard->capture();
@@ -123,8 +125,34 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
  
     handleCameraCollision();
 
-    mBikeObject->setPosition(Ogre::Vector3(mBike.x, 300.0 + mHeight, mBike.y));
-    mBikeObject->setOrientation(Ogre::Quaternion(Ogre::Radian(mBike.dir + 1.5f), Ogre::Vector3(0, 1, 0)));
+    struct timespec spec;
+    clock_gettime(CLOCK_REALTIME, &spec);
+
+    long ns = spec.tv_sec * 1000000000 + spec.tv_nsec;
+    double nsf = (double) ns;
+    nsf /= 1000000000.0f;
+
+    // printf("%f\n", nsf);   
+
+    // printf("%f\n", mHydrax->getHeigth(Ogre::Vector2(mBike.x, mBike.y)));
+
+
+
+    // whoo hoo i figured out quaternions yay neverforgetti pls
+    mBikeObject->setPosition(Ogre::Vector3(mBike.x, -10.0f + mHydrax->getHeigth(Ogre::Vector2(mBike.x, mBike.y)) + (2.0f * sin(nsf * 2.0f)), mBike.y));
+    
+    // mBikeObject->setOrientation(Ogre::Quaternion(
+    //         (double) cos(mBike.dir / (2.0f)), 
+    //         (double) 0.0f, 
+    //         (double) sin(mBike.dir / (2.0f)), 
+    //         (double) 0.0f));
+
+    // fake bob
+    mBikeObject->setOrientation(Ogre::Quaternion(
+            (double) cos(mBike.dir / (2.0f)), 
+            (double) 0.05f * cos(nsf * 2.0f) * cos(mBike.dir / 2.0f), 
+            (double) sin(mBike.dir / (2.0f)), 
+            (double) 0.05f * cos(nsf * 2.0f) * cos(3.14f / 2.0f + mBike.dir / 2.0f)));
 
 
     return true;
@@ -162,7 +190,7 @@ bool BasicApp::mouseMoved(const OIS::MouseEvent& me) {
         Ogre::TerrainGroup::RayResult result = mTerrainGroup->rayIntersects(mouseRay);
  
         if (result.terrain)
-            mCurObject->setPosition(result.position + Ogre::Vector3(0.0, 20.0, 0.0));
+            mCurObject->setPosition(result.position + Ogre::Vector3(0.0, 800.0, 0.0));
     } else if (mRMouseDown) {
         mCamera->yaw(Ogre::Degree(-me.state.X.rel * mRotSpd));
         mCamera->pitch(Ogre::Degree(-me.state.Y.rel * mRotSpd));
@@ -302,13 +330,20 @@ void BasicApp::createCamera() {
 void BasicApp::createScene() {
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.7, 0.7, 0.7));
     // mSceneMgr->setSkyDome(true, "Examples/CloudySky", 5, 13);
+    
     mSceneMgr->setSkyBox(true, "Examples/CloudyNoonSkyBox", 400, true);
  
-    mCamera->setPosition(40, 100, 580);
+    // mSceneMgr->setSkyBox(true, mSkyBoxes[curSkyBox], 99999*3, true);
+    
+
+
+    mCamera->setPosition(40, 900, 580);
     mCamera->pitch(Ogre::Degree(-30));
     mCamera->yaw(Ogre::Degree(-45));
     mCamera->setNearClipDistance(0.1);
     mCamera->setFarClipDistance(50000);
+
+    // mCamera->setPolygonMode(Ogre::PM_WIREFRAME);
  
     Ogre::Vector3 lightDir(0.55, 0.3, 0.75);
     lightDir.normalise();
@@ -320,6 +355,7 @@ void BasicApp::createScene() {
     light->setSpecularColour(Ogre::ColourValue(0.2, 0.2, 0.2));
  
     setupTerrain(light);
+
  
     CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
     CEGUI::Window* rootWin = wmgr.loadLayoutFromFile("test.layout");
@@ -327,14 +363,71 @@ void BasicApp::createScene() {
     CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(rootWin);
 
     /** Create the "boat" we will be using - a fish. */
-    Ogre::Entity* ent = mSceneMgr->createEntity("fish.mesh");
+    Ogre::Entity* ent = mSceneMgr->createEntity("Cube.010.mesh");
  
     mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    mCurObject->setPosition(Ogre::Vector3(0.0, 100.0, 0.0));
-    mCurObject->setScale(10.0, 10.0, 10.0);
+    mCurObject->setPosition(Ogre::Vector3(0.0, 800.0, 0.0));
+    mCurObject->setScale(30.0, 30.0, 30.0);
     mCurObject->attachObject(ent);
 
     mBikeObject = mCurObject;
+
+    
+    // Hydrax initialization code ---------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // Create Hydrax object
+    mHydrax = new Hydrax::Hydrax(mSceneMgr, mCamera, mWindow->getViewport(0));
+
+    // Create our projected grid module  
+    Hydrax::Module::ProjectedGrid *mModule 
+        = new Hydrax::Module::ProjectedGrid(// Hydrax parent pointer
+                                            mHydrax,
+                                            // Noise module
+                                            new Hydrax::Noise::Perlin(/*Generic one*/),
+                                            // Base plane
+                                            Ogre::Plane(Ogre::Vector3(0,1,0), Ogre::Vector3(0,0,0)),
+                                            // Normal mode
+                                            Hydrax::MaterialManager::NM_VERTEX,
+                                            // Projected grid options
+                                            Hydrax::Module::ProjectedGrid::Options(/*264 /*Generic one*/));
+
+    // Set our module
+    mHydrax->setModule(static_cast<Hydrax::Module::Module*>(mModule));
+
+    // Load all parameters from config file
+    // Remarks: The config file must be in Hydrax resource group.
+    // All parameters can be set/updated directly by code(Like previous versions),
+    // but due to the high number of customizable parameters, since 0.4 version, Hydrax allows save/load config files.
+    mHydrax->loadCfg("HydraxDemo.hdx");
+
+    // Create water
+    mHydrax->create();
+
+    // Hydrax initialization code end -----------------------------------------
+    // ------------------------------------------------------------------------
+
+    // mHydrax->getMaterialManager()->addDepthTechnique(
+    //     static_cast<Ogre::MaterialPtr>(Ogre::MaterialManager::getSingleton().getByName("Island"))
+    //     ->createTechnique());
+
+    mHydrax->getMaterialManager()->addDepthTechnique(
+        mTerrainGroup->getTerrain(0, 0)->getMaterial()
+        ->createTechnique());
+
+    int curSkyBox = 1;
+    mSceneMgr->setSkyBox(true, mSkyBoxes[curSkyBox], 400, true);
+
+
+    // Update Hydrax sun position and colour
+    mHydrax->setSunPosition(mSunPosition[curSkyBox]);
+    mHydrax->setSunColor(mSunColor[curSkyBox]);
+
+
+    // Update light 0 light position and colour
+    mSceneMgr->getLight("SceneLight")->setPosition(mSunPosition[curSkyBox]);
+    mSceneMgr->getLight("SceneLight")->setSpecularColour(mSunColor[curSkyBox].x,mSunColor[curSkyBox].y,mSunColor[curSkyBox].z);
+
 }
  
 void BasicApp::destroyScene() {
@@ -459,6 +552,9 @@ void BasicApp::setupTerrain(Ogre::Light* light) {
     }
  
     mTerrainGroup->freeTemporaryResources();
+
+    mTerrainGroup->setAutoUpdateLod(NULL);
+
 }
  
 // Terrain helper function
@@ -490,35 +586,41 @@ void BasicApp::defineTerrain(long x, long y) {
 }
  
 void BasicApp::initBlendMaps(Ogre::Terrain* terrain) {
-    // Ogre::TerrainLayerBlendMap* blendMap0 = terrain->getLayerBlendMap(1);
-    // Ogre::TerrainLayerBlendMap* blendMap1 = terrain->getLayerBlendMap(2);
-    // Ogre::Real minHeight0 = 70;
-    // Ogre::Real fadeDist0 = 40;
-    // Ogre::Real minHeight1 = 70;
-    // Ogre::Real fadeDist1 = 15;
-    // float* blend0 = blendMap0->getBlendPointer();
-    // float* blend1 = blendMap1->getBlendPointer();
+    Ogre::TerrainLayerBlendMap* blendMap1 = terrain->getLayerBlendMap(1);
+    Ogre::TerrainLayerBlendMap* blendMap2 = terrain->getLayerBlendMap(2);
+    Ogre::TerrainLayerBlendMap* blendMap3 = terrain->getLayerBlendMap(3);
+    Ogre::TerrainLayerBlendMap* blendMap4 = terrain->getLayerBlendMap(4);
+
+    float* blend1 = blendMap1->getBlendPointer();
+    float* blend2 = blendMap2->getBlendPointer();
+    float* blend3 = blendMap3->getBlendPointer();
+    float* blend4 = blendMap4->getBlendPointer();
+
  
-    // for (Ogre::uint16 y = 0; y < terrain->getLayerBlendMapSize(); ++y) {
-    //     for (Ogre::uint16 x = 0; x < terrain->getLayerBlendMapSize(); ++x) {
-    //         Ogre::Real tx, ty;
+    for (Ogre::uint16 y = 0; y < terrain->getLayerBlendMapSize(); ++y) {
+        for (Ogre::uint16 x = 0; x < terrain->getLayerBlendMapSize(); ++x) {
+            Ogre::Real tx, ty;
  
-    //         blendMap0->convertImageToTerrainSpace(x, y, &tx, &ty);
-    //         Ogre::Real height = terrain->getHeightAtTerrainPosition(tx, ty);
-    //         Ogre::Real val = (height - minHeight0) / fadeDist0;
-    //         val = Ogre::Math::Clamp(val, (Ogre::Real)0, (Ogre::Real)1);
-    //         *blend0++ = val;
- 
-    //         val = (height - minHeight1) / fadeDist1;
-    //         val = Ogre::Math::Clamp(val, (Ogre::Real)0, (Ogre::Real)1);
-    //         *blend1++ = val;
-    //     }
-    // }
- 
-    // blendMap0->dirty();
-    // blendMap1->dirty();
-    // blendMap0->update();
-    // blendMap1->update();
+            blendMap1->convertImageToTerrainSpace(x, y, &tx, &ty);
+            Ogre::Real height = terrain->getHeightAtTerrainPosition(tx, ty);
+
+            // inc by 50
+            *blend4++ = 0;
+            *blend3++ = 0;
+            // *blend4++ = Ogre::Math::Clamp((50.0f + 0 * 680.0f - height) / 80.0f, 0.0f, 1.0f); //deep water;
+            // *blend3++ = Ogre::Math::Clamp((50.0f + 0 * 690.0f - height) / 20.0f, 0.0f, 1.0f); //shallow water;
+            *blend2++ = Ogre::Math::Clamp((50.0f + 770.0f - height) / 80.0f, 0.0f, 1.0f); //dirt;
+            *blend1++ = Ogre::Math::Clamp((50.0f + 940.0f - height) / 100.0f, 0.0f, 1.0f); //grass; 
+        }
+    }
+    blendMap1->dirty();
+    blendMap2->dirty();
+    blendMap3->dirty();
+    blendMap4->dirty();
+    blendMap1->update();
+    blendMap2->update();
+    blendMap3->update();
+    blendMap4->update();
 }
  
 void BasicApp::configureTerrainDefaults(Ogre::Light* light) {
@@ -532,41 +634,40 @@ void BasicApp::configureTerrainDefaults(Ogre::Light* light) {
     importData.terrainSize = 513;
     importData.worldSize = 12000.0f;
     importData.inputScale = 2000;
-    importData.minBatchSize = 33;
-    importData.maxBatchSize = 65;
- 
-    importData.layerList.resize(3);
-    // importData.layerList[0].worldSize = 100;
-    // importData.layerList[0].textureNames.push_back(
-    //     "dirt_grayrocky_diffusespecular.dds");
-    // importData.layerList[0].textureNames.push_back(
-    //     "dirt_grayrocky_normalheight.dds");
-    // importData.layerList[1].worldSize = 30;
-    // importData.layerList[1].textureNames.push_back(
-    //     "grass_green-01_diffusespecular.dds");
-    // importData.layerList[1].textureNames.push_back(
-    //     "grass_green-01_normalheight.dds");
-    // importData.layerList[2].worldSize = 200;
-    // importData.layerList[2].textureNames.push_back(
-    //     "growth_weirdfungus-03_diffusespecular.dds");
-    // importData.layerList[2].textureNames.push_back(
-    //     "growth_weirdfungus-03_normalheight.dds");
-    
-    importData.layerList[0].worldSize = 12000;
-    importData.layerList[0].textureNames.push_back(
-        "victor_diffusespecular.dds");
-    importData.layerList[0].textureNames.push_back(
-        "victor_normalheight.dds");
-    importData.layerList[1].worldSize = 12000;
-    importData.layerList[1].textureNames.push_back(
-        "victor_diffusespecular.dds");
-    importData.layerList[1].textureNames.push_back(
-        "victor_normalheight.dds");
-    importData.layerList[2].worldSize = 12000;
+    importData.minBatchSize = 33; //33
+    importData.maxBatchSize = 65; // 65
+
+    importData.layerList.resize(6);
+        
+    importData.layerList[3].worldSize = 200;
+    importData.layerList[3].textureNames.push_back(
+        "reservoir1.dds");
+    importData.layerList[3].textureNames.push_back(
+        "dirt_grayrocky_normalheight.dds");
+
+    importData.layerList[2].worldSize = 200;
     importData.layerList[2].textureNames.push_back(
-        "victor_diffusespecular.dds");
+        "dirt_grayrocky_diffusespecular.dds");
     importData.layerList[2].textureNames.push_back(
-        "victor_normalheight.dds");
+        "dirt_grayrocky_normalheight.dds");
+
+    importData.layerList[4].worldSize = 200;
+    importData.layerList[4].textureNames.push_back(
+        "SEAbottom.dds");
+    importData.layerList[4].textureNames.push_back(
+        "dirt_grayrocky_normalheight.dds");
+
+    importData.layerList[0].worldSize = 1000;
+    importData.layerList[0].textureNames.push_back(
+        "growth_weirdfungus-03_diffusespecular.dds");
+    importData.layerList[0].textureNames.push_back(
+        "growth_weirdfungus-03_normalheight.dds");
+
+    importData.layerList[1].worldSize = 250;
+    importData.layerList[1].textureNames.push_back(
+        "grass_green-01_diffusespecular.dds");
+    importData.layerList[1].textureNames.push_back(
+        "grass_green-01_normalheight.dds");
 }
  
 void BasicApp::handleCameraCollision() {

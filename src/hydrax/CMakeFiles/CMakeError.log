@@ -1,0 +1,110 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/vjiaoblack/hydrax/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_dc878/fast"
+/usr/bin/make -f CMakeFiles/cmTC_dc878.dir/build.make CMakeFiles/cmTC_dc878.dir/build
+make[1]: Entering directory '/home/vjiaoblack/hydrax/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_dc878.dir/CheckSymbolExists.c.o
+/usr/bin/cc     -o CMakeFiles/cmTC_dc878.dir/CheckSymbolExists.c.o   -c /home/vjiaoblack/hydrax/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_dc878
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_dc878.dir/link.txt --verbose=1
+/usr/bin/cc       CMakeFiles/cmTC_dc878.dir/CheckSymbolExists.c.o  -o cmTC_dc878 -rdynamic 
+CMakeFiles/cmTC_dc878.dir/CheckSymbolExists.c.o: In function `main':
+CheckSymbolExists.c:(.text+0x16): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_dc878.dir/build.make:97: recipe for target 'cmTC_dc878' failed
+make[1]: *** [cmTC_dc878] Error 1
+make[1]: Leaving directory '/home/vjiaoblack/hydrax/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_dc878/fast' failed
+make: *** [cmTC_dc878/fast] Error 2
+
+File /home/vjiaoblack/hydrax/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/vjiaoblack/hydrax/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_b9d06/fast"
+/usr/bin/make -f CMakeFiles/cmTC_b9d06.dir/build.make CMakeFiles/cmTC_b9d06.dir/build
+make[1]: Entering directory '/home/vjiaoblack/hydrax/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_b9d06.dir/CheckFunctionExists.c.o
+/usr/bin/cc    -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_b9d06.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.5/Modules/CheckFunctionExists.c
+Linking C executable cmTC_b9d06
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b9d06.dir/link.txt --verbose=1
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_b9d06.dir/CheckFunctionExists.c.o  -o cmTC_b9d06 -rdynamic -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_b9d06.dir/build.make:97: recipe for target 'cmTC_b9d06' failed
+make[1]: *** [cmTC_b9d06] Error 1
+make[1]: Leaving directory '/home/vjiaoblack/hydrax/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_b9d06/fast' failed
+make: *** [cmTC_b9d06/fast] Error 2
+
+
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/vjiaoblack/hydrax/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_a58c5/fast"
+/usr/bin/make -f CMakeFiles/cmTC_a58c5.dir/build.make CMakeFiles/cmTC_a58c5.dir/build
+make[1]: Entering directory '/home/vjiaoblack/hydrax/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_a58c5.dir/CheckSymbolExists.c.o
+/usr/bin/cc     -o CMakeFiles/cmTC_a58c5.dir/CheckSymbolExists.c.o   -c /home/vjiaoblack/hydrax/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_a58c5
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a58c5.dir/link.txt --verbose=1
+/usr/bin/cc       CMakeFiles/cmTC_a58c5.dir/CheckSymbolExists.c.o  -o cmTC_a58c5 -rdynamic 
+CMakeFiles/cmTC_a58c5.dir/CheckSymbolExists.c.o: In function `main':
+CheckSymbolExists.c:(.text+0x16): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_a58c5.dir/build.make:97: recipe for target 'cmTC_a58c5' failed
+make[1]: *** [cmTC_a58c5] Error 1
+make[1]: Leaving directory '/home/vjiaoblack/hydrax/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_a58c5/fast' failed
+make: *** [cmTC_a58c5/fast] Error 2
+
+File /home/vjiaoblack/hydrax/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/vjiaoblack/hydrax/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_3df3f/fast"
+/usr/bin/make -f CMakeFiles/cmTC_3df3f.dir/build.make CMakeFiles/cmTC_3df3f.dir/build
+make[1]: Entering directory '/home/vjiaoblack/hydrax/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_3df3f.dir/CheckFunctionExists.c.o
+/usr/bin/cc    -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_3df3f.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.5/Modules/CheckFunctionExists.c
+Linking C executable cmTC_3df3f
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3df3f.dir/link.txt --verbose=1
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_3df3f.dir/CheckFunctionExists.c.o  -o cmTC_3df3f -rdynamic -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_3df3f.dir/build.make:97: recipe for target 'cmTC_3df3f' failed
+make[1]: *** [cmTC_3df3f] Error 1
+make[1]: Leaving directory '/home/vjiaoblack/hydrax/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_3df3f/fast' failed
+make: *** [cmTC_3df3f/fast] Error 2
+
+

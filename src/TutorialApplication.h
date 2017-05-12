@@ -3,6 +3,7 @@
  
 #include <OgreRoot.h>
 #include <OgreCamera.h>
+#include <OgreCommon.h>
 #include <OgreViewport.h>
 #include <OgreSceneManager.h>
 #include <OgreRenderWindow.h>
@@ -25,8 +26,36 @@
  
 #include <SdkCameraMan.h>
  
+#include "hydrax/Hydrax.h"
+#include "hydrax/Noise/Perlin/Perlin.h"
+#include "hydrax/Modules/ProjectedGrid/ProjectedGrid.h"
 
+#include <inttypes.h>
+#include <math.h>
+#include <stdio.h>
+#include <time.h>
 
+#define _def_SkyBoxNum 3
+
+// Hydrax pointer
+Hydrax::Hydrax *mHydrax = 0;
+
+Ogre::String mSkyBoxes[_def_SkyBoxNum] = 
+           {"Sky/ClubTropicana",
+            "Sky/EarlyMorning",
+            "Sky/Clouds"};
+
+Ogre::Vector3 mSunPosition[_def_SkyBoxNum] = 
+           {Ogre::Vector3(0,10000,0),
+            Ogre::Vector3(0,10000,90000),
+            Ogre::Vector3(0,10000,0)};
+
+Ogre::Vector3 mSunColor[_def_SkyBoxNum] = 
+           {Ogre::Vector3(1, 0.9, 0.6),
+            Ogre::Vector3(1,0.6,0.4),
+            Ogre::Vector3(0.45,0.45,0.45)};
+
+int mCurrentSkyBox = 0;
 
 
 #define PI 3.1415926535897

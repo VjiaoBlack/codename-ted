@@ -19,8 +19,10 @@ cmake_minimum_required(VERSION 2.6)
 project(OgreApp)
 
 include(cmake/FindCEGUI.cmake)
+# include(cmake/FindHYDRAX.cmake)
+# include(cmake/FindSKYX.cmake)
  
-set(CMAKE_MODULE_PATH "/home/vjiaoblack/Compsci/;${CMAKE_MODULE_PATH}")
+set(CMAKE_MODULE_PATH "/home/vjiaoblack/Classes/CMSC-23800/codename-ted/cmake/;${CMAKE_MODULE_PATH}")
 
 
 if(EXISTS "/usr/local/lib/OGRE/cmake")
@@ -71,20 +73,78 @@ endif()
 
 find_package(Boost QUIET)
 
+
+link_directories( /usr/lib )
+link_directories( /home/lib )
+link_directories( /usr/include )
+link_directories( /usr/lib/x86_64-linux-gnu )
+
+
+# find_package(SKYX REQUIRED)
+
 # Set up referencing of Boost
 include_directories(${Boost_INCLUDE_DIR})
 add_definitions(-DBOOST_ALL_NO_LIB)
 set(OGRE_LIBRARIES ${OGRE_LIBRARIES} ${Boost_LIBRARIES})
- 
- 
+
+
+#find_package(HYDRAX REQUIRED)
+#include_directories(${HYDRAX INCLUDE_DIRS})
+# set(OGRE_LIBRARIES ${OGRE_LIBRARIES} ${HYDRAX_LIBRARIES})
+
+
 set(HDRS
-	./src/BaseApplication.h
 	./src/TutorialApplication.h
+	./src/hydrax/Enums.h
+	./src/hydrax/Hydrax.h
+	./src/hydrax/CfgFileManager.h
+	./src/hydrax/Prerequisites.h
+	./src/hydrax/CMakeCache.txt
+	./src/hydrax/GodRaysManager.h
+	./src/hydrax/Image.h
+	./src/hydrax/Makefile
+	./src/hydrax/RttManager.h
+	./src/hydrax/CMakeLists.txt
+	./src/hydrax/GPUNormalMapManager.h
+	./src/hydrax/MaterialManager.h
+	./src/hydrax/TextureManager.h
+	./src/hydrax/DecalsManager.h
+	./src/hydrax/Help.h
+	./src/hydrax/Mesh.h
+	./src/hydrax/Modules/Module.h
+	./src/hydrax/Modules/ProjectedGrid/ProjectedGrid.h
+	./src/hydrax/Modules/RadialGrid/RadialGrid.h
+	./src/hydrax/Modules/SimpleGrid/SimpleGrid.h
+	./src/hydrax/Noise/FFT/FFT.h 
+	./src/hydrax/Noise/Noise.h
+	./src/hydrax/Noise/Perlin/Perlin.h
 )
  
 set(SRCS
-	./src/BaseApplication.cpp
 	./src/TutorialApplication.cpp
+	./src/hydrax/CfgFileManager.cpp
+	./src/hydrax/Prerequisites.cpp
+	./src/hydrax/GodRaysManager.cpp
+	./src/hydrax/Image.cpp
+	./src/hydrax/CMakeCache.txt
+	./src/hydrax/RttManager.cpp
+	./src/hydrax/GPUNormalMapManager.cpp
+	./src/hydrax/Makefile
+	./src/hydrax/CMakeLists.txt
+	./src/hydrax/MaterialManager.cpp
+	./src/hydrax/TextureManager.cpp
+	./src/hydrax/DecalsManager.cpp
+	./src/hydrax/Help.cpp
+	./src/hydrax/Mesh.cpp
+	./src/hydrax/Enums.cpp
+	./src/hydrax/Hydrax.cpp
+	./src/hydrax/Modules/Module.cpp
+	./src/hydrax/Modules/ProjectedGrid/ProjectedGrid.cpp
+	./src/hydrax/Modules/RadialGrid/RadialGrid.cpp
+	./src/hydrax/Modules/SimpleGrid/SimpleGrid.cpp
+	./src/hydrax/Noise/FFT/FFT.cpp
+	./src/hydrax/Noise/Noise.cpp
+	./src/hydrax/Noise/Perlin/Perlin.cpp
 )
  
  
