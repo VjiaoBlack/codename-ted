@@ -15,6 +15,7 @@
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/asio.hpp>
+#include "JSON.h"
 
 using boost::asio::ip::udp;
 
