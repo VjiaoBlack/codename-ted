@@ -43,6 +43,10 @@ public:
         std::cout.write(recv_buf.data(), len);
     }
 
+    void send_keystrokes(std::vector<int> keystrokes, std::string ship_id) {
+        std::cout << ship_id << std::endl;
+    }
+
 private:
     boost::asio::io_service &io_service_;
     udp::socket socket_;

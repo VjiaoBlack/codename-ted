@@ -60,6 +60,7 @@ private:
             boost::asio::placeholders::bytes_transferred));
 
       std::cout << bytes_transferred << std::endl;
+      std::cout.write(recv_buffer_.data(), bytes_transferred);
       start_receive();
     }
   }
