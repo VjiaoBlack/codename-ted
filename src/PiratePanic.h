@@ -12,6 +12,7 @@
 #include <OgreEntity.h>
 #include <OgreFrameListener.h>
 #include <OgreManualObject.h>
+#include <OgreMaterial.h>
 #include <OgreWindowEventUtilities.h>
 #include <Terrain/OgreTerrain.h>
 #include <Terrain/OgreTerrainGroup.h>
@@ -30,6 +31,13 @@
 #include "hydrax/Noise/Perlin/Perlin.h"
 #include "hydrax/Modules/ProjectedGrid/ProjectedGrid.h"
 
+#include "skyx/SkyX.h"
+#include "skyx/AtmosphereManager.h"
+
+#include "PiSkyX.h"
+#include "TdBike.h"
+
+#include <algorithm>
 #include <inttypes.h>
 #include <math.h>
 #include <stdio.h>
@@ -56,60 +64,6 @@ Ogre::Vector3 mSunColor[_def_SkyBoxNum] =
             Ogre::Vector3(0.45,0.45,0.45)};
 
 int mCurrentSkyBox = 0;
-
-
-#define PI 3.1415926535897
-
-class TdBike {
-public:
-    float x, y;
-    float wheel; // of front wheel
-    float dir;
-    float r;
-
-    float mass;
-    float vel;
-
-    TdBike(float x, float y, float mass) {
-        this->x = x;
-        this->y = y;
-        this->mass = mass;
-
-        wheel = 0.0;
-        dir = 0.0;
-        r = 40.0;
-        vel = 0.0;
-    }
-
-    /** 
-     * update
-     * updates physics of bike
-     */
-    void update() {
-        // printf("%f\n", vel);
-        float change = 0.02 * (wheel) * fabs(vel);
-        vel -= 0.5f * fabs(change);
-        dir += change;
-        wheel -= change;
-
-        float vx = vel * sin(dir + wheel);
-        float vy = vel * cos(dir + wheel);
-
-        /** check if head of bike is in bounds */
-        // if (x + vx >= 25.0 && x + vx <= 1024.0 - 25.0) {
-            x += vx;
-        // } else {
-        //     vel = fabs(vy);
-        // }
-
-        // if (y + vy >= 25.0 && y + vy <= 768.0 - 25.0) {
-            y += vy;
-        // } else {
-        //     vel = fabs(vx);
-        // }
-    }
-};
-
 
 
 
