@@ -12,17 +12,14 @@ server.o: server.cpp
 client.o: client.cpp
 	$(CC) $(CFLAGS) -c client.cpp $(INCLUDE) -o build/client.o
 
-JSON.o: JSON.cpp
-	$(CC) $(CFLAGS) -c JSON.cpp $(INCLUDE) -o build/JSON.o
+#JSON.o: JSON.cpp
+	#$(CC) $(CFLAGS) -c JSON.cpp $(INCLUDE) -o build/JSON.o
 
-TdBike.o: TdBike.cpp TdBike.h
-	$(CC) $(CFLAGS) -c TdBike.cpp $(INCLUDE) -o build/TdBike.o
+server: server.o
+	$(CC) $(CFLAGS) build/server.o $(INCLUDE) -o server
 
-server: server.o TdBike.o JSON.o
-	$(CC) $(CFLAGS) build/TdBike.o build/server.o build/JSON.o $(INCLUDE) -o server
-
-client: client.o TdBike.o JSON.o
-	$(CC) $(CFLAGS) build/TdBike.o build/client.o build/JSON.o $(INCLUDE) -o client
+client: client.o
+	$(CC) $(CFLAGS) build/client.o  $(INCLUDE) -o client
 
 clean:
 	rm -rf *.o

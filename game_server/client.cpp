@@ -9,46 +9,62 @@
 //
 
 #include <iostream>
-#include <sstream>
-#include <map>
-#include "JSON.h"
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 
 using boost::asio::ip::udp;
 
-int main(int argc, char* argv[])
-{
-  try
-  {
-    if (argc != 2)
-    {
-      std::cerr << "Usage: client <host>" << std::endl;
-      return 1;
+// Inspiration from https://gist.github.com/kaimallea/e112f5c22fe8ca6dc627
+class UDPClient {
+public:
+    UDPClient(
+        boost::asio::io_service &io_service,
+        const std::string &host,
+        const std::string &port
+    ) : io_service_(io_service), socket_(io_service, udp::endpoint(udp::v4(), 0)) {
+        udp::resolver resolver(io_service_);
+        udp::resolver::query query(udp::v4(), host, port);
+        udp::resolver::iterator iter = resolver.resolve(query);
+        receiver_endpoint_ = *iter;
     }
 
-    boost::asio::io_service io_service;
+    ~UDPClient() {
+        socket_.close();
+    }
 
-    udp::resolver resolver(io_service);
-    udp::resolver::query query(udp::v4(), argv[1], "daytime");
-    udp::endpoint receiver_endpoint = *resolver.resolve(query);
+    void send(const std::string &message) {
+        std::cout << message.size() << std::endl;
+        socket_.send_to(boost::asio::buffer(message, message.size()),
+                        receiver_endpoint_);
 
-    udp::socket socket(io_service);
-    socket.open(udp::v4());
+        size_t len = socket_.receive_from(
+            boost::asio::buffer(recv_buf), sender_endpoint_);
 
-    boost::array<char, 1> send_buf  = {{ 0 }};
-    socket.send_to(boost::asio::buffer(send_buf), receiver_endpoint);
+        std::cout.write(recv_buf.data(), len);
+    }
 
+private:
+    boost::asio::io_service &io_service_;
+    udp::socket socket_;
+    udp::endpoint sender_endpoint_;
+    udp::endpoint receiver_endpoint_;
     boost::array<char, 128> recv_buf;
-    udp::endpoint sender_endpoint;
-    size_t len = socket.receive_from(
-        boost::asio::buffer(recv_buf), sender_endpoint);
+};
 
-    std::cout.write(recv_buf.data(), len);
-  }
-  catch (std::exception& e)
-  {
-    std::cerr << e.what() << std::endl;
+int main(int argc, char* argv[])
+{
+  try {
+      if (argc != 3) {
+          std::cerr << "Usage: client <host> <port>" << std::endl;
+          return 1;
+      }
+
+      boost::asio::io_service io_service;
+      UDPClient client(io_service, argv[1], argv[2]);
+
+      client.send("{keystrokes: [UP, LEFT]}");
+  } catch (std::exception &e) {
+      std::cerr << e.what() << std::endl;
   }
 
   return 0;
