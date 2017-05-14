@@ -17,7 +17,7 @@ size_t UDPClient::send(const std::string &message) {
 void UDPClient::send_keystrokes(std::vector<int> keystrokes, int ship_id) {
     keystrokes_obj keystrokes_to_send(ship_id, keystrokes);
     const char *serialized_keystrokes = serialize_keystrokes(keystrokes_to_send).c_str();
-    UDPClient::send(serialized_keystrokes);
+    socket_.send_to(boost::asio::buffer(serialized_keystrokes, strlen(serialized_keystrokes)), receiver_endpoint_);
 }
 
 void UDPClient::get_gamestate() {
