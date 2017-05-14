@@ -2893,7 +2893,7 @@ class basic_json
     @liveexample{The following example shows the effect of different @a indent
     parameters to the result of the serialization.,dump}
 
-    @see https://docs.python.org/2/library/json.html#json.dump
+    @see https://docs.python.org/2/library/JSON_parse.hpptml#json.dump
 
     @since version 1.0.0; indentaction character added in version 3.0.0
     */

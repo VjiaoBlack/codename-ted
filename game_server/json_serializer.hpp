@@ -1,5 +1,5 @@
 /**
- * JSON.h
+ * json_serializer.hpp
  *
  * David Woldenberg
  *
@@ -17,24 +17,24 @@ using std::string;
 using std::vector;
 using json = nlohmann::json;
 
-class keystrokes_to_send {
+class keystrokes_obj {
 	public:
 
 		//attributes
 		string unique_id;
-		vector<string> keystrokes;
+		vector<int> keystrokes;
 
 		//Constructor
-		keystrokes_to_send(int uid, vector<string> ks){
+		keystrokes_obj(int uid, vector<int> ks){
 			this->unique_id = uid;
 			this->keystrokes = ks;
 		}
 };
 
-keystrokes_to_send deserilize_keystrokes(string JSON);
+keystrokes_obj deserilize_keystrokes(string JSON);
 
-string serialize_keystrokes(keystrokes_to_send ks);
+string serialize_keystrokes(keystrokes_obj ks);
 
-//gamestate deserilize_gamestate(string JSON);
+gamestate deserilize_gamestate(string JSON, bool withMapTiles=false);
 
-string serialize_gamestate(gamestate g);
+string serialize_gamestate(gamestate g, bool withMapTiles=false);

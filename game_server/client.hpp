@@ -7,6 +7,8 @@
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 
+#include "json_serializer.hpp"
+
 using boost::asio::ip::udp;
 
 #define MAX_RECV_LENGTH 100000
@@ -29,8 +31,8 @@ public:
         socket_.close();
     }
 
-    void send(const std::string &message);
-    void send_keystrokes(std::vector<int> keystrokes, std::string ship_id);
+    size_t send(const std::string &message);
+    void send_keystrokes(std::vector<int> keystrokes, int ship_id);
     void get_gamestate();
 
 private:

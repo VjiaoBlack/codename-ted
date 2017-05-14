@@ -8,16 +8,21 @@
 
 #define MAX_RECV_LENGTH 100000
 
-void UDPClient::send(const std::string &message) {
+size_t UDPClient::send(const std::string &message) {
     socket_.send_to(boost::asio::buffer(message, message.size()), receiver_endpoint_);
     size_t len = socket_.receive_from(boost::asio::buffer(recv_buf), sender_endpoint_);
-    std::cout.write(recv_buf.data(), len);
+    return len;
 }
 
-void UDPClient::send_keystrokes(std::vector<int> keystrokes, std::string ship_id) {
-    std::cout << ship_id << std::endl;
+void UDPClient::send_keystrokes(std::vector<int> keystrokes, int ship_id) {
+    keystrokes_obj keystrokes_to_send(ship_id, keystrokes);
+    const char *serialized_keystrokes = serialize_keystrokes(keystrokes_to_send).c_str();
+    UDPClient::send(serialized_keystrokes);
 }
 
 void UDPClient::get_gamestate() {
-    UDPClient::send("gamestate");
+    size_t gamestate_len = UDPClient::send("gamestate");
+    std::string serialized_gamestate(recv_buf.data(), gamestate_len);
+    std::cout << serialized_gamestate << std::endl;
+    // return deserilize_gamestate(serialized_gamestate, false);
 }

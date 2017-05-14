@@ -13,11 +13,12 @@
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/asio.hpp>
-#include "game_structs.hpp"
+#include "json_serializer.hpp"
+
 
 using boost::asio::ip::udp;
 
-#define MAX_RECV_LENGTH 10000
+#define MAX_RECV_LENGTH 1000000
 
 std::string serialize_game_state() {
     std::string sweg("yooooooo");
@@ -53,8 +54,8 @@ private:
             std::string gamestate_signal("gamestate");
 
             if (!incoming_message.compare(gamestate_signal)) {
-                std::cout << "sending gamestate" << std::endl;
-                boost::shared_ptr<std::string> message(new std::string(serialize_game_state()));
+                std::string serialized_gamestate = serialize_gamestate(currentGameState_);
+                boost::shared_ptr<std::string> message(new std::string(serialized_gamestate));
 
                 socket_.async_send_to(boost::asio::buffer(*message), remote_endpoint_,
                                       boost::bind(&GameLoopServer::handle_send, this, message,

@@ -9,7 +9,7 @@ all: server client
 server.o: server.cpp game_structs.cpp
 	$(CC) $(CFLAGS) -c server.cpp $(INCLUDE) -o build/server.o
 
-client.o: client.cpp game_structs.cpp client.hpp
+client.o: client.cpp game_structs.cpp client.hpp json_serializer.hpp
 	$(CC) $(CFLAGS) -c client.cpp $(INCLUDE) -o build/client.o
 
 client_demo.o: client_demo.cpp client.cpp client.hpp
@@ -18,17 +18,14 @@ client_demo.o: client_demo.cpp client.cpp client.hpp
 game_structs.o: game_structs.cpp game_structs.hpp
 	$(CC) $(CFLAGS) -c game_structs.cpp  $(INCLUDE) -o build/game_structs.o
 
-JSON.o: JSON.cpp game_structs.hpp
-	$(CC) $(CFLAGS) -c JSON.cpp $(INCLUDE) -o build/JSON.o
+json_serializer.o: json_serializer.cpp game_structs.hpp
+	$(CC) $(CFLAGS) -c json_serializer.cpp $(INCLUDE) -o build/json_serializer.o
 
-server: server.o game_structs.o
-	$(CC) $(CFLAGS) build/game_structs.o build/server.o $(INCLUDE) -o server
+server: server.o game_structs.o json_serializer.o
+	$(CC) $(CFLAGS) build/game_structs.o build/server.o build/json_serializer.o $(INCLUDE) -o server
 
-client: client.o game_structs.o
-	$(CC) $(CFLAGS) build/game_structs.o build/client.o $(INCLUDE) -o client
-
-client_demo: client_demo.o client.o game_structs.o
-	$(CC) $(CFLAGS) build/game_structs.o build/client.o build/client_demo.o $(INCLUDE) -o client_demo
+client_demo: client_demo.o client.o game_structs.o json_serializer.o
+	$(CC) $(CFLAGS) build/game_structs.o build/client.o build/json_serializer.o build/client_demo.o $(INCLUDE) -o client_demo
 
 clean:
 	rm -rf *.o

@@ -6,9 +6,9 @@
  * implementation of serializing/deserializing functions
  */
 
-#include "JSON.h"
+#include "json_serializer.hpp"
 
-string serialize_gamestate(gamestate gstate){
+string serialize_gamestate(gamestate gstate, bool withMapTiles){
     //example serialize from given structs in Slack
 	//assuming some game state, "gstate"
 
@@ -18,33 +18,35 @@ string serialize_gamestate(gamestate gstate){
 
     main_obj["id"] = gstate.id;
 
-    json maptiles;
+	json maptiles;
 
-	for(auto tile_row_unit : gstate.map.mapTiles)
-	{
-        json tiles;
+	if (withMapTiles) {
+		for(auto tile_row_unit : gstate.map.mapTiles)
+		{
+	        json tiles;
 
-        for(auto tile_column_mem : tile_row_unit)
-        {
+	        for(auto tile_column_mem : tile_row_unit)
+	        {
 
-            json tile;
+	            json tile;
 
-            tile["currentDirection"] = {tile_column_mem.currentDirection.x, tile_column_mem.currentDirection.y};
-            tile["currentStrength"] = tile_column_mem.currentStrength;
-            tile["windDirection"] = {tile_column_mem.windDirection.x, tile_column_mem.windDirection.y};            
-            tile["windStrength"] = tile_column_mem.windStrength;
-            tile["is_ship"] = tile_column_mem.is_ship;
-            tile["start_finish"] = tile_column_mem.start_finish;
-            tile["land_water"] = tile_column_mem.land_water;      
+	            tile["currentDirection"] = {tile_column_mem.currentDirection.x, tile_column_mem.currentDirection.y};
+	            tile["currentStrength"] = tile_column_mem.currentStrength;
+	            tile["windDirection"] = {tile_column_mem.windDirection.x, tile_column_mem.windDirection.y};
+	            tile["windStrength"] = tile_column_mem.windStrength;
+	            tile["is_ship"] = tile_column_mem.is_ship;
+	            tile["start_finish"] = tile_column_mem.start_finish;
+	            tile["land_water"] = tile_column_mem.land_water;
 
-            tiles.emplace_back(tile);
-        }
-        maptiles.emplace_back(tiles);
-    }
+	            tiles.emplace_back(tile);
+	        }
+	        maptiles.emplace_back(tiles);
+	    }
 
-    main_obj["map"]["mapTiles"] = maptiles;
-    main_obj["map"]["x_size"] = gstate.map.x_size;
-    main_obj["map"]["y_size"] = gstate.map.y_size;
+	    main_obj["map"]["mapTiles"] = maptiles;
+	    main_obj["map"]["x_size"] = gstate.map.x_size;
+	    main_obj["map"]["y_size"] = gstate.map.y_size;
+	}
 
     json pirates;
 
@@ -55,12 +57,12 @@ string serialize_gamestate(gamestate gstate){
         p["pirate_name"] = pirate.pirate_name;
         p["position"] = {pirate.position.x, pirate.position.y};
         p["coord_pos"] = {pirate.coord_pos.x, pirate.coord_pos.y};
-        p["velocity"] = {pirate.velocity.x, pirate.velocity.y};          
+        p["velocity"] = {pirate.velocity.x, pirate.velocity.y};
         p["acceleration"] = {pirate.acceleration.x, pirate.acceleration.y};
         p["orientation"] = pirate.orientation;
         p["rudderRot"] = pirate.rudderRot;
         p["goldAmount"] = pirate.goldAmount;
-        p["AI"] = pirate.AI;    
+        p["AI"] = pirate.AI;
 
         pirates.emplace_back(p);
     }
@@ -76,12 +78,12 @@ string serialize_gamestate(gamestate gstate){
         m["merchant_name"] = merchant.merchant_name;
         m["position"] = {merchant.position.x, merchant.position.y};
         m["coord_pos"] = {merchant.coord_pos.x, merchant.coord_pos.y};
-        m["velocity"] = {merchant.velocity.x, merchant.velocity.y};          
+        m["velocity"] = {merchant.velocity.x, merchant.velocity.y};
         m["acceleration"] = {merchant.acceleration.x, merchant.acceleration.y};
         m["orientation"] = merchant.orientation;
         m["rudderRot"] = merchant.rudderRot;
         m["goldAmount"] = merchant.goldAmount;
-        m["AI"] = merchant.AI;     
+        m["AI"] = merchant.AI;
 
         merchants.emplace_back(m);
     }
@@ -98,7 +100,7 @@ string serialize_gamestate(gamestate gstate){
     the_pirate["pirate_name"] = gstate.Pirate.pirate_name;
     the_pirate["position"] = {gstate.Pirate.position.x, gstate.Pirate.position.y};
     the_pirate["coord_pos"] = {gstate.Pirate.coord_pos.x, gstate.Pirate.coord_pos.y};
-    the_pirate["velocity"] = {gstate.Pirate.velocity.x, gstate.Pirate.velocity.y};          
+    the_pirate["velocity"] = {gstate.Pirate.velocity.x, gstate.Pirate.velocity.y};
     the_pirate["acceleration"] = {gstate.Pirate.acceleration.x, gstate.Pirate.acceleration.y};
     the_pirate["orientation"] = gstate.Pirate.orientation;
     the_pirate["rudderRot"] = gstate.Pirate.rudderRot;
@@ -135,7 +137,7 @@ string serialize_gamestate(gamestate gstate){
   	return main_obj.dump();
 }
 
-gamestate deserialize_gamestate(string JSON){
+gamestate deserialize_gamestate(string JSON, bool withMapTiles){
     auto j = json::parse(JSON);
 
     std::cout << "JSON from deserialize: " << JSON << "\n";
@@ -152,36 +154,38 @@ gamestate deserialize_gamestate(string JSON){
     gstate.id = j["id"];
 
     //build map
+	vector< vector<mapTile> > mapTiles;
 
-    vector< vector<mapTile> > mapTiles;
+	if (withMapTiles) {
 
-    for(auto tiles : j["map"]["mapTiles"])
-    {
-        vector<mapTile> mapTile_col;
+	    for(auto tiles : j["map"]["mapTiles"])
+	    {
+	        vector<mapTile> mapTile_col;
 
-        for(auto tile : tiles)
-        {
-            mapTile temp = mapTile(vec2(tile["currentDirection"]["x"], tile["currentDirection"]["y"]), tile["currentStrength"],
-                vec2(tile["windDirection"]["x"], tile["windDirection"]["y"]), tile["currentStrength"], tile["is_ship"]);
-            temp.start_finish = tile["start_finish"];
-            temp.land_water = tile["land_water"];
+	        for(auto tile : tiles)
+	        {
+	            mapTile temp = mapTile(vec2(tile["currentDirection"]["x"], tile["currentDirection"]["y"]), tile["currentStrength"],
+	                vec2(tile["windDirection"]["x"], tile["windDirection"]["y"]), tile["currentStrength"], tile["is_ship"]);
+	            temp.start_finish = tile["start_finish"];
+	            temp.land_water = tile["land_water"];
 
-            mapTile_col.push_back(temp);
-        }
+	            mapTile_col.push_back(temp);
+	        }
 
-        mapTiles.push_back(mapTile_col);
-    }
+	        mapTiles.push_back(mapTile_col);
+	    }
+	}
 
-    vector<pirate> pirates; 
+    vector<pirate> pirates;
 
     for(auto pirate_temp : j["map"]["pirates"])
     {
-        pirate p = pirate(pirate_temp["pirate_name"], 
-            vec2(pirate_temp["position"]["x"], pirate_temp["position"]["y"]), 
+        pirate p = pirate(pirate_temp["pirate_name"],
+            vec2(pirate_temp["position"]["x"], pirate_temp["position"]["y"]),
             vec2(pirate_temp["velocity"]["x"], pirate_temp["velocity"]["y"]),
-            vec2(pirate_temp["acceleration"]["x"], pirate_temp["acceleration"]["y"]), 
-            pirate_temp["orientation"], pirate_temp["rudderRot"], 
-            pirate_temp["goldAmount"], pirate_temp["AI"], 
+            vec2(pirate_temp["acceleration"]["x"], pirate_temp["acceleration"]["y"]),
+            pirate_temp["orientation"], pirate_temp["rudderRot"],
+            pirate_temp["goldAmount"], pirate_temp["AI"],
             vec2(pirate_temp["coord_pos"]["x"], pirate_temp["coord_pos"]["y"]));
 
         pirates.push_back(p);
@@ -191,13 +195,13 @@ gamestate deserialize_gamestate(string JSON){
 
     for(auto merchant_temp : j["map"]["merchants"])
     {
-        merchant m = merchant(merchant_temp["merchant_name"], 
-            vec2(merchant_temp["position"]["x"], merchant_temp["position"]["y"]), 
+        merchant m = merchant(merchant_temp["merchant_name"],
+            vec2(merchant_temp["position"]["x"], merchant_temp["position"]["y"]),
             vec2(merchant_temp["velocity"]["x"], merchant_temp["velocity"]["y"]),
-            vec2(merchant_temp["acceleration"]["x"], merchant_temp["acceleration"]["y"]), 
-            merchant_temp["orientation"], merchant_temp["rudderRot"], 
-            merchant_temp["goldAmount"], merchant_temp["AI"], 
-            vec2(merchant_temp["coord_pos"]["x"], merchant_temp["coord_pos"]["y"])); 
+            vec2(merchant_temp["acceleration"]["x"], merchant_temp["acceleration"]["y"]),
+            merchant_temp["orientation"], merchant_temp["rudderRot"],
+            merchant_temp["goldAmount"], merchant_temp["AI"],
+            vec2(merchant_temp["coord_pos"]["x"], merchant_temp["coord_pos"]["y"]));
 
         merchants.push_back(m);
     }
@@ -210,12 +214,12 @@ gamestate deserialize_gamestate(string JSON){
 
     //build pirate
 
-    gstate.Pirate = pirate(j["Pirate"]["pirate_name"], 
-        vec2(j["Pirate"]["position"]["x"], j["Pirate"]["position"]["y"]), 
+    gstate.Pirate = pirate(j["Pirate"]["pirate_name"],
+        vec2(j["Pirate"]["position"]["x"], j["Pirate"]["position"]["y"]),
         vec2(j["Pirate"]["velocity"]["x"], j["Pirate"]["velocity"]["y"]),
-        vec2(j["Pirate"]["acceleration"]["x"], j["Pirate"]["acceleration"]["y"]), 
-        j["Pirate"]["orientation"], j["Pirate"]["rudderRot"], 
-        j["Pirate"]["goldAmount"], j["Pirate"]["AI"], 
+        vec2(j["Pirate"]["acceleration"]["x"], j["Pirate"]["acceleration"]["y"]),
+        j["Pirate"]["orientation"], j["Pirate"]["rudderRot"],
+        j["Pirate"]["goldAmount"], j["Pirate"]["AI"],
         vec2(j["Pirate"]["coord_pos"]["x"], j["Pirate"]["coord_pos"]["y"]));
 
     //pirate done
@@ -239,9 +243,9 @@ gamestate deserialize_gamestate(string JSON){
     //players done
 
     return gstate;
-} 
+}
 
-string serialize_keystrokes(keystrokes_to_send ks){
+string serialize_keystrokes(keystrokes_obj ks){
     json main_obj;
 
     main_obj["unique_id"] = ks.unique_id;
@@ -258,7 +262,7 @@ string serialize_keystrokes(keystrokes_to_send ks){
     return main_obj.dump();
 }
 
-keystrokes_to_send deserialize_keystrokes(string JSON){
+keystrokes_obj deserialize_keystrokes(string JSON){
 
 	auto j = json::parse(JSON);
 
@@ -266,12 +270,12 @@ keystrokes_to_send deserialize_keystrokes(string JSON){
 
 	int uid = j["unique_id"];
 
-	vector<string> keys;
+	vector<int> keys;
 	for( auto key : j["keystrokes"]) {
 		keys.push_back(key);
 	}
 
-	keystrokes_to_send ret = keystrokes_to_send(uid, keys);
+	keystrokes_obj ret = keystrokes_obj(uid, keys);
 
 	return ret;
 }
