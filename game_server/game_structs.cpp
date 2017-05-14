@@ -1,9 +1,9 @@
-/* 
+/*
  *
  * game_structs.cpp - codename-ted (2017)
  *
- * Implementations of Class Methods in game_structs.hpp as 
- * well as other useful helper functions. 
+ * Implementations of Class Methods in game_structs.hpp as
+ * well as other useful helper functions.
  *
  * Worked on by Jigar
  *
@@ -31,21 +31,31 @@ void mapTile::print_map_tile() {
         cout << "[x]";
     } else if (is_ship == 2) {
         cout << "[o]";
-    } 
+    }
     else {
         cout << "[ ]";
-    } 
-}  
+    }
+}
 
 void gameMap::print_game_map() {
     for (vector<mapTile> xs: mapTiles) {
-        for (mapTile x : xs) { 
+        for (mapTile x : xs) {
             x.print_map_tile();
         }
         cout << "\n";
-    } 
+    }
 }
 
+gamestate::gamestate(gameMap map, pirate Pirate,
+                     unordered_map<int, player_t> players,
+                     unordered_map<int, lobby_t> lobbies)
+    : map(map.mapTiles, map.x_size, map.y_size, map.pirates,
+              map.merchants, map.size)
+    , Pirate(Pirate.pirate_name, Pirate.position, Pirate.coord_pos,
+             Pirate.velocity , Pirate.orientation, Pirate.rudderRot,
+             Pirate.goldAmount, Pirate.AI, Pirate.acceleration) {
+
+    }
 
 // HELPER FUNCTIONS
 bool compare_vec(vec2 a, vec2 b) {
@@ -189,8 +199,3 @@ void move_merchant(gameMap& map, vec2 pos1, vec2 pos2) {
     map.mapTiles[pos1.x][pos1.y].is_ship = 0;
     map.mapTiles[pos2.x][pos2.y].is_ship = 1;
 }
-
-
-
-
-

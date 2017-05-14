@@ -848,14 +848,15 @@ namespace Hydrax
 			//mMaterialManager->getCompositor(MaterialManager::COMP_UNDERWATER)->
 			//	getTechnique(0)->getTargetPass(0)->getPass(0)->setClearColour(WC);
 
-			if (getHeigth(mCamera->getDerivedPosition()) > mCamera->getDerivedPosition().y-1.25f)
-			{
-				if (mMaterialManager->isCompositorEnable(MaterialManager::COMP_UNDERWATER))
-				{
-					mMaterialManager->setCompositorEnable(MaterialManager::COMP_UNDERWATER, false);
-					mMaterialManager->setCompositorEnable(MaterialManager::COMP_UNDERWATER, true);
-				}
-			}
+		    // binbinwelkin said to comment this out to increase FPS
+			// if (getHeigth(mCamera->getDerivedPosition()) > mCamera->getDerivedPosition().y-1.25f)
+			// {
+			// 	if (mMaterialManager->isCompositorEnable(MaterialManager::COMP_UNDERWATER))
+			// 	{
+			// 		mMaterialManager->setCompositorEnable(MaterialManager::COMP_UNDERWATER, false);
+			// 		mMaterialManager->setCompositorEnable(MaterialManager::COMP_UNDERWATER, true);
+			// 	}
+			// }
 		}
     }
 

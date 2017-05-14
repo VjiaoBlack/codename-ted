@@ -1,4 +1,10 @@
-#include "TutorialApplication.h"
+/**
+ * PiratePanic.cpp
+ *
+ * Holds the main stuff
+ */
+
+#include "PiratePanic.h"
 
 BasicApp::BasicApp()
     : mShutdown(false)
@@ -22,15 +28,16 @@ BasicApp::BasicApp()
     , mCurObject(0)
     , mHeight(0)
     , mBike(0, 0, 100)
-    , mBikeObject(0)  {
+    , mBikeObject(0) 
+    , mGameLoopClient(NULL) {
 }
- 
+
 BasicApp::~BasicApp() {
     if (mCameraMan) delete mCameraMan;
  
     Ogre::WindowEventUtilities::removeWindowEventListener(mWindow, this);
     windowClosed(mWindow);
- 
+
     delete mRoot;
 }
  
@@ -56,43 +63,29 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
     if (mWindow->isClosed())
         return false;
 
-    float dx = 0.0f;
-
-    if (mKeyboard->isKeyDown(OIS::KC_L)) {
-        dx = 100.0f;
+    // Switch SkyX presets 
+    if (mKeyboard->isKeyDown(OIS::KC_1)) {
+        mCurrentPreset = 0;
+        setPreset(mPresets[mCurrentPreset], mCamera); 
+    } else if (mKeyboard->isKeyDown(OIS::KC_2)) {
+        mCurrentPreset = 1;
+        setPreset(mPresets[mCurrentPreset], mCamera); 
+    } else if (mKeyboard->isKeyDown(OIS::KC_3)) {
+        mCurrentPreset = 2;
+        setPreset(mPresets[mCurrentPreset], mCamera); 
+    } else if (mKeyboard->isKeyDown(OIS::KC_4)) {
+        mCurrentPreset = 3;
+        setPreset(mPresets[mCurrentPreset], mCamera); 
+    } else if (mKeyboard->isKeyDown(OIS::KC_5)) {
+        mCurrentPreset = 4;
+        setPreset(mPresets[mCurrentPreset], mCamera); 
+    } else if (mKeyboard->isKeyDown(OIS::KC_6)) {
+        mCurrentPreset = 5;
+        setPreset(mPresets[mCurrentPreset], mCamera); 
     }
 
-    if (mKeyboard->isKeyDown(OIS::KC_J)) {
-        if (mBike.wheel < 1.6f) {
-            mBike.wheel += 0.02;
-        }
-    }
-    if (mKeyboard->isKeyDown(OIS::KC_L)) {
-        if (mBike.wheel > -1.6f) {
-            mBike.wheel -= 0.02;
-        }
-    }
-
-    if (mKeyboard->isKeyDown(OIS::KC_I)) {
-        if (mBike.vel < 4.0) {
-            mBike.vel += 0.04;
-        }
-    } else {
-        if (mBike.vel > 0.005) {
-            mBike.vel -= 0.005;
-        } else {
-            mBike.vel = 0;
-        }
-    }
-
-    if (mKeyboard->isKeyDown(OIS::KC_K)) {
-        if (mBike.vel > 0.0) {
-            mBike.vel -= 0.0195;
-        }
-    }
-
+    mBike.processInput(mKeyboard);
     mBike.update();
-
 
     // Update Hydrax
     mHydrax->update(fe.timeSinceLastFrame);
@@ -101,7 +94,11 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
     mKeyboard->capture();
     mMouse->capture();
  
+    // TODO make camera respond differently to keys
     mCameraMan->frameRenderingQueued(fe);
+
+    // TODO build vector of pressed keys
+    mGameLoopClient->send("asdf\n");
  
     CEGUI::System::getSingleton().injectTimePulse(fe.timeSinceLastFrame);
  
@@ -116,13 +113,13 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
             terrainLabel->setText("Updating textures, patience...");
     } else {
         terrainLabel->setText("");
- 
+
         if (mTerrainsImported) {
             mTerrainGroup->saveAllTerrains(true);
             mTerrainsImported = false;
         }
     }
- 
+
     handleCameraCollision();
 
     struct timespec spec;
@@ -132,28 +129,57 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
     double nsf = (double) ns;
     nsf /= 1000000000.0f;
 
-    // printf("%f\n", nsf);   
-
-    // printf("%f\n", mHydrax->getHeigth(Ogre::Vector2(mBike.x, mBike.y)));
-
-
-
     // whoo hoo i figured out quaternions yay neverforgetti pls
-    mBikeObject->setPosition(Ogre::Vector3(mBike.x, -10.0f + mHydrax->getHeigth(Ogre::Vector2(mBike.x, mBike.y)) + (2.0f * sin(nsf * 2.0f)), mBike.y));
-    
-    // mBikeObject->setOrientation(Ogre::Quaternion(
-    //         (double) cos(mBike.dir / (2.0f)), 
-    //         (double) 0.0f, 
-    //         (double) sin(mBike.dir / (2.0f)), 
-    //         (double) 0.0f));
+    mBikeObject->setPosition(Ogre::Vector3(mBike.x,  -10.0f + mHydrax->getHeigth(Ogre::Vector2(mBike.x, mBike.y)) + (2.0f * sin(nsf * 2.0f)), mBike.y));
 
     // fake bob
+    // TODO: create REAL bob physics WOW
     mBikeObject->setOrientation(Ogre::Quaternion(
-            (double) cos(mBike.dir / (2.0f)), 
+            (double) cos(mBike.dir / (2.0f)),   
             (double) 0.05f * cos(nsf * 2.0f) * cos(mBike.dir / 2.0f), 
             (double) sin(mBike.dir / (2.0f)), 
             (double) 0.05f * cos(nsf * 2.0f) * cos(3.14f / 2.0f + mBike.dir / 2.0f)));
 
+
+    Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
+    mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
+    mSceneMgr->getLight("SceneLight")->setDiffuseColour(mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
+                                                        mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
+                                                        mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
+
+    if (sunDir.y < 0.0f) {
+        printf("FUCK FUCK FUCK WHERE DID THE \n");
+        mSceneMgr->setAmbientLight(Ogre::ColourValue(0.3,0.3,0.4) * (-sunDir.y + 0.5));
+
+
+        if (sunDir.y < 0.05f) {
+            mSceneMgr->getLight("SceneLight")->setDiffuseColour(0,0,0);
+        } else {
+            mSceneMgr->getLight("SceneLight")->setDiffuseColour(-sunDir.y * 20.0f * mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
+                                                                -sunDir.y * 20.0f * mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
+                                                                -sunDir.y * 20.0f * mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
+        }
+    }
+
+    mHydrax->setSunPosition(mSkyX->getController()->getSunDirection()*mCamera->getFarClipDistance()*0.5f);
+    mHydrax->setSunColor(mSkyX->getVCloudsManager()->getVClouds()->getSunColor());
+
+    // quikfix for water color circle bug weird
+    Ogre::Vector3 camDir = mCamera->getDirection();
+    camDir.y = -camDir.y;
+    camDir.x = -camDir.x;
+    camDir.z = -camDir.z;
+
+    mHydrax->setWaterColor(mSkyX->getAtmosphereManager()->getColorAt(camDir));
+
+    mTerrainGlobals->setLightMapDirection(mSceneMgr->getLight("SceneLight")->getDerivedDirection());
+    mTerrainGlobals->setCompositeMapDiffuse(mSceneMgr->getLight("SceneLight")->getDiffuseColour());
+
+    mTerrainGroup->getTerrain(0,0)->dirty();
+    mTerrainGroup->getTerrain(0,0)->update();
+
+    mTerrainGroup->getTerrain(0,0)->dirtyLightmap();
+    mTerrainGroup->getTerrain(0,0)->updateDerivedData();
 
     return true;
 }
@@ -165,9 +191,6 @@ bool BasicApp::keyPressed(const OIS::KeyEvent& ke) {
 }
  
 bool BasicApp::keyReleased(const OIS::KeyEvent& ke) {
-    // CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
-    // context.injectKeyUp((CEGUI::Key::Scan)ke.key);
- 
     mCameraMan->injectKeyUp(ke);
  
     return true;
@@ -176,8 +199,6 @@ bool BasicApp::keyReleased(const OIS::KeyEvent& ke) {
 bool BasicApp::mouseMoved(const OIS::MouseEvent& me) {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     context.injectMouseMove(me.state.X.rel, me.state.Y.rel);
- 
-    // mCameraMan->injectMouseMove(me);
  
     if (mLMouseDown) {
         CEGUI::Vector2f mousePos = context.getMouseCursor().getPosition();
@@ -217,8 +238,6 @@ bool BasicApp::mousePressed(const OIS::MouseEvent& me, OIS::MouseButtonID id) {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     context.injectMouseButtonDown(convertButton(id));
  
-    // mCameraMan->injectMouseDown(me, id);
- 
     if (id == OIS::MB_Left) {
         mLMouseDown = true;
  
@@ -242,8 +261,6 @@ bool BasicApp::mousePressed(const OIS::MouseEvent& me, OIS::MouseButtonID id) {
 bool BasicApp::mouseReleased(const OIS::MouseEvent& me, OIS::MouseButtonID id) {
     CEGUI::GUIContext& context = CEGUI::System::getSingleton().getDefaultGUIContext();
     context.injectMouseButtonUp(convertButton(id));
- 
-    // mCameraMan->injectMouseUp(me, id);
  
     if (id == OIS::MB_Left) {
         mLMouseDown = false;
@@ -299,6 +316,10 @@ bool BasicApp::setup() {
     createScene();
  
     createFrameListener();
+
+    // setup UDP client 
+    boost::asio::io_service io_service;
+    mGameLoopClient = new UDPClient(io_service, K_SERVER_STRING, K_PORT_STRING);
  
     return true;
 }
@@ -328,14 +349,9 @@ void BasicApp::createCamera() {
 }
  
 void BasicApp::createScene() {
-    mSceneMgr->setAmbientLight(Ogre::ColourValue(0.7, 0.7, 0.7));
-    // mSceneMgr->setSkyDome(true, "Examples/CloudySky", 5, 13);
-    
-    mSceneMgr->setSkyBox(true, "Examples/CloudyNoonSkyBox", 400, true);
- 
-    // mSceneMgr->setSkyBox(true, mSkyBoxes[curSkyBox], 99999*3, true);
-    
-
+    mSceneMgr->setAmbientLight(Ogre::ColourValue(0,0,0));
+    mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_MODULATIVE);
+    // mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_NONE);
 
     mCamera->setPosition(40, 900, 580);
     mCamera->pitch(Ogre::Degree(-30));
@@ -345,17 +361,19 @@ void BasicApp::createScene() {
 
     // mCamera->setPolygonMode(Ogre::PM_WIREFRAME);
  
-    Ogre::Vector3 lightDir(0.55, 0.3, 0.75);
+    Ogre::Vector3 lightDir(0,-10000,-90000);
     lightDir.normalise();
  
     Ogre::Light* light = mSceneMgr->createLight("SceneLight");
     light->setType(Ogre::Light::LT_DIRECTIONAL);
     light->setDirection(lightDir);
-    light->setDiffuseColour(Ogre::ColourValue(0.4, 0.4, 0.4));
-    light->setSpecularColour(Ogre::ColourValue(0.2, 0.2, 0.2));
+    light->setDiffuseColour(Ogre::ColourValue(0.6, 0.5, 0.5));
+    light->setSpecularColour(Ogre::ColourValue(0.2, 0.18, 0.18));
+
+    light->setCastShadows(true);
+
  
     setupTerrain(light);
-
  
     CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
     CEGUI::Window* rootWin = wmgr.loadLayoutFromFile("test.layout");
@@ -371,10 +389,19 @@ void BasicApp::createScene() {
     mCurObject->attachObject(ent);
 
     mBikeObject = mCurObject;
-
     
-    // Hydrax initialization code ---------------------------------------------
-    // ------------------------------------------------------------------------
+    // Create SkyX
+    mBasicController = new SkyX::BasicController();
+    mSkyX = new SkyX::SkyX(mSceneMgr, mBasicController);
+    mSkyX->create();
+
+    mSkyX->getVCloudsManager()->getVClouds()->setDistanceFallingParams(Ogre::Vector2(2,-1));
+
+    // Register SkyX listeners
+    mRoot->addFrameListener(mSkyX);
+    mWindow->addListener(mSkyX);
+
+    setPreset(mPresets[mCurrentPreset], mCamera);
 
     // Create Hydrax object
     mHydrax = new Hydrax::Hydrax(mSceneMgr, mCamera, mWindow->getViewport(0));
@@ -404,30 +431,13 @@ void BasicApp::createScene() {
     // Create water
     mHydrax->create();
 
-    // Hydrax initialization code end -----------------------------------------
-    // ------------------------------------------------------------------------
-
-    // mHydrax->getMaterialManager()->addDepthTechnique(
-    //     static_cast<Ogre::MaterialPtr>(Ogre::MaterialManager::getSingleton().getByName("Island"))
-    //     ->createTechnique());
-
     mHydrax->getMaterialManager()->addDepthTechnique(
         mTerrainGroup->getTerrain(0, 0)->getMaterial()
         ->createTechnique());
 
-    int curSkyBox = 1;
-    mSceneMgr->setSkyBox(true, mSkyBoxes[curSkyBox], 400, true);
+    mTerrainGroup->getTerrain(0, 0)->getMaterial()->setReceiveShadows(false);
 
-
-    // Update Hydrax sun position and colour
-    mHydrax->setSunPosition(mSunPosition[curSkyBox]);
-    mHydrax->setSunColor(mSunColor[curSkyBox]);
-
-
-    // Update light 0 light position and colour
-    mSceneMgr->getLight("SceneLight")->setPosition(mSunPosition[curSkyBox]);
-    mSceneMgr->getLight("SceneLight")->setSpecularColour(mSunColor[curSkyBox].x,mSunColor[curSkyBox].y,mSunColor[curSkyBox].z);
-
+    // light colors etc. will be set in framerendering queue! 
 }
  
 void BasicApp::destroyScene() {
@@ -588,15 +598,10 @@ void BasicApp::defineTerrain(long x, long y) {
 void BasicApp::initBlendMaps(Ogre::Terrain* terrain) {
     Ogre::TerrainLayerBlendMap* blendMap1 = terrain->getLayerBlendMap(1);
     Ogre::TerrainLayerBlendMap* blendMap2 = terrain->getLayerBlendMap(2);
-    Ogre::TerrainLayerBlendMap* blendMap3 = terrain->getLayerBlendMap(3);
-    Ogre::TerrainLayerBlendMap* blendMap4 = terrain->getLayerBlendMap(4);
 
     float* blend1 = blendMap1->getBlendPointer();
     float* blend2 = blendMap2->getBlendPointer();
-    float* blend3 = blendMap3->getBlendPointer();
-    float* blend4 = blendMap4->getBlendPointer();
 
- 
     for (Ogre::uint16 y = 0; y < terrain->getLayerBlendMapSize(); ++y) {
         for (Ogre::uint16 x = 0; x < terrain->getLayerBlendMapSize(); ++x) {
             Ogre::Real tx, ty;
@@ -604,23 +609,14 @@ void BasicApp::initBlendMaps(Ogre::Terrain* terrain) {
             blendMap1->convertImageToTerrainSpace(x, y, &tx, &ty);
             Ogre::Real height = terrain->getHeightAtTerrainPosition(tx, ty);
 
-            // inc by 50
-            *blend4++ = 0;
-            *blend3++ = 0;
-            // *blend4++ = Ogre::Math::Clamp((50.0f + 0 * 680.0f - height) / 80.0f, 0.0f, 1.0f); //deep water;
-            // *blend3++ = Ogre::Math::Clamp((50.0f + 0 * 690.0f - height) / 20.0f, 0.0f, 1.0f); //shallow water;
             *blend2++ = Ogre::Math::Clamp((50.0f + 770.0f - height) / 80.0f, 0.0f, 1.0f); //dirt;
             *blend1++ = Ogre::Math::Clamp((50.0f + 940.0f - height) / 100.0f, 0.0f, 1.0f); //grass; 
         }
     }
     blendMap1->dirty();
     blendMap2->dirty();
-    blendMap3->dirty();
-    blendMap4->dirty();
     blendMap1->update();
     blendMap2->update();
-    blendMap3->update();
-    blendMap4->update();
 }
  
 void BasicApp::configureTerrainDefaults(Ogre::Light* light) {
@@ -638,32 +634,20 @@ void BasicApp::configureTerrainDefaults(Ogre::Light* light) {
     importData.maxBatchSize = 65; // 65
 
     importData.layerList.resize(6);
-        
-    importData.layerList[3].worldSize = 200;
-    importData.layerList[3].textureNames.push_back(
-        "reservoir1.dds");
-    importData.layerList[3].textureNames.push_back(
-        "dirt_grayrocky_normalheight.dds");
 
-    importData.layerList[2].worldSize = 200;
+    importData.layerList[2].worldSize = 50;
     importData.layerList[2].textureNames.push_back(
         "dirt_grayrocky_diffusespecular.dds");
     importData.layerList[2].textureNames.push_back(
         "dirt_grayrocky_normalheight.dds");
 
-    importData.layerList[4].worldSize = 200;
-    importData.layerList[4].textureNames.push_back(
-        "SEAbottom.dds");
-    importData.layerList[4].textureNames.push_back(
-        "dirt_grayrocky_normalheight.dds");
-
-    importData.layerList[0].worldSize = 1000;
+    importData.layerList[0].worldSize = 250;
     importData.layerList[0].textureNames.push_back(
         "growth_weirdfungus-03_diffusespecular.dds");
     importData.layerList[0].textureNames.push_back(
         "growth_weirdfungus-03_normalheight.dds");
 
-    importData.layerList[1].worldSize = 250;
+    importData.layerList[1].worldSize = 80;
     importData.layerList[1].textureNames.push_back(
         "grass_green-01_diffusespecular.dds");
     importData.layerList[1].textureNames.push_back(
@@ -685,8 +669,6 @@ void BasicApp::handleCameraCollision() {
             mCamera->setPosition(camPos.x, terrainHeight + 10.0, camPos.z);
     }
 }
- 
- 
  
 int main(int argc, char *argv[]) {
     BasicApp app;

@@ -1,41 +1,24 @@
-#/*
-#-----------------------------------------------------------------------------
-# Filename:    CMakeLists.txt
-#-----------------------------------------------------------------------------
 #
-# This source file is part of the
-#    ___                 __    __ _ _    _ 
-#   /___\__ _ _ __ ___  / / /\ \ (_) | _(_)
-#  //  // _` | '__/ _ \ \ \/  \/ / | |/ / |
-# / \_// (_| | | |  __/  \  /\  /| |   <| |
-# \___/ \__, |_|  \___|   \/  \/ |_|_|\_\_|
-#       |___/                              
-#       Tutorial Framework
-#       http://www.ogre3d.org/tikiwiki/
-#-----------------------------------------------------------------------------
-#*/
+# CMakeLists.txt
+#
+# Victor Jiao
+# (Pulled from the Ogre Wiki Tutorials)
+#
 cmake_minimum_required(VERSION 2.6)
  
 project(OgreApp)
 
 include(cmake/FindCEGUI.cmake)
-# include(cmake/FindHYDRAX.cmake)
-# include(cmake/FindSKYX.cmake)
  
 set(CMAKE_MODULE_PATH "/home/vjiaoblack/Classes/CMSC-23800/codename-ted/cmake/;${CMAKE_MODULE_PATH}")
 
-
 if(EXISTS "/usr/local/lib/OGRE/cmake")
-
 	set(CMAKE_MODULE_PATH "/usr/local/lib/OGRE/cmake/;${CMAKE_MODULE_PATH}")
 	set(OGRE_SAMPLES_INCLUDEPATH "/usr/local/share/OGRE/samples/Common/include/") # We could just *assume* that developers uses this basepath : /usr/local
-
 elseif(EXISTS "/usr/lib/OGRE/cmake")
-
 	set(CMAKE_MODULE_PATH "/usr/lib/OGRE/cmake/;${CMAKE_MODULE_PATH}")
 	set(OGRE_SAMPLES_INCLUDEPATH "/usr/share/OGRE/samples/Common/include/") # Otherwise, this one
-
-else ()
+PiratePanic ()
 	message(SEND_ERROR "Failed to find module path.")
 endif()
  
@@ -92,9 +75,13 @@ set(OGRE_LIBRARIES ${OGRE_LIBRARIES} ${Boost_LIBRARIES})
 #include_directories(${HYDRAX INCLUDE_DIRS})
 # set(OGRE_LIBRARIES ${OGRE_LIBRARIES} ${HYDRAX_LIBRARIES})
 
-
 set(HDRS
-	./src/TutorialApplication.h
+	./src/PiratePanic.h
+	./src/PiSkyX.h
+	./src/TdBike.h
+
+	./game_server/game_structs.hpp
+
 	./src/hydrax/Enums.h
 	./src/hydrax/Hydrax.h
 	./src/hydrax/CfgFileManager.h
@@ -115,13 +102,38 @@ set(HDRS
 	./src/hydrax/Modules/ProjectedGrid/ProjectedGrid.h
 	./src/hydrax/Modules/RadialGrid/RadialGrid.h
 	./src/hydrax/Modules/SimpleGrid/SimpleGrid.h
-	./src/hydrax/Noise/FFT/FFT.h 
+	./src/hydrax/Noise/FFT/FFT.h
 	./src/hydrax/Noise/Noise.h
 	./src/hydrax/Noise/Perlin/Perlin.h
+
+	./src/skyx/GPUManager.h
+	./src/skyx/Prerequisites.h
+	./src/skyx/AtmosphereManager.h
+	./src/skyx/SkyX.h
+	./src/skyx/BasicController.h
+	./src/skyx/MeshManager.h
+	./src/skyx/ColorGradient.h
+	./src/skyx/CloudsManager.h
+	./src/skyx/Controller.h
+	./src/skyx/MoonManager.h
+	./src/skyx/VCloudsManager.h
+	./src/skyx/VClouds/Ellipsoid.h
+	./src/skyx/VClouds/GeometryBlock.h
+	./src/skyx/VClouds/Lightning.h
+	./src/skyx/VClouds/VClouds.h
+	./src/skyx/VClouds/DataManager.h
+	./src/skyx/VClouds/FastFakeRandom.h
+	./src/skyx/VClouds/GeometryManager.h
+	./src/skyx/VClouds/LightningManager.h
 )
- 
+
 set(SRCS
-	./src/TutorialApplication.cpp
+	./src/PiratePanic.cpp
+	./src/PiSkyX.cpp
+	./src/TdBike.cpp
+
+	./game_server/client.cpp
+
 	./src/hydrax/CfgFileManager.cpp
 	./src/hydrax/Prerequisites.cpp
 	./src/hydrax/GodRaysManager.cpp
@@ -145,6 +157,25 @@ set(SRCS
 	./src/hydrax/Noise/FFT/FFT.cpp
 	./src/hydrax/Noise/Noise.cpp
 	./src/hydrax/Noise/Perlin/Perlin.cpp
+
+	./src/skyx/AtmosphereManager.cpp
+	./src/skyx/SkyX.cpp
+	./src/skyx/BasicController.cpp
+	./src/skyx/MeshManager.cpp
+	./src/skyx/ColorGradient.cpp
+	./src/skyx/CloudsManager.cpp
+	./src/skyx/MoonManager.cpp
+	./src/skyx/VCloudsManager.cpp
+	./src/skyx/GPUManager.cpp
+	./src/skyx/Prerequisites.cpp
+	./src/skyx/VClouds/DataManager.cpp
+	./src/skyx/VClouds/FastFakeRandom.cpp
+	./src/skyx/VClouds/GeometryManager.cpp
+	./src/skyx/VClouds/LightningManager.cpp
+	./src/skyx/VClouds/Ellipsoid.cpp
+	./src/skyx/VClouds/GeometryBlock.cpp
+	./src/skyx/VClouds/Lightning.cpp
+	./src/skyx/VClouds/VClouds.cpp
 )
  
  

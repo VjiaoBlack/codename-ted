@@ -615,7 +615,7 @@ namespace Hydrax
 						}
 
 						FragmentProgramData += 
-								"uniform sampler1D    uFresnelMap      : register(s" + Ogre::StringConverter::toString(TexNum) + ")";
+								"uniform sampler2D    uFresnelMap      : register(s" + Ogre::StringConverter::toString(TexNum) + ")";
 						TexNum++;
 
 						if (cFoam)
@@ -666,7 +666,7 @@ namespace Hydrax
 						if (Options.NM == NM_TEXTURE || Options.NM == NM_RTT)
 						{
 							FragmentProgramData +=
-								"float dotProduct=dot(camToSurface,pixelNormal);\n";
+								"float dotProduct=dot(-camToSurface,pixelNormal);\n";
 						}
 						else
 						{
@@ -676,13 +676,14 @@ namespace Hydrax
 						FragmentProgramData += 
 							Ogre::String(
 								"dotProduct=saturate(dotProduct);\n") +
-								"float fresnel = tex1D(uFresnelMap,dotProduct);\n" +
+								"float fresnel = tex2D(uFresnelMap,float2(dotProduct,0.5));\n" +
 								// Add additional reflection and saturate
 								"fresnel+=additionalReflection;\n" +
 								"fresnel=saturate(fresnel);\n" +
 								// Decrease the transparency and saturate
-								"fresnel-=uGlobalTransparency;\n" +
+								"fresnel+=uGlobalTransparency;\n" +
                                 "fresnel=saturate(fresnel);\n" +
+
 								// Get the reflection/refraction pixels. Make sure to disturb the texcoords by pixelnormal
 								"float3 reflection=tex2D(uReflectionMap,ProjectionCoord.xy+pixelNormalModified);\n" +
 								"float3 refraction=tex2D(uRefractionMap,ProjectionCoord.xy-pixelNormalModified);\n";
@@ -1190,7 +1191,7 @@ namespace Hydrax
 	              	        "oPosition = mul(uWorldViewProj, iPosition);\n") +
 	               	        // Projective texture coordinates, adjust for mapping
 	                	    "float4x4 scalemat = float4x4(0.5,   0,   0, 0.5,"+
-	                                              	     "0,-0.5,   0, 0.5,"+
+	                                              	     "0,0.5,   0, 0.5,"+
 	                							  	     "0,   0, 0.5, 0.5,"+
 	                							  	     "0,   0,   0,   1);\n" +
 	               	        "oUvProjection = mul(scalemat, oPosition);\n" +
@@ -1242,7 +1243,7 @@ namespace Hydrax
 	              	        "oPosition = mul(uWorldViewProj, iPosition);\n") +
 	               	        // Projective texture coordinates, adjust for mapping
 	                	    "float4x4 scalemat = float4x4(0.5,   0,   0, 0.5,"+
-	                                              	     "0,-0.5,   0, 0.5,"+
+	                                              	     "0,0.5,   0, 0.5,"+
 	                							  	     "0,   0, 0.5, 0.5,"+
 	                							  	     "0,   0,   0,   1);\n" +
 	               	        "oUvProjection = mul(scalemat, oPosition);\n" +
@@ -1415,7 +1416,7 @@ namespace Hydrax
 						}
 
 						FragmentProgramData += 
-								"uniform sampler1D    uFresnelMap      : register(s" + Ogre::StringConverter::toString(TexNum) + ")";
+								"uniform sampler2D    uFresnelMap      : register(s" + Ogre::StringConverter::toString(TexNum) + ")";
 						TexNum++;
 
 						if (cFoam)
@@ -1466,7 +1467,7 @@ namespace Hydrax
 						if (Options.NM == NM_TEXTURE || Options.NM == NM_RTT)
 						{
 							FragmentProgramData +=
-								"float dotProduct=dot(camToSurface,pixelNormal);\n";
+								"float dotProduct=dot(-camToSurface,pixelNormal);\n";
 						}
 						else
 						{
@@ -1476,13 +1477,14 @@ namespace Hydrax
 						FragmentProgramData += 
 							Ogre::String(
 								"dotProduct=saturate(dotProduct);\n") +
-								"float fresnel = tex1D(uFresnelMap,dotProduct);\n" +
+								"float fresnel = tex2D(uFresnelMap,float2(dotProduct,0.5));\n" +
 								// Add additional reflection and saturate
 								"fresnel+=additionalReflection;\n" +
 								"fresnel=saturate(fresnel);\n" +
 								// Decrease the transparency and saturate
-								"fresnel-=uGlobalTransparency;\n" +
+								"fresnel+=uGlobalTransparency;\n" +
                                 "fresnel=saturate(fresnel);\n" +
+
 								// Get the reflection/refraction pixels. Make sure to disturb the texcoords by pixelnormal
 								"float3 refraction=tex2D(uRefractionMap,ProjectionCoord.xy-pixelNormalModified);\n";
 						if (cUReflections)
