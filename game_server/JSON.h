@@ -9,50 +9,32 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <sys/time.h>
 #include <map>
-#include <boost/asio.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
+#include "game_structs.hpp"
+#include "json.hpp"
 
-#define MAX_CHAR 16384
+using std::string;
+using json = nlohmann::json;
 
-using namespace std;
-using boost::property_tree::ptree;
-using boost::property_tree::read_json;
-using boost::property_tree::write_json;
-
-class gamestate {
-	public:
-		// Game state var
-		// Pirate var
-		// Merchant var
-		int time;
-		game_map gmap; //will have 2D array: std::array< std::array <map_tiles> > map_tiles
-		vector<players> players;
-		
-		gamestate(){
-			// Game state declaration, need to consult charlie
-		}
-};
-
-class response {
+class keystrokes_to_send {
 	public:
 
-		int unique_id;
+		//attributes
+		string unique_id;
 		vector<string> keystrokes;
 
+		//Constructor
 		response(int uid, vector<string> ks){
 			this->unique_id = uid;
 			this->keystrokes = ks;
 		}
 };
 
-response deserilize_response(char JSON[MAX_CHAR]);
+keystrokes_to_send deserilize_keystrokes(string JSON);
 
-string serialize_response(response r);
+string serialize_keystrokes(keystrokes_to_send ks);
 
-gamestate deserilize_gamestate(char JSON[MAX_CHAR]);
+gamestate deserilize_gamestate(string JSON);
 
 string serialize_gamestate(gamestate g);

@@ -3,163 +3,183 @@
  *
  * David Woldenberg
  *
- * implementation of serializing functions
+ * implementation of serializing/deserializing functions
  */
 
 #include "JSON.h"
 
 string serialize_gamestate(gamestate gstate){
-	//example serialize from given structs in Slack
+	/*
+
+    //example serialize from given structs in Slack
 	//assuming some game state, "gstate"
 
-	ptree main_tree;
+	json main_obj;
 
-	//Add global/important variables to main tree here (TBD)
-	main_tree.add("time", gstate.time);
+	//map start
 
-	// For game_map, assuming struct, need to revise this to account for 2D structure of map_tiles array
-	BOOST_FOREACH(const std::string &tile, gstate.gmap.map_tiles)
+    json maptiles;
+
+	BOOST_FOREACH(const std::string &tile_row_unit, gstate.map.mapTiles)
 	{
-        ptree tile_tree;
-        tile_tree.add("tile.cur_direction", tile.cur_direction);
-        tile_tree.add("tile.cur_strength", tile.cur_strength);
-        tile_tree.add("tile.wind_direction", tile.wind_direction);
-        tile_tree.add("tile.wind_strength", tile.wind_strength);
-		tile_tree.add("tile.is_land", tile.is_land);
-		tile_tree.add("tile.is_start", tile.is_start);        
+        json tiles;
 
-        main_tree.add_child("game_map.map_tiles", title_tree);
+        BOOST_FOREACH(const std::string &tile_column_mem, tile_row_unit)
+        {
+
+            json tile;
+
+            tile["currentDirection"] = {tile_column_mem.currentDirection.x, tile_column_mem.currentDirection.y};
+            tile["currentStrength"] = tile_column_mem.currentStrength;
+            tile["windDirection"] = {tile_column_mem.windDirection.x, tile_column_mem.windDirection.y};            
+            tile["windStrength"] = tile_column_mem.windStrength;
+            tile["is_ship"] = tile_column_mem.is_ship;
+            tile["start_finish"] = tile_column_mem.start_finish;
+            tile["land_water"] = tile_column_mem.land_water;      
+
+            tiles.emplace_back(tile);
+        }
+        maptiles.emplace_back(tiles);
     }
 
-    //For players, assuming struct
-    BOOST_FOREACH(const std::string &player, gstate.players)
-	{
-        ptree player_tree;
-        player_tree.add("player.name", player.name);
-        player_tree.add("player.orientation", player.orientation);
-        player_tree.add("player.rudder_rotation", player.rudder_rotation);
-        player_tree.add("player.gold_amount", player.gold_amount);
-        player_tree.add("player.AI", player.AI);
+    main_obj["map"]["mapTiles"] = maptiles;
+    main_obj["map"]["x_size"] = gstate.map.x_size;
+    main_obj["map"]["y_size"] = gstate.map.y_size;
 
-        //add subtree for position, velocity, acceleration
+    json pirates;
 
-        ptree pos_tree;
-        pos_tree.add("position.x", player.position.x);
-        pos_tree.add("position.y", player.position.y);
-        player_tree.add_child("player.position", pos_tree);
+    BOOST_FOREACH(const std::string &pirate, gstate.map.pirates)
+    {
+        json p;
 
-        ptree vel_tree;
-        pos_tree.add("velocity.x", player.velocity.x);
-        pos_tree.add("velocity.y", player.velocity.y);
-        player_tree.add_child("player.velocity", vel_tree);
+        p["pirate_name"] = pirate.pirate_name;
+        p["position"] = {pirate.position.x, pirate.position.y};
+        p["coord_pos"] = {pirate.coord_pos.x, pirate.coord_pos.y};
+        p["velocity"] = {pirate.velocity.x, pirate.velocity.y};          
+        p["acceleration"] = {pirate.acceleration.x, pirate.acceleration.y};
+        p["orientation"] = pirate.orientation;
+        p["rudderRot"] = pirate.rudderRot;
+        p["goldAmount"] = pirate.goldAmount;
+        p["AI"] = pirate.AI;     
 
-        ptree accel_tree;
-        pos_tree.add("acceleration.x", player.acceleration.x);
-        pos_tree.add("acceleration.y", player.acceleration.y);
-        player_tree.add_child("player.acceleration", accel_tree);           
-
-        main_tree.add_child("players", player_tree);
+        pirates.emplace_back(p);
     }
 
-    std::ostringstream JSON; 
-  	write_json (JSON, main_tree, false); 
+    main_obj["map"]["pirates"] = pirates;
 
-  	return JSON.str();
+    json merchants;
+
+    BOOST_FOREACH(const std::string &merchant, gstate.map.merchants)
+    {
+        json m;
+
+        m["merchant_name"] = merchant.merchant_name;
+        m["position"] = {merchant.position.x, merchant.position.y};
+        m["coord_pos"] = {merchant.coord_pos.x, merchant.coord_pos.y};
+        m["velocity"] = {merchant.velocity.x, merchant.velocity.y};          
+        m["acceleration"] = {merchant.acceleration.x, merchant.acceleration.y};
+        m["orientation"] = merchant.orientation;
+        m["rudderRot"] = merchant.rudderRot;
+        m["goldAmount"] = merchant.goldAmount;
+        m["AI"] = merchant.AI;     
+
+        merchants.emplace_back(m);
+    }
+
+    main_obj["map"]["merchants"] = merchants;
+    main_obj["map"]["size"] = {gstate.size.x, gstate.size.y, gstate.size.z};
+
+    //map done
+
+    //pirate start
+
+    the_pirate["pirate_name"] = gstate.Pirate.pirate_name;
+    the_pirate["position"] = {gstate.Pirate.position.x, gstate.Pirate.position.y};
+    the_pirate["coord_pos"] = {gstate.Pirate.coord_pos.x, gstate.Pirate.coord_pos.y};
+    the_pirate["velocity"] = {gstate.Pirate.velocity.x, gstate.Pirate.velocity.y};          
+    the_pirate["acceleration"] = {gstate.Pirate.acceleration.x, gstate.Pirate.acceleration.y};
+    the_pirate["orientation"] = gstate.Pirate.orientation;
+    the_pirate["rudderRot"] = gstate.Pirate.rudderRot;
+    the_pirate["goldAmount"] = gstate.Pirate.goldAmount;
+    the_pirate["AI"] = gstate.Pirate.AI;
+
+    main_obj["Pirate"] = the_pirate;
+
+    //pirate done
+
+    //players start
+
+    json players;
+
+    BOOST_FOREACH(HASH::value_type& player, gstate.map.players)
+    {
+        json p;
+
+        p["uID"] = player.second.uID;
+        p["x"] = player.second.x;
+        p["y"] = player.second.y;
+        p["registered"] = player.second.registered;
+        p["name"] = player.second.name;
+
+        players.emplace_back(player.first,p);
+    }
+
+    main_obj["players"] = players;
+
+    //players done
+    //not doing lobbies
+    //not doing heightmap
+
+  	return main_tree.dump();*/
+    return 0;
 }
 
-gamestate deserialize_gamestate(char JSON[MAX_CHAR]){
-	gamestate gstate;
-	ptree main_tree;
+gamestate deserialize_gamestate(string JSON){
+	/*auto j = json::parse(JSON);
 
-    std::istringstream is (JSON);
-    read_json (is, main_tree);
+    std::cout << "JSON from deserialize: " << JSON < "\n";
 
-	gstate.time = main_tree.get<int>("time");
+    gamestate gstate;
 
-	//iterate through segments of JSON hierarchy and convert them into tree branhces
 
-	vector<map_tile> map_tiles;
 
-	BOOST_FOREACH(pt::ptree::value_type &tile, tree.get_child("game_map.map_tiles")) {
 
-		map_tile the_tile;
+    return gstate;*/
 
-        the_tile.cur_direction =  tile.get<int>("tile.cur_direction");
-        the_tile.cur_strength =  tile.get<int>("tile.cur_strength");
-        the_tile.wind_direction =  tile.get<int>("tile.wind_direction");
-        the_tile.wind_strength =  tile.get<int>("tile.wind_strength");
-        the_tile.is_land =  tile.get<bool>("tile.is_land");
-		the_tile.is_start =  tile.get<bool>("tile.is_start");      
-
-        map_tiles.insert(the_tile);
-	}
-
-	vector<player> players;
-
-	//For players, assuming struct
-    BOOST_FOREACH(pt::ptree::value_type &player, tree.get_child("players")) {
-	{
-        
-		player the_player;
-
-        the_player.name =  tile.get<string>("player.name");
-        the_player.orientation =  tile.get<int>("player.orientation");
-        the_player.rudder_rotation =  tile.get<int>("player.rudder_rotation");
-        the_player.gold_amount =  tile.get<int>("player.gold_amount");
-        the_player.AI =  tile.get<int>("player.AI");
-
-        //add subtstructs for position, velocity, acceleration
-
-        position x;
-        x.x = player.get<int>("player.position.x");
-        x.y = player.get<int>("player.position.y");
-        the_player.position = x;
-
-        velocity v;
-        v.x = player.get<int>("player.velocity.x");
-        v.y = player.get<int>("player.velocity.y");
-        the_player.velocity = v;
-
-        acceleration a;
-        a.x = player.get<int>("player.acceleration.x");
-        a.y = player.get<int>("player.acceleration.y");
-        the_player.acceleration = a;
-
-        players.insert(the_player);
-    }
+    return 0;
 } 
 
-string serialize_response(response r){
-    ptree main_tree;
+string serialize_keystrokes(keystrokes_to_send ks){
+    json main_obj;
 
-    main_tree.add("unique_id", r.uid);
+    main_obj["unique_id"] = ks.uid;
 
-    BOOST_FOREACH(pt::ptree::value_type &key, response.keystrokes) {
-        main_tree.add_child("keys", key);
+    json keys;
+    BOOST_FOREACH(pt::ptree::value_type &key, ks.keystrokes) {
+        keys.emplace_back(key);
     }
 
-    std::ostringstream JSON; 
-    write_json (JSON, main_tree, false); 
+    main_obj["keystrokes"] = keys
 
-    return JSON.str();
+    std::cout << "JSON from serialize: " << main_obj.dump() < "\n";
+
+    return main_obj.dump();
 }
 
-response deserialize_response(char JSON[MAX_CHAR]){
+keystrokes_to_send deserialize_keystrokes(string JSON){
 
-	ptree res_tree;
-	std::istringstream is (JSON);
-	read_json (is, res_tree);
+	auto j = json::parse(JSON);
 
-	std::cout << "JSON: " << JSON < "\n";
+	std::cout << "JSON from deserialize: " << JSON < "\n";
 
-	int uid = response.get<int> ("unique_id");
+	int uid = j["unique_id"];
+
 	vector<string> keys;
-
-	BOOST_FOREACH(pt::ptree::value_type &key, res_tree.get_child("keystrokes")) {
+	BOOST_FOREACH(pt::ptree::value_type &key, j["keystrokes"]) {
 		keys.insert((string) key);
 	}
 
-	response ret(uid, keys);
+	keystrokes_to_send ret(uid, keys);
 
 	return ret;
 }
