@@ -28,15 +28,16 @@ BasicApp::BasicApp()
     , mCurObject(0)
     , mHeight(0)
     , mBike(0, 0, 100)
-    , mBikeObject(0)  {
+    , mBikeObject(0) 
+    , mGameLoopClient(NULL) {
 }
- 
+
 BasicApp::~BasicApp() {
     if (mCameraMan) delete mCameraMan;
  
     Ogre::WindowEventUtilities::removeWindowEventListener(mWindow, this);
     windowClosed(mWindow);
- 
+
     delete mRoot;
 }
  
@@ -93,7 +94,11 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
     mKeyboard->capture();
     mMouse->capture();
  
+    // TODO make camera respond differently to keys
     mCameraMan->frameRenderingQueued(fe);
+
+    // TODO build vector of pressed keys
+    mGameLoopClient->send("asdf\n");
  
     CEGUI::System::getSingleton().injectTimePulse(fe.timeSinceLastFrame);
  
@@ -311,6 +316,10 @@ bool BasicApp::setup() {
     createScene();
  
     createFrameListener();
+
+    // setup UDP client 
+    boost::asio::io_service io_service;
+    mGameLoopClient = new UDPClient(io_service, K_SERVER_STRING, K_PORT_STRING);
  
     return true;
 }

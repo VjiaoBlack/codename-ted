@@ -26,7 +26,7 @@
 #include <CEGUI/RendererModules/Ogre/Renderer.h>
  
 #include <SdkCameraMan.h>
- 
+
 #include "hydrax/Hydrax.h"
 #include "hydrax/Noise/Perlin/Perlin.h"
 #include "hydrax/Modules/ProjectedGrid/ProjectedGrid.h"
@@ -37,6 +37,8 @@
 #include "PiSkyX.h"
 #include "TdBike.h"
 
+#include "../game_server/client.hpp"
+
 #include <algorithm>
 #include <inttypes.h>
 #include <math.h>
@@ -44,6 +46,9 @@
 #include <time.h>
 
 #define _def_SkyBoxNum 3
+
+#define K_SERVER_STRING "localhost"
+#define K_PORT_STRING "8888"
 
 // Hydrax pointer
 Hydrax::Hydrax *mHydrax = 0;
@@ -145,6 +150,8 @@ private:
 
     float mHeight;
     TdBike mBike;
+
+    UDPClient* mGameLoopClient;
 };
 
 
