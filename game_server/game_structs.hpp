@@ -135,6 +135,7 @@ class gameMap {
 
 class gamestate {
 public:
+    long id;
     gameMap map;
     pirate Pirate;
     unordered_map<int, player_t> players;

@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
         boost::asio::io_service io_service;
         UDPClient client(io_service, argv[1], argv[2]);
 
-        client.send("{keystrokes: [UP, LEFT]}");
+        client.get_gamestate();
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
     }
