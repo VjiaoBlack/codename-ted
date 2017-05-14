@@ -10,11 +10,11 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <map>
-#include <boost/foreach.hpp>
 #include "game_structs.hpp"
 #include "json.hpp"
 
 using std::string;
+using std::vector;
 using json = nlohmann::json;
 
 class keystrokes_to_send {
@@ -25,7 +25,7 @@ class keystrokes_to_send {
 		vector<string> keystrokes;
 
 		//Constructor
-		response(int uid, vector<string> ks){
+		keystrokes_to_send(int uid, vector<string> ks){
 			this->unique_id = uid;
 			this->keystrokes = ks;
 		}
@@ -35,6 +35,6 @@ keystrokes_to_send deserilize_keystrokes(string JSON);
 
 string serialize_keystrokes(keystrokes_to_send ks);
 
-gamestate deserilize_gamestate(string JSON);
+//gamestate deserilize_gamestate(string JSON);
 
 string serialize_gamestate(gamestate g);
