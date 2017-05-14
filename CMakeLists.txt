@@ -81,7 +81,9 @@ set(HDRS
 	./src/PiSkyX.h
 	./src/TdBike.h
 
+	./game_server/client.hpp
 	./game_server/game_structs.hpp
+	./game_server/json_serializer.hpp
 
 	./src/hydrax/Enums.h
 	./src/hydrax/Hydrax.h
@@ -135,6 +137,7 @@ set(SRCS
 
 	./game_server/client.cpp
 	./game_server/game_structs.cpp
+	./game_server/json_serializer.cpp
 
 	./src/hydrax/CfgFileManager.cpp
 	./src/hydrax/Prerequisites.cpp

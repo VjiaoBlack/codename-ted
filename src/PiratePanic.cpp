@@ -30,16 +30,12 @@ BasicApp::BasicApp()
     , mBike(0, 0, 100)
     , mBikeObject(0) 
     , mGameLoopClient(NULL)
-    , _gameMap(create_blank_map())
-    , _pirate(create_basic_pirate(vec2(100.0, 100.0)))
-    , _players()
-    , _lobbies()
-    , mgamestate(_gameMap, _pirate, _players, _lobbies)
+    , mGameState()
     , mOtherPirates() {
 
     // create more pirates 
-    mgamestate.map.pirates.push_back(create_basic_pirate(vec2(200.0f, 200.0f)));
-    mgamestate.map.pirates.push_back(create_basic_pirate(vec2(100.0f, 300.0f)));
+    mGameState.map.pirates.push_back(PiPirate(vec2(200.0f, 200.0f)));
+    mGameState.map.pirates.push_back(PiPirate(vec2(100.0f, 300.0f)));
 }
 
 BasicApp::~BasicApp() {
@@ -114,17 +110,17 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
         }
     }
 
-    std::stringstream tempJsonStream;
-    std::string tempJson;
+    // std::stringstream tempJsonStream;
+    // std::string tempJson;
 
-    for (auto it = pressedKeysToSend.begin(); it != pressedKeysToSend.end(); it++) {
-        tempJsonStream << *it << ":";
-    }
-    tempJsonStream >> tempJson;
+    // for (auto it = pressedKeysToSend.begin(); it != pressedKeysToSend.end(); it++) {
+    //     tempJsonStream << *it << ":";
+    // }
+    // tempJsonStream >> tempJson;
 
-    // std::cout << tempJson << std::endl;
+    // // std::cout << tempJson << std::endl;
 
-    mGameLoopClient->send(tempJson);
+    // mGameLoopClient->send(tempJson);
         
     // TODO: get server team to finish registration
     // mGameLoopClient->send_keystrokes(pressedKeysToSend, "victor");
@@ -170,11 +166,11 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
             (double) 0.05f * cos(nsf * 2.0f) * cos(3.14f / 2.0f + mBike.dir / 2.0f)));
 
 
-    for (int i = 0; i < mgamestate.map.pirates.size(); i++) {
-        mOtherPirates[i]->setPosition(Ogre::Vector3(mgamestate.map.pirates[i].position.x,  
-                                                    -10.0f + mHydrax->getHeigth(Ogre::Vector2(mgamestate.map.pirates[i].position.x,
-                                                                                              mgamestate.map.pirates[i].position.y)) + (2.0f * sin((nsf + i * 100.0f) * 2.0f)),
-                                                    mgamestate.map.pirates[i].position.y));
+    for (int i = 0; i < mGameState.map.pirates.size(); i++) {
+        mOtherPirates[i]->setPosition(Ogre::Vector3(mGameState.map.pirates[i].position.x,  
+                                                    -10.0f + mHydrax->getHeigth(Ogre::Vector2(mGameState.map.pirates[i].position.x,
+                                                                                              mGameState.map.pirates[i].position.y)) + (2.0f * sin((nsf + i * 100.0f) * 2.0f)),
+                                                    mGameState.map.pirates[i].position.y));
 
         mOtherPirates[i]->setOrientation(Ogre::Quaternion(
                 (double) cos(0.0f / (2.0f)),   
@@ -422,11 +418,11 @@ void BasicApp::createScene() {
 
     mBikeObject = mCurObject;
 
-    for (int i = 0; i < mgamestate.map.pirates.size(); i++) {
+    for (int i = 0; i < mGameState.map.pirates.size(); i++) {
         Ogre::Entity* ent = mSceneMgr->createEntity("Cube.010.mesh");
 
         mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-        mCurObject->setPosition(Ogre::Vector3(mgamestate.map.pirates[i].position.x, 800.0, mgamestate.map.pirates[i].position.y));
+        mCurObject->setPosition(Ogre::Vector3(mGameState.map.pirates[i].position.x, 800.0, mGameState.map.pirates[i].position.y));
         mCurObject->setScale(30.0, 30.0, 30.0);
         mCurObject->attachObject(ent);
 

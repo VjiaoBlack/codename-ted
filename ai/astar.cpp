@@ -13,14 +13,14 @@
 using namespace std;
 
 void astar_main() {
-    gameMap map = create_random_map();
+    PiGameMap map = PiGameMap::createRandomMap();
     int ticks = 0;
     for (ticks = 0; ticks < 5; ticks++) {
         map.print_game_map(); 
         priority_queue<q_elem, vector<q_elem>, PriorityComp> main_q; 
         bool goal_reached = false;
         vector<vec2> positions = retrieve_ship_positions(map);
-        vec2 pirate_pos = positions[0]; // Hacky way to get pirate position
+        vec2 pirate_pos = positions[0]; // Hacky way to get PiPirate position
         pirate_pos.print_vec2();
         vec2 target_pos = get_target(positions);
         vec2 selected_pos = pirate_pos;
@@ -49,18 +49,18 @@ void astar_main() {
     map.print_game_map(); 
 }
 
-void merchant_moves(gameMap& gm) {
-    for (merchant m : gm.merchants) {
+void merchant_moves(PiGameMap& gm) {
+    for (PiMerchant m : gm.merchants) {
         move_merchant(gm, m.position, vec2(m.position.x - 2, m.position.y));
     } 
 }
 
-vector<vec2> retrieve_ship_positions(gameMap gm) {
+vector<vec2> retrieve_ship_positions(PiGameMap gm) {
     vector<vec2> positions; 
-    for(pirate p: gm.pirates) {
+    for(PiPirate p: gm.pirates) {
         positions.push_back(p.position);
     }
-    for(merchant m: gm.merchants) {
+    for(PiMerchant m: gm.merchants) {
         positions.push_back(m.position);
     }
     return positions; 
@@ -86,7 +86,7 @@ vector<vec2> retrieve_next_positions(vec2 curr, int max_x, int max_y) {
 
 
 vec2 get_target(vector<vec2> positions) {
-    vec2 start_pos = positions[0]; // hacky way to get pirate
+    vec2 start_pos = positions[0]; // hacky way to get PiPirate
     vec2 min_pos = start_pos; 
     float min_dist = -1;
     for (vec2 pos : positions) {

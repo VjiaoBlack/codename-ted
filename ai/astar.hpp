@@ -26,11 +26,11 @@ struct PriorityComp
 
 // FUNCTION HEADERS
 void astar_main(); 
-vector<vec2> retrieve_ship_positions(gameMap gm); 
+vector<vec2> retrieve_ship_positions(PiGameMap gm); 
 vector<vec2> retrieve_next_positions(vec2 curr, int max_x, int max_y);
 float distance(vec2 pos1, vec2 pos2);
 bool q_elem_compare(q_elem a, q_elem b);
 vec2 get_target(vector<vec2> positions);
-void merchant_moves(gameMap& gm);
+void merchant_moves(PiGameMap& gm);
 
 

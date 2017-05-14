@@ -27,15 +27,11 @@ std::string serialize_game_state() {
 
 class GameLoopServer {
 public:
-    gameMap initGameMap = create_blank_map();
-    pirate initPirate = create_basic_pirate(vec2(0.0, 0.0));
-    unordered_map<int, player_t> players;
-    unordered_map<int, lobby_t> lobbies;
     float **heightMap;
 
     GameLoopServer(boost::asio::io_service& io_service, int port)
         : socket_(io_service, udp::endpoint(udp::v4(), port))
-        , currentGameState_(initGameMap, initPirate, players, lobbies) {
+        , currentGameState_() {
         start_receive();
     }
 
@@ -77,7 +73,7 @@ private:
     udp::socket socket_;
     udp::endpoint remote_endpoint_;
     boost::array<char, MAX_RECV_LENGTH> recv_buffer_;
-    gamestate currentGameState_;
+   PiGameState currentGameState_;
 };
 
 int main(int argc, char *argv[1]) {

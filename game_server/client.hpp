@@ -9,6 +9,9 @@
 
 #include "json_serializer.hpp"
 
+#ifndef _CLIENT_HPP_
+#define _CLIENT_HPP_
+
 using boost::asio::ip::udp;
 
 #define MAX_RECV_LENGTH 100000
@@ -42,3 +45,5 @@ private:
     udp::endpoint receiver_endpoint_;
     boost::array<char, MAX_RECV_LENGTH> recv_buf;
 };
+
+#endif

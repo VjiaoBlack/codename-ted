@@ -144,14 +144,9 @@ private:
     UDPClient* mGameLoopClient;
 
     // TODO make these pointers... holy FUCK
-    gameMap _gameMap;
-    pirate _pirate;
-    unordered_map<int, player_t> _players;
-    unordered_map<int, lobby_t> _lobbies;
-
     std::map<int, Ogre::SceneNode*> mOtherPirates;
 
-    gamestate mgamestate;
+   PiGameState mGameState;
 };
 
 

@@ -8,61 +8,58 @@
 
 #include "json_serializer.hpp"
 
-string serialize_gamestate(gamestate gstate, bool withMapTiles){
+string serialize_gamestate(PiGameState gstate, bool withMapTiles) {
     //example serialize from given structs in Slack
-	//assuming some game state, "gstate"
+    //assuming some game state, "gstate"
 
-	json main_obj;
+    json main_obj;
 
-	//map start
+    //map start
 
     main_obj["id"] = gstate.id;
 
-	json maptiles;
+    json maptiles;
 
-	if (withMapTiles) {
-		for(auto tile_row_unit : gstate.map.mapTiles)
-		{
-	        json tiles;
+    if (withMapTiles) {
+        for(auto tile_row_unit : gstate.map.mapTiles) {
+            json tiles;
 
-	        for(auto tile_column_mem : tile_row_unit)
-	        {
+            for(auto tile_column_mem : tile_row_unit) {
 
-	            json tile;
+                json tile;
 
-	            tile["currentDirection"] = {tile_column_mem.currentDirection.x, tile_column_mem.currentDirection.y};
-	            tile["currentStrength"] = tile_column_mem.currentStrength;
-	            tile["windDirection"] = {tile_column_mem.windDirection.x, tile_column_mem.windDirection.y};
-	            tile["windStrength"] = tile_column_mem.windStrength;
-	            tile["is_ship"] = tile_column_mem.is_ship;
-	            tile["start_finish"] = tile_column_mem.start_finish;
-	            tile["land_water"] = tile_column_mem.land_water;
+                tile["currentDirection"] = {tile_column_mem.currentDirection.x, tile_column_mem.currentDirection.y};
+                tile["currentStrength"] = tile_column_mem.currentStrength;
+                tile["windDirection"] = {tile_column_mem.windDirection.x, tile_column_mem.windDirection.y};
+                tile["windStrength"] = tile_column_mem.windStrength;
+                tile["is_ship"] = tile_column_mem.is_ship;
+                tile["start_finish"] = tile_column_mem.start_finish;
+                tile["land_water"] = tile_column_mem.land_water;
 
-	            tiles.emplace_back(tile);
-	        }
-	        maptiles.emplace_back(tiles);
-	    }
+                tiles.emplace_back(tile);
+            }
+            maptiles.emplace_back(tiles);
+        }
 
-	    main_obj["map"]["mapTiles"] = maptiles;
-	    main_obj["map"]["x_size"] = gstate.map.x_size;
-	    main_obj["map"]["y_size"] = gstate.map.y_size;
-	}
+        main_obj["map"]["mapTiles"] = maptiles;
+        main_obj["map"]["x_size"] = gstate.map.x_size;
+        main_obj["map"]["y_size"] = gstate.map.y_size;
+    }
 
     json pirates;
 
-    for(auto pirate : gstate.map.pirates)
-    {
+    for(auto PiPirate : gstate.map.pirates) {
         json p;
 
-        p["pirate_name"] = pirate.pirate_name;
-        p["position"] = {pirate.position.x, pirate.position.y};
-        p["coord_pos"] = {pirate.coord_pos.x, pirate.coord_pos.y};
-        p["velocity"] = {pirate.velocity.x, pirate.velocity.y};
-        p["acceleration"] = {pirate.acceleration.x, pirate.acceleration.y};
-        p["orientation"] = pirate.orientation;
-        p["rudderRot"] = pirate.rudderRot;
-        p["goldAmount"] = pirate.goldAmount;
-        p["AI"] = pirate.AI;
+        p["pirate_name"] = PiPirate.pirate_name;
+        p["position"] = {PiPirate.position.x, PiPirate.position.y};
+        p["coord_pos"] = {PiPirate.coord_pos.x, PiPirate.coord_pos.y};
+        p["velocity"] = {PiPirate.velocity.x, PiPirate.velocity.y};
+        p["acceleration"] = {PiPirate.acceleration.x, PiPirate.acceleration.y};
+        p["orientation"] = PiPirate.orientation;
+        p["rudderRot"] = PiPirate.rudderRot;
+        p["goldAmount"] = PiPirate.goldAmount;
+        p["AI"] = PiPirate.AI;
 
         pirates.emplace_back(p);
     }
@@ -71,19 +68,18 @@ string serialize_gamestate(gamestate gstate, bool withMapTiles){
 
     json merchants;
 
-    for(auto merchant : gstate.map.merchants)
-    {
+    for(auto PiMerchant : gstate.map.merchants) {
         json m;
 
-        m["merchant_name"] = merchant.merchant_name;
-        m["position"] = {merchant.position.x, merchant.position.y};
-        m["coord_pos"] = {merchant.coord_pos.x, merchant.coord_pos.y};
-        m["velocity"] = {merchant.velocity.x, merchant.velocity.y};
-        m["acceleration"] = {merchant.acceleration.x, merchant.acceleration.y};
-        m["orientation"] = merchant.orientation;
-        m["rudderRot"] = merchant.rudderRot;
-        m["goldAmount"] = merchant.goldAmount;
-        m["AI"] = merchant.AI;
+        m["merchant_name"] = PiMerchant.merchant_name;
+        m["position"] = {PiMerchant.position.x, PiMerchant.position.y};
+        m["coord_pos"] = {PiMerchant.coord_pos.x, PiMerchant.coord_pos.y};
+        m["velocity"] = {PiMerchant.velocity.x, PiMerchant.velocity.y};
+        m["acceleration"] = {PiMerchant.acceleration.x, PiMerchant.acceleration.y};
+        m["orientation"] = PiMerchant.orientation;
+        m["rudderRot"] = PiMerchant.rudderRot;
+        m["goldAmount"] = PiMerchant.goldAmount;
+        m["AI"] = PiMerchant.AI;
 
         merchants.emplace_back(m);
     }
@@ -93,7 +89,7 @@ string serialize_gamestate(gamestate gstate, bool withMapTiles){
 
     //map done
 
-    //pirate start
+    //PiPirate start
 
     json the_pirate;
 
@@ -109,14 +105,13 @@ string serialize_gamestate(gamestate gstate, bool withMapTiles){
 
     main_obj["Pirate"] = the_pirate;
 
-    //pirate done
+    //PiPirate done
 
     //players start
 
     json players;
 
-    for(auto player : gstate.players)
-    {
+    for(auto player : gstate.players) {
         json p;
 
         p["uID"] = player.second.uID;
@@ -134,53 +129,44 @@ string serialize_gamestate(gamestate gstate, bool withMapTiles){
     //not doing lobbies
     //not doing heightmap
 
-  	return main_obj.dump();
+    return main_obj.dump();
 }
 
-gamestate deserialize_gamestate(string JSON, bool withMapTiles){
+PiGameState deserialize_gamestate(string JSON, bool withMapTiles) {
     auto j = json::parse(JSON);
 
     std::cout << "JSON from deserialize: " << JSON << "\n";
 
     //TODO: fix for no constructor, NEEDS TO BE ADDRESSED
-
-    gameMap initGameMap = create_blank_map();
-    pirate initPirate = create_basic_pirate(vec2(0.0, 0.0));
-    unordered_map<int, player_t> players_x;
-    unordered_map<int, lobby_t> lobbies;
-
-    gamestate gstate(initGameMap, initPirate, players_x, lobbies);
+    PiGameState gstate;
 
     gstate.id = j["id"];
 
     //build map
-	vector< vector<mapTile> > mapTiles;
+    vector< vector<PiMapTile> > mapTiles;
 
-	if (withMapTiles) {
+    if (withMapTiles) {
 
-	    for(auto tiles : j["map"]["mapTiles"])
-	    {
-	        vector<mapTile> mapTile_col;
+        for(auto tiles : j["map"]["mapTiles"]) {
+            vector<PiMapTile> mapTile_col;
 
-	        for(auto tile : tiles)
-	        {
-	            mapTile temp = mapTile(vec2(tile["currentDirection"]["x"], tile["currentDirection"]["y"]), tile["currentStrength"],
-	                vec2(tile["windDirection"]["x"], tile["windDirection"]["y"]), tile["currentStrength"], tile["is_ship"]);
-	            temp.start_finish = tile["start_finish"];
-	            temp.land_water = tile["land_water"];
+            for(auto tile : tiles) {
+                PiMapTile temp = PiMapTile(vec2(tile["currentDirection"]["x"], tile["currentDirection"]["y"]), tile["currentStrength"],
+                    vec2(tile["windDirection"]["x"], tile["windDirection"]["y"]), tile["currentStrength"], tile["is_ship"]);
+                temp.start_finish = tile["start_finish"];
+                temp.land_water = tile["land_water"];
 
-	            mapTile_col.push_back(temp);
-	        }
+                mapTile_col.push_back(temp);
+            }
 
-	        mapTiles.push_back(mapTile_col);
-	    }
-	}
+            mapTiles.push_back(mapTile_col);
+        }
+    }
 
-    vector<pirate> pirates;
+    vector<PiPirate> pirates;
 
-    for(auto pirate_temp : j["map"]["pirates"])
-    {
-        pirate p = pirate(pirate_temp["pirate_name"],
+    for(auto pirate_temp : j["map"]["pirates"]) {
+        PiPirate p = PiPirate(pirate_temp["pirate_name"],
             vec2(pirate_temp["position"]["x"], pirate_temp["position"]["y"]),
             vec2(pirate_temp["velocity"]["x"], pirate_temp["velocity"]["y"]),
             vec2(pirate_temp["acceleration"]["x"], pirate_temp["acceleration"]["y"]),
@@ -191,11 +177,10 @@ gamestate deserialize_gamestate(string JSON, bool withMapTiles){
         pirates.push_back(p);
     }
 
-    vector<merchant> merchants;
+    vector<PiMerchant> merchants;
 
-    for(auto merchant_temp : j["map"]["merchants"])
-    {
-        merchant m = merchant(merchant_temp["merchant_name"],
+    for(auto merchant_temp : j["map"]["merchants"]) {
+        PiMerchant m = PiMerchant(merchant_temp["merchant_name"],
             vec2(merchant_temp["position"]["x"], merchant_temp["position"]["y"]),
             vec2(merchant_temp["velocity"]["x"], merchant_temp["velocity"]["y"]),
             vec2(merchant_temp["acceleration"]["x"], merchant_temp["acceleration"]["y"]),
@@ -208,13 +193,13 @@ gamestate deserialize_gamestate(string JSON, bool withMapTiles){
 
     vec3 size(j["map"]["size"][0], j["map"]["size"][1], j["map"]["size"][2]);
 
-    gstate.map = gameMap(mapTiles, j["map"]["x_size"], j["map"]["y_size"], pirates, merchants, size);
+    gstate.map = PiGameMap(mapTiles, j["map"]["x_size"], j["map"]["y_size"], pirates, merchants, size);
 
     //map done
 
-    //build pirate
+    //build PiPirate
 
-    gstate.Pirate = pirate(j["Pirate"]["pirate_name"],
+    gstate.Pirate = PiPirate(j["Pirate"]["pirate_name"],
         vec2(j["Pirate"]["position"]["x"], j["Pirate"]["position"]["y"]),
         vec2(j["Pirate"]["velocity"]["x"], j["Pirate"]["velocity"]["y"]),
         vec2(j["Pirate"]["acceleration"]["x"], j["Pirate"]["acceleration"]["y"]),
@@ -222,15 +207,14 @@ gamestate deserialize_gamestate(string JSON, bool withMapTiles){
         j["Pirate"]["goldAmount"], j["Pirate"]["AI"],
         vec2(j["Pirate"]["coord_pos"]["x"], j["Pirate"]["coord_pos"]["y"]));
 
-    //pirate done
+    //PiPirate done
 
     //build players
 
-    unordered_map<int, player_t> players;
+    unordered_map<int, PiPlayer> players;
 
-    for(auto player_temp : j["players"])
-    {
-        player_t p;
+    for(auto player_temp : j["players"]) {
+        PiPlayer p;
         p.uID = player_temp["uID"];
         p.x = player_temp["x"];
         p.y = player_temp["y"];
@@ -245,7 +229,7 @@ gamestate deserialize_gamestate(string JSON, bool withMapTiles){
     return gstate;
 }
 
-string serialize_keystrokes(keystrokes_obj ks){
+string serialize_keystrokes(keystrokes_obj ks) {
     json main_obj;
 
     main_obj["unique_id"] = ks.unique_id;
@@ -262,20 +246,20 @@ string serialize_keystrokes(keystrokes_obj ks){
     return main_obj.dump();
 }
 
-keystrokes_obj deserialize_keystrokes(string JSON){
+keystrokes_obj deserialize_keystrokes(string JSON) {
 
-	auto j = json::parse(JSON);
+    auto j = json::parse(JSON);
 
-	std::cout << "JSON from deserialize: " << JSON << "\n";
+    std::cout << "JSON from deserialize: " << JSON << "\n";
 
-	int uid = j["unique_id"];
+    int uid = j["unique_id"];
 
-	vector<int> keys;
-	for( auto key : j["keystrokes"]) {
-		keys.push_back(key);
-	}
+    vector<int> keys;
+    for( auto key : j["keystrokes"]) {
+        keys.push_back(key);
+    }
 
-	keystrokes_obj ret = keystrokes_obj(uid, keys);
+    keystrokes_obj ret = keystrokes_obj(uid, keys);
 
-	return ret;
+    return ret;
 }

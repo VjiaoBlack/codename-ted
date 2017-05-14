@@ -5,7 +5,8 @@
 #include <functional>
 #include <queue>
 #include <vector>
+#include <math.h>
 using namespace std;
 
-gamestate compute_gamestate(unordered_map<string, vector<string> > input_object, gamestate gameState);
-void print_boat(gameMap gmap);
+PiGameState compute_gamestate(unordered_map<string, vector<string> > input_object, PiGameState gameState);
+void print_boat(PiGameMap gmap);

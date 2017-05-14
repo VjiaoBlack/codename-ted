@@ -11,7 +11,7 @@ float pioveroneeighty = 0.01745329251;
 int turning_speed = 10;
 
 //TODO factor in the delta thing to make this run framerate independent
-gameMap compute_gamestate(unordered_map<string, vector<string> > input_object, gameMap gm){
+PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object, PiGameMap gm){
   /*********Apply Input**********/
   int iter;
 
@@ -89,8 +89,8 @@ gameMap compute_gamestate(unordered_map<string, vector<string> > input_object, g
         continue;
       }
       else{ //Checking collision with another ship
-        if((abs(gm.merchants[iter].position.x - gm.merchants[jter].position.x) < firstOrderCollisionBuffer) && 
-           (abs(gm.merchants[iter].position.y - gm.merchants[jter].position.y) < firstOrderCollisionBuffer)){  // If this passes, do more granular collision.  This is barebones so I'll just treat this as a collision.
+        if((fabs(gm.merchants[iter].position.x - gm.merchants[jter].position.x) < firstOrderCollisionBuffer) && 
+           (fabs(gm.merchants[iter].position.y - gm.merchants[jter].position.y) < firstOrderCollisionBuffer)){  // If this passes, do more granular collision.  This is barebones so I'll just treat this as a collision.
           //I am just going to reverse the accelerations for both ships to see if that fixes it.  I can do something more special later.
           printf("Collided\n");
           gm.merchants[iter].acceleration.x *= -1;
@@ -111,7 +111,7 @@ gameMap compute_gamestate(unordered_map<string, vector<string> > input_object, g
   return gm;
 }
 
-void print_boat(gameMap gmap){
+void print_boat(PiGameMap gmap){
   float posx = gmap.merchants[0].position.x;
   float posy = gmap.merchants[0].position.y;
   float velx = gmap.merchants[0].velocity.x;
@@ -123,7 +123,7 @@ void print_boat(gameMap gmap){
 }
 
 int main(int argc, char* argv[]){
-  gameMap map = create_random_map();
+  PiGameMap map = PiGameMap::createRandomMap();
   map.print_game_map();
 
   map.merchants[0].merchant_name = "our_guy";
@@ -148,7 +148,7 @@ int main(int argc, char* argv[]){
 
   printf("\n\n\n");
 
-  map = main_loop(input_object, map);
+  map = compute_gamestate(input_object, map);
 
   map.print_game_map();
 

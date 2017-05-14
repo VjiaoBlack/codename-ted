@@ -13,6 +13,9 @@
 #include "game_structs.hpp"
 #include "json.hpp"
 
+#ifndef _JSON_SERIALIZER_HPP_
+#define _JSON_SERIALIZER_HPP_
+
 using std::string;
 using std::vector;
 using json = nlohmann::json;
@@ -35,6 +38,8 @@ keystrokes_obj deserilize_keystrokes(string JSON);
 
 string serialize_keystrokes(keystrokes_obj ks);
 
-gamestate deserilize_gamestate(string JSON, bool withMapTiles=false);
+PiGameState deserilize_gamestate(string JSON, bool withMapTiles=false);
 
-string serialize_gamestate(gamestate g, bool withMapTiles=false);
+string serialize_gamestate(PiGameState g, bool withMapTiles=false);
+
+#endif

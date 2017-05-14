@@ -3,160 +3,207 @@
  * game_structs.hpp - codename-ted (2017)
  *
  * Definitions for necessary structs
- * including player, lobby, gamestate, etc
+ * including player, lobby,PiGameState, etc
  *
  * Worked on by Jigar, Charlie, Chris, David, and Victor
  *
- * 5/14
+ * 5/14 - significant code structure overhaul - Victor
  *
  */
+
+// TODO rename variable names to be more clear
 
 #include <cstdlib>
 #include <unordered_map>
 #include <string>
 #include <vector>
 
+#ifndef _GAME_STRUCTS_HPP_
+#define _GAME_STRUCTS_HPP_
+
 using namespace std;
 
 // CLASSES
 class vec2 {
-    public:
-        // Attributes
-        float x, y;
-        // Constructor
-        vec2(float a, float b) : x(a), y(b) {};
-        // Methods
-        void print_vec2();
+public:
+    // Attributes
+    float x, y;
+    // Constructor
+    vec2(float a, float b) : x(a), y(b) {};
+    // Methods
+    void print_vec2();
 };
 
 class vec3 {
-    public:
-        //Attributes
+public:
+    //Attributes
 
-        float x, y, z;
-        //Constructor
-        vec3(float a, float b, float c) : x(a), y(b), z(c) {};
-        // Methods
-        void print_vec3();
+    float x, y, z;
+    //Constructor
+    vec3(float a, float b, float c) : x(a), y(b), z(c) {};
+    // Methods
+    void print_vec3();
 };
 
-class player_t {
-    public:
-        int uID;
-	    float x;
-	    float y;
-	    bool registered;
-	    string name;
+class PiPlayer {
+public:
+    int uID;
+    float x;
+    float y;
+    bool registered;
+    string name;
 };
 
-class ship {
-    public:
-        //Attributes
-        vec2 position; // map tile position
-        vec2 coord_pos; // coordinate position
-        vec2 velocity;
-        vec2 acceleration;
-        float orientation;
-        float rudderRot;
-        int goldAmount;
-        bool AI;
-        // Constructor
-        ship(vec2 a, vec2 b, vec2 c, float d,
-                float e, int f, bool g, vec2 h) :
-                position(a), velocity(b), acceleration(c),
-                orientation(d), rudderRot(e), goldAmount(f),
-                AI(g), coord_pos(h) {};
-        // Methods
+class PiShip {
+public:
+    //Attributes
+    vec2 position; // map tile position
+    vec2 coord_pos; // coordinate position
+    vec2 velocity;
+    vec2 acceleration;
+    float orientation;
+    float rudderRot;
+    int goldAmount;
+    bool AI;
+    // Constructor
+    PiShip(vec2 a, vec2 b, vec2 c, float d,
+            float e, int f, bool g, vec2 h) :
+            position(a), velocity(b), acceleration(c),
+            orientation(d), rudderRot(e), goldAmount(f),
+            AI(g), coord_pos(h) {};
+    // Methods
 };
 
-class pirate : public ship {
-    public:
-        // Attributes
-        string pirate_name;
-        // Constructor
-        pirate(string a, vec2 b, vec2 c, vec2 d,
-                float e, float f, int g, bool h, vec2 i) :
-                pirate_name(a), ship(b, c, d, e, f, g, h, i) {};
+class PiPirate : public PiShip {
+private:
+
+public:
+    // Attributes
+    string pirate_name;
+    // Constructor
+    // TODO construct map tile position from coordinate position
+    PiPirate(string a, vec2 b, vec2 c, vec2 d,
+             float e, float f, int g, bool h, vec2 i)
+        : pirate_name(a)
+        , PiShip(b, c, d, e, f, g, h, i) {
+    };
+    PiPirate(vec2 loc) : PiPirate("Vader", loc, vec2(0,0), vec2(0,0), 0, 0, 0, true, vec2(0,0)) {}
+    PiPirate() : PiPirate(vec2(0,0)) {}
 };
 
-class merchant : public ship {
-    public:
-        // Attributes
-        string merchant_name;
-        // Constructor
-        merchant(string a, vec2 b, vec2 c, vec2 d,
-                float e, float f, int g, bool h, vec2 i) :
-                merchant_name(a), ship(b, c, d, e, f, g, h, i) {};
+class PiMerchant : public PiShip {
+public:
+    // Attributes
+    string merchant_name;
+    // Constructor
+    PiMerchant(string a, vec2 b, vec2 c, vec2 d,
+               float e, float f, int g, bool h, vec2 i)
+        : merchant_name(a)
+        , PiShip(b, c, d, e, f, g, h, i) {};
+    PiMerchant(vec2 loc) 
+        : PiMerchant("Clone", loc, vec2(0,0), vec2(0,0), 0, 0, 0, true, vec2(0,0)) {}
+    PiMerchant() : PiMerchant(vec2(0,0)) {} 
 };
 
-class lobby_t {
-    public:
-        int uID;
-        unordered_map<int, player_t> players;
+class PiLobby {
+public:
+    int uID;
+    unordered_map<int, PiPlayer> players;
 };
 
-class mapTile {
-    public:
-        // ATTRIBUTES
-        vec2 currentDirection;
-        float currentStrength;
-        vec2 windDirection;
-        float windStrength;
-        // Convert these to enums later
-        int is_ship; // 2 if pirate, 1 if merchant, 0 if nothing
-        int start_finish; // 1 if start, 0 if finish
-        int land_water; // 1 if land, 0 if water
+class PiMapTile {
+public:
+    // ATTRIBUTES
+    vec2 currentDirection;
+    float currentStrength;
+    vec2 windDirection;
+    float windStrength;
+    // Convert these to enums later
+    int is_ship; // 2 if PiPirate, 1 if PiMerchant, 0 if nothing
+    int start_finish; // 1 if start, 0 if finish
+    int land_water; // 1 if land, 0 if water
 
-        // CONSTRUCTOR
-        mapTile(vec2 a, float b, vec2 c, float d, int e) :
-                currentDirection(a), currentStrength(b),
-                windDirection(a), windStrength(b), is_ship(e) {};
+    // CONSTRUCTOR
+    PiMapTile(vec2 a, float b, vec2 c, float d, int e)
+        : currentDirection(a)
+        , currentStrength(b)
+        , windDirection(a)
+        , windStrength(b)
+        , is_ship(e) {};
 
-        // METHODS
-        void print_map_tile();
+    PiMapTile() : PiMapTile(vec2(0,0), 0, vec2(0,0), 0, 0) {};
+
+    static PiMapTile createRandomTile(int PiPirate);
+    // METHODS
+    void print_map_tile();
 };
 
-class gameMap {
-    public:
-        // ATTRIBUTES
-        vector< vector<mapTile> > mapTiles;
-        int x_size;
-        int y_size;
-        vector<pirate> pirates;
-        vector<merchant> merchants;
-        vec3 size;
+class PiGameMap {
+public:
+    // ATTRIBUTES
+    vector<vector<PiMapTile> > mapTiles;
+    int x_size;
+    int y_size;
+    vector<PiPirate> pirates;
+    vector<PiMerchant> merchants;
+    vec3 size;
 
-        //CONSTRUCTOR
-        gameMap(vector< vector<mapTile> > a, int b, int c,
-                vector<pirate> d, vector <merchant> e,
-                vec3 f) : mapTiles(a), x_size(b), y_size(c),
-                pirates(d), merchants(e), size(f) {};
+    // CONSTRUCTOR
+    PiGameMap(vector< vector<PiMapTile> > a, int b, int c,
+              vector<PiPirate> d, vector <PiMerchant> e, vec3 f) 
+        : mapTiles(a)
+        , x_size(b)
+        , y_size(c)
+        , pirates(d)
+        , merchants(e)
+        , size(f) {};
 
-        // METHODS
-        void print_game_map();
+    // TODO size in num tiles I suppose??
+    PiGameMap(int sz)
+        : x_size(sz)
+        , y_size(sz)
+        , size(sz, sz, sz) {
+        vec3 size(sz, sz, sz);
+        for(int i = 0; i < sz; i++) {
+            vector<PiMapTile> curr_row; 
+            for (int j = 0; j < sz; j++) {
+                curr_row.push_back(PiMapTile());
+            }
+            mapTiles.push_back(curr_row);
+        }
+    }
+    PiGameMap() : PiGameMap(25) {};
+
+    static PiGameMap createRandomMap();
+
+    // METHODS
+    void print_game_map();
 };
 
-class gamestate {
-    public:
-        long id;
-        gameMap map;
-        pirate Pirate;
-        unordered_map<int, player_t> players;
-        unordered_map<int, lobby_t> lobbies;
-        float **heightMap;
+class PiGameState {
+public:
+    long id;
+    PiGameMap map;
+    PiPirate Pirate;
+    unordered_map<int, PiPlayer> players;
+    unordered_map<int, PiLobby> lobbies;
+    float **heightMap;
 
-        gamestate(gameMap map, pirate Pirate,
-                  unordered_map<int, player_t> players,
-                  unordered_map<int, lobby_t> lobbies);
+    PiGameState(PiGameMap map, PiPirate Pirate,
+                unordered_map<int, PiPlayer> players,
+                unordered_map<int, PiLobby> lobbies);
+
+    PiGameState()
+        : id(0)
+        , map()
+        , Pirate()
+        , players()
+        , lobbies()
+        , heightMap(NULL) {}
 };
 
-// HELPER FUNCTIONS
-mapTile create_blank_tile();
-gameMap create_blank_map();
-gameMap create_random_map();
-mapTile create_random_tile(int pirate);
-pirate create_basic_pirate(vec2 loc);
-merchant create_basic_merchant(vec2 loc);
 bool compare_vec(vec2 a, vec2 b);
-void move_pirate(gameMap& m, vec2 pos1, vec2 pos2);
-void move_merchant(gameMap& map, vec2 pos1, vec2 pos2);
+void move_pirate(PiGameMap& m, vec2 pos1, vec2 pos2);
+void move_merchant(PiGameMap& map, vec2 pos1, vec2 pos2);
+
+#endif
