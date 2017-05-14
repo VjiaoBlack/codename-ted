@@ -80,6 +80,8 @@ set(HDRS
 	./src/PiSkyX.h
 	./src/TdBike.h
 
+	./game_server/game_structs.hpp
+
 	./src/hydrax/Enums.h
 	./src/hydrax/Hydrax.h
 	./src/hydrax/CfgFileManager.h
@@ -129,6 +131,8 @@ set(SRCS
 	./src/PiratePanic.cpp
 	./src/PiSkyX.cpp
 	./src/TdBike.cpp
+
+	./game_server/client.cpp
 
 	./src/hydrax/CfgFileManager.cpp
 	./src/hydrax/Prerequisites.cpp

@@ -9,8 +9,8 @@ all: server client
 server.o: server.cpp game_structs.cpp
 	$(CC) $(CFLAGS) -c server.cpp $(INCLUDE) -o build/server.o
 
-client.o: client.cpp game_structs.cpp
-	$(CC) $(CFLAGS) -c client.cpp  $(INCLUDE) -o build/client.o
+client.o: client.cpp game_structs.cpp client.hpp
+	$(CC) $(CFLAGS) -c client.cpp $(INCLUDE) -o build/client.o
 
 game_structs.o: game_structs.cpp game_structs.hpp
 	$(CC) $(CFLAGS) -c game_structs.cpp  $(INCLUDE) -o build/game_structs.o
