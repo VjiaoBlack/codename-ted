@@ -4,7 +4,7 @@ CC=g++
 CFLAGS=-std=c++11
 INCLUDE=-I/$(BOOST_ROOT)  -L/$(BOOST_ROOT)/stage/lib -lboost_system -I/usr/local/include -L/usr/local/lib -lSDL2 -lpthread
 
-all: server client
+all: server client_demo
 
 server.o: server.cpp game_structs.cpp
 	$(CC) $(CFLAGS) -c server.cpp $(INCLUDE) -o build/server.o
