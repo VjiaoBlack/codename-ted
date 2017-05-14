@@ -12,6 +12,9 @@ server.o: server.cpp game_structs.cpp
 client.o: client.cpp game_structs.cpp client.hpp
 	$(CC) $(CFLAGS) -c client.cpp $(INCLUDE) -o build/client.o
 
+client_demo.o: client_demo.cpp client.cpp client.hpp
+	$(CC) $(CFLAGS) -c client_demo.cpp  $(INCLUDE) -o build/client_demo.o
+
 game_structs.o: game_structs.cpp game_structs.hpp
 	$(CC) $(CFLAGS) -c game_structs.cpp  $(INCLUDE) -o build/game_structs.o
 
@@ -23,6 +26,9 @@ server: server.o game_structs.o
 
 client: client.o game_structs.o
 	$(CC) $(CFLAGS) build/game_structs.o build/client.o $(INCLUDE) -o client
+
+client_demo: client_demo.o client.o game_structs.o
+	$(CC) $(CFLAGS) build/game_structs.o build/client.o build/client_demo.o $(INCLUDE) -o client_demo
 
 
 clean:
