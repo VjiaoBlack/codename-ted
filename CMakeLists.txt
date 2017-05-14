@@ -5,6 +5,7 @@
 # (Pulled from the Ogre Wiki Tutorials)
 #
 cmake_minimum_required(VERSION 2.6)
+set (CMAKE_CXX_STANDARD 11)
  
 project(OgreApp)
 
@@ -133,6 +134,7 @@ set(SRCS
 	./src/TdBike.cpp
 
 	./game_server/client.cpp
+	./game_server/game_structs.cpp
 
 	./src/hydrax/CfgFileManager.cpp
 	./src/hydrax/Prerequisites.cpp

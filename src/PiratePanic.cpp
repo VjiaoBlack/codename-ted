@@ -29,7 +29,17 @@ BasicApp::BasicApp()
     , mHeight(0)
     , mBike(0, 0, 100)
     , mBikeObject(0) 
-    , mGameLoopClient(NULL) {
+    , mGameLoopClient(NULL)
+    , _gameMap(create_blank_map())
+    , _pirate(create_basic_pirate(vec2(100.0, 100.0)))
+    , _players()
+    , _lobbies()
+    , mgamestate(_gameMap, _pirate, _players, _lobbies)
+    , mOtherPirates() {
+
+    // create more pirates 
+    mgamestate.map.pirates.push_back(create_basic_pirate(vec2(200.0f, 200.0f)));
+    mgamestate.map.pirates.push_back(create_basic_pirate(vec2(100.0f, 300.0f)));
 }
 
 BasicApp::~BasicApp() {
@@ -90,15 +100,34 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
     // Update Hydrax
     mHydrax->update(fe.timeSinceLastFrame);
 
- 
     mKeyboard->capture();
     mMouse->capture();
- 
+
     // TODO make camera respond differently to keys
     mCameraMan->frameRenderingQueued(fe);
+        
+    std::vector<int> pressedKeysToSend;
+    mKeyboard->copyKeyStates(mCurPressedKeys);
+    for (int i = 0; i < 256; i++) {
+        if (mCurPressedKeys[i]) {
+            pressedKeysToSend.push_back(i);
+        }
+    }
 
-    // TODO build vector of pressed keys
-    mGameLoopClient->send("asdf\n");
+    std::stringstream tempJsonStream;
+    std::string tempJson;
+
+    for (auto it = pressedKeysToSend.begin(); it != pressedKeysToSend.end(); it++) {
+        tempJsonStream << *it << ":";
+    }
+    tempJsonStream >> tempJson;
+
+    // std::cout << tempJson << std::endl;
+
+    mGameLoopClient->send(tempJson);
+        
+    // TODO: get server team to finish registration
+    // mGameLoopClient->send_keystrokes(pressedKeysToSend, "victor");
  
     CEGUI::System::getSingleton().injectTimePulse(fe.timeSinceLastFrame);
  
@@ -141,28 +170,18 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
             (double) 0.05f * cos(nsf * 2.0f) * cos(3.14f / 2.0f + mBike.dir / 2.0f)));
 
 
-    Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
-    mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
-    mSceneMgr->getLight("SceneLight")->setDiffuseColour(mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
-                                                        mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
-                                                        mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
+    for (int i = 0; i < mgamestate.map.pirates.size(); i++) {
+        mOtherPirates[i]->setPosition(Ogre::Vector3(mgamestate.map.pirates[i].position.x,  
+                                                    -10.0f + mHydrax->getHeigth(Ogre::Vector2(mgamestate.map.pirates[i].position.x,
+                                                                                              mgamestate.map.pirates[i].position.y)) + (2.0f * sin((nsf + i * 100.0f) * 2.0f)),
+                                                    mgamestate.map.pirates[i].position.y));
 
-    if (sunDir.y < 0.0f) {
-        printf("FUCK FUCK FUCK WHERE DID THE \n");
-        mSceneMgr->setAmbientLight(Ogre::ColourValue(0.3,0.3,0.4) * (-sunDir.y + 0.5));
-
-
-        if (sunDir.y < 0.05f) {
-            mSceneMgr->getLight("SceneLight")->setDiffuseColour(0,0,0);
-        } else {
-            mSceneMgr->getLight("SceneLight")->setDiffuseColour(-sunDir.y * 20.0f * mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
-                                                                -sunDir.y * 20.0f * mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
-                                                                -sunDir.y * 20.0f * mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
-        }
+        mOtherPirates[i]->setOrientation(Ogre::Quaternion(
+                (double) cos(0.0f / (2.0f)),   
+                (double) 0.05f * cos((nsf + i * 100.0f) * 2.0f) * cos(0.0f / 2.0f), 
+                (double) sin(0.0f / (2.0f)), 
+                (double) 0.05f * cos((nsf + i * 100.0f) * 2.0f) * cos(3.14f / 2.0f + 0.0f / 2.0f)));
     }
-
-    mHydrax->setSunPosition(mSkyX->getController()->getSunDirection()*mCamera->getFarClipDistance()*0.5f);
-    mHydrax->setSunColor(mSkyX->getVCloudsManager()->getVClouds()->getSunColor());
 
     // quikfix for water color circle bug weird
     Ogre::Vector3 camDir = mCamera->getDirection();
@@ -172,14 +191,14 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
 
     mHydrax->setWaterColor(mSkyX->getAtmosphereManager()->getColorAt(camDir));
 
-    mTerrainGlobals->setLightMapDirection(mSceneMgr->getLight("SceneLight")->getDerivedDirection());
-    mTerrainGlobals->setCompositeMapDiffuse(mSceneMgr->getLight("SceneLight")->getDiffuseColour());
+    // mTerrainGroup->getTerrain(0,0)->dirty();
+    // mTerrainGroup->getTerrain(0,0)->update();
 
-    mTerrainGroup->getTerrain(0,0)->dirty();
-    mTerrainGroup->getTerrain(0,0)->update();
+    // mTerrainGroup->getTerrain(0,0)->dirtyLightmap();
+    // mTerrainGroup->getTerrain(0,0)->updateDerivedData();
 
-    mTerrainGroup->getTerrain(0,0)->dirtyLightmap();
-    mTerrainGroup->getTerrain(0,0)->updateDerivedData();
+    float lastFPS = mWindow->getLastFPS();
+    terrainLabel->setText("FPS: " + to_string(lastFPS));
 
     return true;
 }
@@ -360,19 +379,32 @@ void BasicApp::createScene() {
     mCamera->setFarClipDistance(50000);
 
     // mCamera->setPolygonMode(Ogre::PM_WIREFRAME);
- 
-    Ogre::Vector3 lightDir(0,-10000,-90000);
-    lightDir.normalise();
+
+    // Create SkyX
+    mBasicController = new SkyX::BasicController();
+    mSkyX = new SkyX::SkyX(mSceneMgr, mBasicController);
+    mSkyX->create();
+
+    mSkyX->getVCloudsManager()->getVClouds()->setDistanceFallingParams(Ogre::Vector2(2,-1));
+
+    // Register SkyX listeners
+    mRoot->addFrameListener(mSkyX);
+    mWindow->addListener(mSkyX);
+
+    setPreset(mPresets[mCurrentPreset], mCamera);
+
+    Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
  
     Ogre::Light* light = mSceneMgr->createLight("SceneLight");
     light->setType(Ogre::Light::LT_DIRECTIONAL);
-    light->setDirection(lightDir);
-    light->setDiffuseColour(Ogre::ColourValue(0.6, 0.5, 0.5));
+    light->setDirection(-sunDir);
+    light->setDiffuseColour(mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
+                            mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
+                            mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
     light->setSpecularColour(Ogre::ColourValue(0.2, 0.18, 0.18));
 
     light->setCastShadows(true);
 
- 
     setupTerrain(light);
  
     CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
@@ -389,19 +421,17 @@ void BasicApp::createScene() {
     mCurObject->attachObject(ent);
 
     mBikeObject = mCurObject;
-    
-    // Create SkyX
-    mBasicController = new SkyX::BasicController();
-    mSkyX = new SkyX::SkyX(mSceneMgr, mBasicController);
-    mSkyX->create();
 
-    mSkyX->getVCloudsManager()->getVClouds()->setDistanceFallingParams(Ogre::Vector2(2,-1));
+    for (int i = 0; i < mgamestate.map.pirates.size(); i++) {
+        Ogre::Entity* ent = mSceneMgr->createEntity("Cube.010.mesh");
 
-    // Register SkyX listeners
-    mRoot->addFrameListener(mSkyX);
-    mWindow->addListener(mSkyX);
+        mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+        mCurObject->setPosition(Ogre::Vector3(mgamestate.map.pirates[i].position.x, 800.0, mgamestate.map.pirates[i].position.y));
+        mCurObject->setScale(30.0, 30.0, 30.0);
+        mCurObject->attachObject(ent);
 
-    setPreset(mPresets[mCurrentPreset], mCamera);
+        mOtherPirates[i] = mCurObject;
+    }
 
     // Create Hydrax object
     mHydrax = new Hydrax::Hydrax(mSceneMgr, mCamera, mWindow->getViewport(0));
@@ -437,7 +467,22 @@ void BasicApp::createScene() {
 
     mTerrainGroup->getTerrain(0, 0)->getMaterial()->setReceiveShadows(false);
 
-    // light colors etc. will be set in framerendering queue! 
+    // Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
+    mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
+    mSceneMgr->getLight("SceneLight")->setDiffuseColour(mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
+                                                        mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
+                                                        mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
+
+    mHydrax->setSunPosition(mSkyX->getController()->getSunDirection()*mCamera->getFarClipDistance()*0.5f);
+    mHydrax->setSunColor(mSkyX->getVCloudsManager()->getVClouds()->getSunColor());
+
+    // quikfix for water color circle bug weird
+    Ogre::Vector3 camDir = mCamera->getDirection();
+    camDir.y = -camDir.y;
+    camDir.x = -camDir.x;
+    camDir.z = -camDir.z;
+
+    mHydrax->setWaterColor(mSkyX->getAtmosphereManager()->getColorAt(camDir));
 }
  
 void BasicApp::destroyScene() {
@@ -622,9 +667,14 @@ void BasicApp::initBlendMaps(Ogre::Terrain* terrain) {
 void BasicApp::configureTerrainDefaults(Ogre::Light* light) {
     mTerrainGlobals->setMaxPixelError(8);
     mTerrainGlobals->setCompositeMapDistance(3000);
-    mTerrainGlobals->setLightMapDirection(light->getDerivedDirection());
+    // mTerrainGlobals->setLightMapDirection(light->getDerivedDirection());
     mTerrainGlobals->setCompositeMapAmbient(mSceneMgr->getAmbientLight());
-    mTerrainGlobals->setCompositeMapDiffuse(light->getDiffuseColour());
+    // mTerrainGlobals->setCompositeMapDiffuse(light->getDiffuseColour());
+    mTerrainGlobals->setLightMapDirection(mSceneMgr->getLight("SceneLight")->getDerivedDirection());
+    mTerrainGlobals->setCompositeMapDiffuse(mSceneMgr->getLight("SceneLight")->getDiffuseColour());
+
+
+
  
     Ogre::Terrain::ImportData& importData = mTerrainGroup->getDefaultImportSettings();
     importData.terrainSize = 513;

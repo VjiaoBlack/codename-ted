@@ -38,12 +38,17 @@
 #include "TdBike.h"
 
 #include "../game_server/client.hpp"
+#include "../game_server/game_structs.hpp"
 
 #include <algorithm>
+#include <string>
+#include <sstream>
+#include <vector>
 #include <inttypes.h>
 #include <math.h>
 #include <stdio.h>
 #include <time.h>
+#include <map>
 
 #define _def_SkyBoxNum 3
 
@@ -53,23 +58,9 @@
 // Hydrax pointer
 Hydrax::Hydrax *mHydrax = 0;
 
-Ogre::String mSkyBoxes[_def_SkyBoxNum] = 
-           {"Sky/ClubTropicana",
-            "Sky/EarlyMorning",
-            "Sky/Clouds"};
-
-Ogre::Vector3 mSunPosition[_def_SkyBoxNum] = 
-           {Ogre::Vector3(0,10000,0),
-            Ogre::Vector3(0,10000,90000),
-            Ogre::Vector3(0,10000,0)};
-
-Ogre::Vector3 mSunColor[_def_SkyBoxNum] = 
-           {Ogre::Vector3(1, 0.9, 0.6),
-            Ogre::Vector3(1,0.6,0.4),
-            Ogre::Vector3(0.45,0.45,0.45)};
-
 int mCurrentSkyBox = 0;
 
+char mCurPressedKeys[256] = {};
 
 
 class BasicApp
@@ -121,7 +112,6 @@ private:
  
     // CEGUI
     CEGUI::OgreRenderer* mRenderer;
- 
     bool setupCEGUI();
  
     // OIS
@@ -152,27 +142,17 @@ private:
     TdBike mBike;
 
     UDPClient* mGameLoopClient;
+
+    // TODO make these pointers... holy FUCK
+    gameMap _gameMap;
+    pirate _pirate;
+    unordered_map<int, player_t> _players;
+    unordered_map<int, lobby_t> _lobbies;
+
+    std::map<int, Ogre::SceneNode*> mOtherPirates;
+
+    gamestate mgamestate;
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
 #endif

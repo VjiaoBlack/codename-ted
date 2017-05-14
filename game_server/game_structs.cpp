@@ -55,7 +55,7 @@ gamestate::gamestate(gameMap map, pirate Pirate,
              Pirate.velocity , Pirate.orientation, Pirate.rudderRot,
              Pirate.goldAmount, Pirate.AI, Pirate.acceleration) {
 
-    }
+}
 
 // HELPER FUNCTIONS
 bool compare_vec(vec2 a, vec2 b) {
