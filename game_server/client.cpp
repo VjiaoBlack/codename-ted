@@ -14,6 +14,8 @@
 
 using boost::asio::ip::udp;
 
+#define MAX_RECV_LENGTH 100000
+
 // Inspiration from https://gist.github.com/kaimallea/e112f5c22fe8ca6dc627
 class UDPClient {
 public:
@@ -52,7 +54,7 @@ private:
     udp::socket socket_;
     udp::endpoint sender_endpoint_;
     udp::endpoint receiver_endpoint_;
-    boost::array<char, 128> recv_buf;
+    boost::array<char, MAX_RECV_LENGTH> recv_buf;
 };
 
 int main(int argc, char* argv[])

@@ -15,10 +15,11 @@
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/asio.hpp>
+#include "game_structs.hpp"
 
 using boost::asio::ip::udp;
 
-#define MAX_LENGTH 1000
+#define MAX_RECV_LENGTH 10000
 
 std::string serialize_game_state()
 {
@@ -27,13 +28,20 @@ std::string serialize_game_state()
   return ctime(&now);
 }
 
-class udp_server
+class GameLoopServer
 {
 public:
-  udp_server(boost::asio::io_service& io_service, int port)
+    gameMap initGameMap = create_blank_map();
+    pirate initPirate = create_basic_pirate(vec2(0.0, 0.0));
+    unordered_map<int, player_t> players;
+    unordered_map<int, lobby_t> lobbies;
+    float **heightMap;
+
+    GameLoopServer(boost::asio::io_service& io_service, int port)
     : socket_(io_service, udp::endpoint(udp::v4(), port))
+    , currentGameState_(initGameMap, initPirate, players, lobbies)
   {
-    start_receive();
+      start_receive();
   }
 
 private:
@@ -41,7 +49,7 @@ private:
   {
         socket_.async_receive_from(
         boost::asio::buffer(recv_buffer_), remote_endpoint_,
-        boost::bind(&udp_server::handle_receive, this,
+        boost::bind(&GameLoopServer::handle_receive, this,
           boost::asio::placeholders::error,
           boost::asio::placeholders::bytes_transferred));
   }
@@ -55,7 +63,7 @@ private:
           new std::string(serialize_game_state()));
 
       socket_.async_send_to(boost::asio::buffer(*message), remote_endpoint_,
-          boost::bind(&udp_server::handle_send, this, message,
+          boost::bind(&GameLoopServer::handle_send, this, message,
             boost::asio::placeholders::error,
             boost::asio::placeholders::bytes_transferred));
 
@@ -73,7 +81,8 @@ private:
 
   udp::socket socket_;
   udp::endpoint remote_endpoint_;
-  boost::array<char, MAX_LENGTH> recv_buffer_;
+  boost::array<char, MAX_RECV_LENGTH> recv_buffer_;
+  gamestate currentGameState_;
 };
 
 int main(int argc, char *argv[1])
@@ -86,7 +95,7 @@ int main(int argc, char *argv[1])
     try {
         boost::asio::io_service io_service;
         int port = atoi(argv[1]);
-        udp_server server(io_service, port);
+        GameLoopServer server(io_service, port);
         io_service.run();
     } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
