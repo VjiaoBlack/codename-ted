@@ -1,7 +1,7 @@
 /**
  * client.hpp
  *
- * worked on by Jigar, Chris 
+ * worked on by Jigar, Chris
  */
 #include <iostream>
 #include <boost/array.hpp>
@@ -31,6 +31,7 @@ public:
 
     void send(const std::string &message);
     void send_keystrokes(std::vector<int> keystrokes, std::string ship_id);
+    void get_gamestate();
 
 private:
     boost::asio::io_service &io_service_;
@@ -39,4 +40,3 @@ private:
     udp::endpoint receiver_endpoint_;
     boost::array<char, MAX_RECV_LENGTH> recv_buf;
 };
-

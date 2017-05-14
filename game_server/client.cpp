@@ -15,9 +15,13 @@ void UDPClient::send(const std::string &message) {
 
     size_t len = socket_.receive_from(boost::asio::buffer(recv_buf), sender_endpoint_);
 
-    std::cout.write(recv_buf.data(), len);
+    //std::cout.write(recv_buf.data(), len);
 }
 
 void UDPClient::send_keystrokes(std::vector<int> keystrokes, std::string ship_id) {
     std::cout << ship_id << std::endl;
+}
+
+void UDPClient::get_gamestate() {
+    socket_.send_to(boost::asio::buffer(message, message.size()), receiver_endpoint_);
 }

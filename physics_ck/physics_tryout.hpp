@@ -7,5 +7,5 @@
 #include <vector>
 using namespace std;
 
-gamestate main_loop(unordered_map<string, vector<string> > input_object, gamestate gameState);
+gamestate compute_gamestate(unordered_map<string, vector<string> > input_object, gamestate gameState);
 void print_boat(gameMap gmap);

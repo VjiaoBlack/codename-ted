@@ -11,8 +11,7 @@ float pioveroneeighty = 0.01745329251;
 int turning_speed = 10;
 
 //TODO factor in the delta thing to make this run framerate independent
-gameMap main_loop(unordered_map<string, vector<string> > input_object, gameMap gm){
-
+gameMap compute_gamestate(unordered_map<string, vector<string> > input_object, gameMap gm){
   /*********Apply Input**********/
   int iter;
 
@@ -38,7 +37,7 @@ gameMap main_loop(unordered_map<string, vector<string> > input_object, gameMap g
         }
         i++;
       }
-    }      
+    }
   }
 
   /********Update Game State*********/
@@ -100,7 +99,7 @@ gameMap main_loop(unordered_map<string, vector<string> > input_object, gameMap g
           gm.merchants[jter].acceleration.y *= -1;
         }
         else{ // Not close to each other so pass.
-          continue; 
+          continue;
         }
       }
     }
@@ -125,7 +124,7 @@ void print_boat(gameMap gmap){
 
 int main(int argc, char* argv[]){
   gameMap map = create_random_map();
-  map.print_game_map(); 
+  map.print_game_map();
 
   map.merchants[0].merchant_name = "our_guy";
 
@@ -151,7 +150,7 @@ int main(int argc, char* argv[]){
 
   map = main_loop(input_object, map);
 
-  map.print_game_map(); 
+  map.print_game_map();
 
   return 0;
 }

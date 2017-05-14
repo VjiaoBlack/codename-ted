@@ -18,8 +18,8 @@ client_demo.o: client_demo.cpp client.cpp client.hpp
 game_structs.o: game_structs.cpp game_structs.hpp
 	$(CC) $(CFLAGS) -c game_structs.cpp  $(INCLUDE) -o build/game_structs.o
 
-#JSON.o: JSON.cpp
-	#$(CC) $(CFLAGS) -c JSON.cpp $(INCLUDE) -o build/JSON.o
+JSON.o: JSON.cpp
+	$(CC) $(CFLAGS) -c JSON.cpp $(INCLUDE) -o build/JSON.o
 
 server: server.o game_structs.o
 	$(CC) $(CFLAGS) build/game_structs.o build/server.o $(INCLUDE) -o server
@@ -29,7 +29,6 @@ client: client.o game_structs.o
 
 client_demo: client_demo.o client.o game_structs.o
 	$(CC) $(CFLAGS) build/game_structs.o build/client.o build/client_demo.o $(INCLUDE) -o client_demo
-
 
 clean:
 	rm -rf *.o
