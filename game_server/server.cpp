@@ -2,7 +2,7 @@
  * server.cpp
  *
  *  by Chris, Jigar
- * 
+ *
  */
 
 
@@ -20,9 +20,8 @@ using boost::asio::ip::udp;
 #define MAX_RECV_LENGTH 10000
 
 std::string serialize_game_state() {
-    using namespace std; // For time_t, time and ctime;
-    time_t now = time(0);
-    return ctime(&now);
+    std::string sweg("yooooooo");
+    return sweg;
 }
 
 class GameLoopServer {
@@ -50,15 +49,21 @@ private:
     void handle_receive(const boost::system::error_code& error,
                         std::size_t bytes_transferred) {
         if (!error || error == boost::asio::error::message_size) {
-            boost::shared_ptr<std::string> message(new std::string(serialize_game_state()));
+            std::string incoming_message(recv_buffer_.data(), bytes_transferred);
+            std::string gamestate_signal("gamestate");
 
-            socket_.async_send_to(boost::asio::buffer(*message), remote_endpoint_,
-                                  boost::bind(&GameLoopServer::handle_send, this, message,
-                                              boost::asio::placeholders::error,
-                                              boost::asio::placeholders::bytes_transferred));
+            if (!incoming_message.compare(gamestate_signal)) {
+                std::cout << "sending gamestate" << std::endl;
+                boost::shared_ptr<std::string> message(new std::string(serialize_game_state()));
 
-            std::cout << bytes_transferred << std::endl;
-            std::cout.write(recv_buffer_.data(), bytes_transferred);
+                socket_.async_send_to(boost::asio::buffer(*message), remote_endpoint_,
+                                      boost::bind(&GameLoopServer::handle_send, this, message,
+                                                  boost::asio::placeholders::error,
+                                                  boost::asio::placeholders::bytes_transferred));
+            } else {
+                std::cout << incoming_message << std::endl;
+            }
+
             start_receive();
         }
     }

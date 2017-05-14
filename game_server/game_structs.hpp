@@ -136,15 +136,16 @@ class gameMap {
 
 class gamestate {
     public:
+        long id;
         gameMap map;
         pirate Pirate;
         unordered_map<int, player_t> players;
         unordered_map<int, lobby_t> lobbies;
-        float **upheightMap;
+        float **heightMap;
 
         gamestate(gameMap map, pirate Pirate,
-                     unordered_map<int, player_t> players,
-                     unordered_map<int, lobby_t> lobbies);
+                  unordered_map<int, player_t> players,
+                  unordered_map<int, lobby_t> lobbies);
 };
 
 // HELPER FUNCTIONS

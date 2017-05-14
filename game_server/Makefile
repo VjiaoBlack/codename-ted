@@ -30,7 +30,6 @@ client: client.o game_structs.o
 client_demo: client_demo.o client.o game_structs.o
 	$(CC) $(CFLAGS) build/game_structs.o build/client.o build/client_demo.o $(INCLUDE) -o client_demo
 
-
 clean:
 	rm -rf *.o
 	rm -rf build/*

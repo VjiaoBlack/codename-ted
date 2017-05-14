@@ -16,6 +16,8 @@ string serialize_gamestate(gamestate gstate){
 
 	//map start
 
+    main_obj["id"] = gstate.id;
+
     json maptiles;
 
 	for(auto tile_row_unit : gstate.map.mapTiles)
@@ -146,6 +148,8 @@ gamestate deserialize_gamestate(string JSON){
     unordered_map<int, lobby_t> lobbies;
 
     gamestate gstate(initGameMap, initPirate, players_x, lobbies);
+
+    gstate.id = j["id"];
 
     //build map
 
