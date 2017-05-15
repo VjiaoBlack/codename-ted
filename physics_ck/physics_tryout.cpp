@@ -1,38 +1,120 @@
 #include "physics_tryout.hpp"
-#include <math.h>
 
 using namespace std;
 
 //Magic numbers
-int firstOrderCollisionBuffer = 1;
-int acceleration_normal_slowdown_factor = 1;
-int acceleration_increase = 1;
+float acceleration_normal_slowdown_factor = 0.05;
+float acceleration_increase = 0.05;
 float pioveroneeighty = 0.01745329251;
-int turning_speed = 10;
+int turning_speed = 1;
+
+float firstOrderCollisionBuffer = 0.1;
+float y_extension = 1;
+float x_extension = 1;
+
+float acceleration_cap = .1;
+float velocity_cap = .1;
+
+int verbose = 0;
+
+bool is_colliding(vec2 a, vec2 b) {
+
+    if(verbose)
+      printf("Boat one x: %f,Boat one y: %f,Boat two x: %f,Boat two y: %f\n", a.x, a.y, b.x, b.y);
+
+    if(((a.x + x_extension + firstOrderCollisionBuffer) > (b.x - x_extension)) && ((a.x - x_extension) < (b.x - x_extension))){
+      if(verbose)
+        printf("Right wall of a is inside of b\n");
+      return 1;
+    }
+    if(((a.x - x_extension - firstOrderCollisionBuffer) < (b.x + x_extension)) && ((a.x + x_extension) > (b.x + x_extension))){
+      if(verbose)
+        printf("Left wall of a is inside b");
+      return 1;
+    }
+    if(((a.y + y_extension + firstOrderCollisionBuffer) > (b.y - y_extension)) && ((a.y - y_extension) < (b.y - y_extension))){
+      if(verbose)
+        printf("Top wall of a is inside b");
+      return 1;
+    }
+    if(((a.y - y_extension - firstOrderCollisionBuffer) < (b.y + y_extension)) && ((a.y + y_extension) > (b.y + y_extension))){
+      if(verbose)
+        printf("Bottom wall of a is inside b");
+      return 1;
+    }
+    if((a.y == b.y) && (a.x == b.x)){
+      if(verbose)
+        printf("Right on top of each other, probably due to initalizing in the same place\n");
+      return 1;
+    }
+    return 0;
+}
+
+void draw_boat(SDL_Renderer* renderer, PiGameMap gm) {
+
+  SDL_SetRenderDrawColor(renderer, 0xCC, 0x00, 0x00, 0xFF);
+
+  int x1 = gm.merchants[0].coord_pos.x + x_extension * (float)cos(gm.merchants[0].orientation*pioveroneeighty);
+  int y1 = gm.merchants[0].coord_pos.y + y_extension * (float)sin(gm.merchants[0].orientation*pioveroneeighty);
+
+  int x2 = gm.merchants[0].coord_pos.x - x_extension * (float)cos(gm.merchants[0].orientation*pioveroneeighty);
+  int y2 = gm.merchants[0].coord_pos.y - y_extension * (float)sin(gm.merchants[0].orientation*pioveroneeighty);
+
+  SDL_RenderDrawLine(renderer, x1 * 2, y1 * 2, x2 * 2, y2 * 2);
+
+  SDL_SetRenderDrawColor(renderer, 0x00, 0xCC, 0x00, 0xFF);
+
+  int wx1 = x1 + (float)cos(gm.merchants[0].rudderRot*pioveroneeighty) * 5.0;
+  int wy1 = y1 + (float)sin(gm.merchants[0].rudderRot*pioveroneeighty) * 5.0;
+
+  int wx2 = x1 - (float)cos(gm.merchants[0].rudderRot*pioveroneeighty) * 5.0;
+  int wy2 = y1 - (float)sin(gm.merchants[0].rudderRot*pioveroneeighty) * 5.0;
+
+  SDL_RenderDrawLine(renderer, wx1 * 2, wy1 * 2, wx2 * 2, wy2 * 2);
+
+}
 
 //TODO factor in the delta thing to make this run framerate independent
 PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object, PiGameMap gm){
   /*********Apply Input**********/
-  int iter;
+  int current_boat;
 
-  for(iter = 0; iter<gm.merchants.size(); iter++) { //Cycle through every merchant
-    if(gm.merchants[iter].merchant_name == input_object["player_name"][0]){ //See if we have a match to the merchant name and the owner of the input
+  for(current_boat = 0; current_boat<gm.merchants.size(); current_boat++) { //Cycle through every merchant
+    if(gm.merchants[current_boat].merchant_name == input_object["player_name"][0]){ //See if we have a match to the merchant name and the owner of the input
       int i=0;
       while(i < input_object["keystrokes"].size()){ //While we still have a valid input in the input vector
         switch (input_object["keystrokes"][i][0]){ // Read the first letter of the string, which with UP DOWN LEFT RIGHT will be unique
           case 'U':
-            gm.merchants[iter].acceleration.x += acceleration_increase * (float)sin(gm.merchants[iter].rudderRot*pioveroneeighty);
-            gm.merchants[iter].acceleration.y += acceleration_increase * (float)cos(gm.merchants[iter].rudderRot*pioveroneeighty);
+            gm.merchants[current_boat].acceleration.x += acceleration_increase * (float)cos(gm.merchants[current_boat].orientation*pioveroneeighty);
+            gm.merchants[current_boat].acceleration.y += acceleration_increase * (float)sin(gm.merchants[current_boat].orientation*pioveroneeighty);
             break;
           case 'D':
-            gm.merchants[iter].acceleration.x -= acceleration_increase * (float)sin(gm.merchants[iter].rudderRot*pioveroneeighty);
-            gm.merchants[iter].acceleration.y -= acceleration_increase * (float)cos(gm.merchants[iter].rudderRot*pioveroneeighty);
+            gm.merchants[current_boat].acceleration.x -= acceleration_increase * (float)cos(gm.merchants[current_boat].orientation*pioveroneeighty);
+            gm.merchants[current_boat].acceleration.y -= acceleration_increase * (float)sin(gm.merchants[current_boat].orientation*pioveroneeighty);
             break;
           case 'L':
-            gm.merchants[iter].rudderRot -= turning_speed;
+            gm.merchants[current_boat].rudderRot -= turning_speed;
+
+            //I am aware this is bad practice
+            if(gm.merchants[current_boat].rudderRot < -30){
+              gm.merchants[current_boat].rudderRot = -30;
+            }
+            if(gm.merchants[current_boat].rudderRot > 30){
+              gm.merchants[current_boat].rudderRot = 30;
+            }
+
             break;
           case 'R':
-            gm.merchants[iter].rudderRot += turning_speed;
+            gm.merchants[current_boat].rudderRot += turning_speed;
+
+            //I am aware that this is bad practice
+            if(gm.merchants[current_boat].rudderRot < -30){
+              gm.merchants[current_boat].rudderRot = -30;
+            }
+            if(gm.merchants[current_boat].rudderRot > 30){
+              gm.merchants[current_boat].rudderRot = 30;
+            }
+
             break;
         }
         i++;
@@ -42,61 +124,80 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
 
   /********Update Game State*********/
 
-  for(iter = 0; iter<gm.merchants.size(); iter++) {
+  for(current_boat = 0; current_boat<gm.merchants.size(); current_boat++) {
 
-    float currStr = gm.mapTiles[gm.merchants[iter].position.x][gm.merchants[iter].position.y].currentStrength;
-    float windStr = gm.mapTiles[gm.merchants[iter].position.x][gm.merchants[iter].position.y].windStrength;
-    float windDirx = gm.mapTiles[gm.merchants[iter].position.x][gm.merchants[iter].position.y].windDirection.x;
-    float windDiry = gm.mapTiles[gm.merchants[iter].position.x][gm.merchants[iter].position.y].windDirection.y;
-    float currDiry = gm.mapTiles[gm.merchants[iter].position.x][gm.merchants[iter].position.y].currentDirection.y;
-    float currDirx = gm.mapTiles[gm.merchants[iter].position.x][gm.merchants[iter].position.y].currentDirection.x;
+    //Commented until I know how to get maptile
+    /*
+    float currStr = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentStrength;
+    float windStr = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windStrength;
+    float windDirx = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windDirection.x;
+    float windDiry = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windDirection.y;
+    float currDiry = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentDirection.y;
+    float currDirx = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentDirection.x;
 
-    gm.merchants[iter].acceleration.x += currStr * currDirx;
-    gm.merchants[iter].acceleration.y += currStr * currDiry;
+    gm.merchants[current_boat].acceleration.x += currStr * currDirx;
+    gm.merchants[current_boat].acceleration.y += currStr * currDiry;
 
-    gm.merchants[iter].acceleration.x += windStr * windDirx;
-    gm.merchants[iter].acceleration.y += windStr * windDiry;
+    gm.merchants[current_boat].acceleration.x += windStr * windDirx;
+    gm.merchants[current_boat].acceleration.y += windStr * windDiry;
+    */
 
-    gm.merchants[iter].orientation += gm.merchants[iter].rudderRot;
-    gm.merchants[iter].velocity.x += gm.merchants[iter].acceleration.x;
-    gm.merchants[iter].velocity.y += gm.merchants[iter].acceleration.y;
+    //Enforce acceleration caps:
+    if(gm.merchants[current_boat].acceleration.Length() > acceleration_cap){
+      gm.merchants[current_boat].acceleration = gm.merchants[current_boat].acceleration.Normalize();
+    }
+
+    gm.merchants[current_boat].orientation += (.01) * gm.merchants[current_boat].rudderRot;
+    gm.merchants[current_boat].velocity.x += gm.merchants[current_boat].acceleration.x;
+    gm.merchants[current_boat].velocity.y += gm.merchants[current_boat].acceleration.y;
+
+    if(gm.merchants[current_boat].velocity.Length() > acceleration_cap){
+      gm.merchants[current_boat].velocity = gm.merchants[current_boat].velocity.Normalize();
+    }
 
     //Updating position, we also update the map tiles
-    if(iter == 0){
-      gm.mapTiles[gm.merchants[iter].position.x][gm.merchants[iter].position.y].is_ship = 0;
+    /*Again getting rid of until jigar says so
+    if(current_boat == 0){
+      gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].is_ship = 0;
     }
-    gm.merchants[iter].position.x += gm.merchants[iter].velocity.x;
-    gm.merchants[iter].position.y += gm.merchants[iter].velocity.y;
-    if(iter == 0)
-      gm.mapTiles[gm.merchants[iter].position.x][gm.merchants[iter].position.y].is_ship = 1;
+    */
+    gm.merchants[current_boat].coord_pos.x += gm.merchants[current_boat].velocity.x;
+    gm.merchants[current_boat].coord_pos.y += gm.merchants[current_boat].velocity.y;
+    /* Again getting rid of until jigar says so
+    if(current_boat == 0)
+      gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].is_ship = 1;
+    */
 
     //Normal slowdown of acceleration
-    if(gm.merchants[iter].acceleration.x > 0)
-      gm.merchants[iter].acceleration.x -= acceleration_normal_slowdown_factor;
-    else{
-      gm.merchants[iter].acceleration.x += acceleration_normal_slowdown_factor;
+    if(gm.merchants[current_boat].acceleration.x > 0)
+      gm.merchants[current_boat].acceleration.x -= acceleration_normal_slowdown_factor;
+    else if(gm.merchants[current_boat].acceleration.x < 0){
+      gm.merchants[current_boat].acceleration.x += acceleration_normal_slowdown_factor;
     }
-    if(gm.merchants[iter].acceleration.y > 0)
-      gm.merchants[iter].acceleration.y -= acceleration_normal_slowdown_factor;
-    else{
-      gm.merchants[iter].acceleration.y += acceleration_normal_slowdown_factor;
+    if(gm.merchants[current_boat].acceleration.y > 0)
+      gm.merchants[current_boat].acceleration.y -= acceleration_normal_slowdown_factor;
+    else if(gm.merchants[current_boat].acceleration.y < 0){
+      gm.merchants[current_boat].acceleration.y += acceleration_normal_slowdown_factor;
     }
 
     //Collision Detection.  This is barebones and I am sure box2D will do something better. This is of n^2 complexity so boohoo
-    int jter;
-    for(jter = 0; jter<gm.merchants.size(); jter++) {
-      if(gm.merchants[iter].merchant_name == gm.merchants[jter].merchant_name){ // If we are checking collision with ourself
+    int boat_to_compare;
+    for(boat_to_compare = 0; boat_to_compare<gm.merchants.size(); boat_to_compare++) {
+      //printf("************************************Check for boat %d against boat %d\n", current_boat, boat_to_compare);
+      if(current_boat==boat_to_compare){ // If we are checking collision with ourself
+        //printf("This is a check with myself\n");
         continue;
       }
       else{ //Checking collision with another ship
-        if((fabs(gm.merchants[iter].position.x - gm.merchants[jter].position.x) < firstOrderCollisionBuffer) && 
-           (fabs(gm.merchants[iter].position.y - gm.merchants[jter].position.y) < firstOrderCollisionBuffer)){  // If this passes, do more granular collision.  This is barebones so I'll just treat this as a collision.
+        if(is_colliding(gm.merchants[current_boat].coord_pos, gm.merchants[boat_to_compare].coord_pos)){
+          // If this passes, do more granular collision.  This is barebones so I'll just treat this as a collision.
           //I am just going to reverse the accelerations for both ships to see if that fixes it.  I can do something more special later.
-          printf("Collided\n");
-          gm.merchants[iter].acceleration.x *= -1;
-          gm.merchants[iter].acceleration.y *= -1;
-          gm.merchants[jter].acceleration.x *= -1;
-          gm.merchants[jter].acceleration.y *= -1;
+          if(verbose)
+            printf("Collided\n");
+          gm.merchants[current_boat].acceleration.x *= -1;
+          gm.merchants[current_boat].acceleration.y *= -1;
+          gm.merchants[boat_to_compare].acceleration.x *= -1;
+          gm.merchants[boat_to_compare].acceleration.y *= -1;
         }
         else{ // Not close to each other so pass.
           continue;
@@ -112,19 +213,64 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
 }
 
 void print_boat(PiGameMap gmap){
-  float posx = gmap.merchants[0].position.x;
-  float posy = gmap.merchants[0].position.y;
+  float posx = gmap.merchants[0].coord_pos.x;
+  float posy = gmap.merchants[0].coord_pos.y;
   float velx = gmap.merchants[0].velocity.x;
   float vely = gmap.merchants[0].velocity.y;
   float accx = gmap.merchants[0].acceleration.x;
   float accy = gmap.merchants[0].acceleration.y;
+  float orient = gmap.merchants[0].orientation;
+  float rot = gmap.merchants[0].rudderRot;
 
-  printf("Name: %s\nPosition %f,%f\nVelocity %f,%f\nAcceleration %f,%f\n", gmap.merchants[0].merchant_name.c_str(), posx, posy, velx, vely, accx, accy);
+  // if(verbose)
+    printf("Name: %s\nPosition %f,%f\nVelocity %f,%f\nAcceleration %f,%f\nOrientation: %f\n, rudderRot: %f\n", gmap.merchants[0].merchant_name.c_str(), posx, posy, velx, vely, accx, accy, orient,rot);
 }
 
 int main(int argc, char* argv[]){
+  if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+      printf("Could not initialize SDL: %s\n", SDL_GetError());
+      exit(1);
+  }
+
+  SDL_Window* window;
+  SDL_Renderer* renderer;
+
+  if (SDL_Init( SDL_INIT_VIDEO ) < 0) {
+      printf("SDL could not initialize - SDL Error: %s\n", SDL_GetError());
+      exit(1);
+  }
+  /** Create window */
+  window = SDL_CreateWindow("test_driving",
+                             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                             1024 * 1, 768 * 1, SDL_WINDOW_SHOWN);
+  if (window == NULL) {
+      printf("Window could not be created - SDL Error: %s\n", SDL_GetError());
+      exit(1);
+  }
+
+  /** Create renderer for window */
+  renderer = SDL_CreateRenderer(window, -1,
+                                              SDL_RENDERER_ACCELERATED);
+  if (renderer == NULL) {
+      printf("Renderer could not be created - SDL Error: %s\n", SDL_GetError());
+      exit(1);
+  }
+  /** Initialize renderer color to white */
+  SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
+  struct timeval start, current;
+
+  gettimeofday(&start, NULL);
+  gettimeofday(&current, NULL);
+
+  SDL_Event e;
+
+  unordered_set<int> keysDown;
+  unordered_set<char> buttonsDown;
+
+  bool quit = false;
+
   PiGameMap map = PiGameMap::createRandomMap();
-  map.print_game_map();
 
   map.merchants[0].merchant_name = "our_guy";
 
@@ -137,20 +283,92 @@ int main(int argc, char* argv[]){
   vector<string> msg;
   msg.push_back("our_guy");
   vector<string> content;
-  content.push_back("UP");
-  content.push_back("UP");
-  content.push_back("UP");
-  content.push_back("UP");
   input_object["player_name"] = msg;
-  input_object["keystrokes"] = content;
 
-  // printf("%s\n", input_object["player_name"][0].c_str());
+  while(!quit) {
+    while (SDL_PollEvent(&e) != 0) {
+        /* user requests QUIT */
+        if (e.type == SDL_QUIT) {
+            quit = true;
+        } else if (e.type == SDL_KEYDOWN) {
+            keysDown.insert(e.key.keysym.sym);
+        } else if (e.type == SDL_KEYUP) {
+            keysDown.erase(e.key.keysym.sym);
+        } else if (e.type == SDL_MOUSEBUTTONDOWN) {
+            buttonsDown.insert(e.button.button);
+        } else if (e.type == SDL_MOUSEBUTTONUP) {
+            buttonsDown.erase(e.button.button);
+        }
+    }
 
-  printf("\n\n\n");
+    /** update() block for keypresses */
+    if (keysDown.count(SDLK_q)) {
+        quit = true;
+    }
 
-  map = compute_gamestate(input_object, map);
+    // TODO make sure the angles don't just keep increasing infinitely
+    if (keysDown.count(SDLK_LEFT)) {
+      content.push_back("LEFT");
+      input_object["keystrokes"] = content;
+      map = compute_gamestate(input_object, map);
+      if(verbose)
+        map.print_game_map();
+      print_boat(map);
+      if(verbose)
+        printf("\n\n\n");
+    }
+    if (keysDown.count(SDLK_RIGHT)) {
+      content.push_back("RIGHT");
+      input_object["keystrokes"] = content;
+      map = compute_gamestate(input_object, map);
+      if(verbose)
+        map.print_game_map();
+      print_boat(map);
+      if(verbose)
+        printf("\n\n\n");
+    }
 
-  map.print_game_map();
+    if (keysDown.count(SDLK_UP)) {
+      content.push_back("UP");
+      input_object["keystrokes"] = content;
+      map = compute_gamestate(input_object, map);
+      if(verbose)
+        map.print_game_map();
+      print_boat(map);
+      if(verbose)
+        printf("\n\n\n");
+    }
+
+    if (keysDown.count(SDLK_DOWN)) {
+      content.push_back("DOWN");
+      input_object["keystrokes"] = content;
+      map = compute_gamestate(input_object, map);
+      if(verbose)
+        map.print_game_map();
+      print_boat(map);
+      if(verbose)
+        printf("\n\n\n");
+    }
+
+      /** Clear screen */
+    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_RenderClear(renderer);
+
+    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
+
+    SDL_Rect wholeRect = {25 * 1, 25 * 1, (1024 - 50) * 1, (768 - 50) * 1};
+    SDL_RenderDrawRect(renderer, &wholeRect);
+
+    draw_boat(renderer,map);
+
+    /** Update screen */
+    SDL_RenderPresent(renderer);
+
+    /** Update the surface */
+    SDL_UpdateWindowSurface(window);
+
+      // usleep(3000);
+  }
 
   return 0;
 }

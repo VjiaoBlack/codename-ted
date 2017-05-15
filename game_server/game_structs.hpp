@@ -32,6 +32,11 @@ public:
     vec2(float a, float b) : x(a), y(b) {};
     // Methods
     void print_vec2();
+
+    float Length();
+ 
+    // Normalizes the vector
+    vec2 Normalize();
 };
 
 class vec3 {

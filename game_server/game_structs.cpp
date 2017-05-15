@@ -13,6 +13,7 @@
 #include <vector>
 #include <iostream>
 #include <stdlib.h>
+#include <math.h>
 
 using namespace std;
 
@@ -21,6 +22,28 @@ using namespace std;
 void vec2::print_vec2() {
     cout << "{" << x << ", " << y << "}\n"; 
 } 
+
+float vec2::Length(){
+    return sqrt(x * x + y * y);
+}
+ 
+// Normalizes the vector
+vec2 vec2::Normalize(){
+    float norm_x;
+    float norm_y;
+
+    float length = this->Length();
+ 
+    if(length != 0){
+        norm_x = x/length;
+        norm_y = y/length;
+    }
+
+    vec2 vector = vec2(norm_x, norm_y);
+
+    return vector;
+}
+
 
 void vec3::print_vec3() {
     cout << "{" << x << ", " << y << ", " << z <<  "}\n"; 
