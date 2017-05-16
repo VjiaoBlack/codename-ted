@@ -578,7 +578,7 @@ void BasicApp::setupTerrain(Ogre::Light* light) {
     mTerrainGlobals = OGRE_NEW Ogre::TerrainGlobalOptions();
     mTerrainGroup = OGRE_NEW Ogre::TerrainGroup(
         mSceneMgr,
-        Ogre::Terrain::ALIGN_X_Z, 513, 12000.0);
+        Ogre::Terrain::ALIGN_X_Z, 513, 48000.0);
     mTerrainGroup->setFilenameConvention(Ogre::String("terrain"),Ogre::String("dat"));
     mTerrainGroup->setOrigin(Ogre::Vector3::ZERO);
  
@@ -648,7 +648,7 @@ void BasicApp::initBlendMaps(Ogre::Terrain* terrain) {
             blendMap1->convertImageToTerrainSpace(x, y, &tx, &ty);
             Ogre::Real height = terrain->getHeightAtTerrainPosition(tx, ty);
 
-            *blend2++ = Ogre::Math::Clamp((50.0f + 770.0f - height) / 80.0f, 0.0f, 1.0f); //dirt;
+            *blend2++ = Ogre::Math::Clamp((50.0f + 800.0f - height) / 80.0f, 0.0f, 1.0f); //dirt;
             *blend1++ = Ogre::Math::Clamp((50.0f + 940.0f - height) / 100.0f, 0.0f, 1.0f); //grass; 
         }
     }
@@ -668,26 +668,26 @@ void BasicApp::configureTerrainDefaults(Ogre::Light* light) {
 
     Ogre::Terrain::ImportData& importData = mTerrainGroup->getDefaultImportSettings();
     importData.terrainSize = 513;
-    importData.worldSize = 12000.0f;
+    importData.worldSize = 48000.0f;
     importData.inputScale = 2000;
     importData.minBatchSize = 33; //33
     importData.maxBatchSize = 65; // 65
 
     importData.layerList.resize(3);
 
-    importData.layerList[2].worldSize = 10;
+    importData.layerList[2].worldSize = 50;
     importData.layerList[2].textureNames.push_back(
         "dirt_grayrocky_diffusespecular.dds");
     importData.layerList[2].textureNames.push_back(
         "dirt_grayrocky_normalheight.dds");
 
-    importData.layerList[0].worldSize = 50;
+    importData.layerList[0].worldSize = 250;
     importData.layerList[0].textureNames.push_back(
         "growth_weirdfungus-03_diffusespecular.dds");
     importData.layerList[0].textureNames.push_back(
         "growth_weirdfungus-03_normalheight.dds");
 
-    importData.layerList[1].worldSize = 16;
+    importData.layerList[1].worldSize = 80;
     importData.layerList[1].textureNames.push_back(
         "grass_green-01_diffusespecular.dds");
     importData.layerList[1].textureNames.push_back(
