@@ -20,9 +20,9 @@ void UDPClient::send_keystrokes(std::vector<int> keystrokes, int ship_id) {
     socket_.send_to(boost::asio::buffer(serialized_keystrokes, strlen(serialized_keystrokes)), receiver_endpoint_);
 }
 
-void UDPClient::get_gamestate() {
+PiGameState UDPClient::get_gamestate() {
     size_t gamestate_len = UDPClient::send("gamestate");
     std::string serialized_gamestate(recv_buf.data(), gamestate_len);
-    std::cout << serialized_gamestate << std::endl;
-    // return deserilize_gamestate(serialized_gamestate, false);
+    // std::cout << serialized_gamestate << std::endl;
+    return deserialize_gamestate(serialized_gamestate, false);
 }

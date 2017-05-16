@@ -155,7 +155,7 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
     nsf /= 1000000000.0f;
 
     // whoo hoo i figured out quaternions yay neverforgetti pls
-    mBikeObject->setPosition(Ogre::Vector3(mBike.x,  -10.0f + mHydrax->getHeigth(Ogre::Vector2(mBike.x, mBike.y)) + (2.0f * sin(nsf * 2.0f)), mBike.y));
+    mBikeObject->setPosition(Ogre::Vector3(mBike.x,  -10.0f * 0 + 100.0f + mHydrax->getHeigth(Ogre::Vector2(mBike.x, mBike.y)) + (2.0f * sin(nsf * 2.0f)), mBike.y));
 
     // fake bob
     // TODO: create REAL bob physics WOW
@@ -168,7 +168,7 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
 
     for (int i = 0; i < mGameState.map.pirates.size(); i++) {
         mOtherPirates[i]->setPosition(Ogre::Vector3(mGameState.map.pirates[i].position.x,  
-                                                    -10.0f + mHydrax->getHeigth(Ogre::Vector2(mGameState.map.pirates[i].position.x,
+                                                    -10.0f * 0 + 100.0f + mHydrax->getHeigth(Ogre::Vector2(mGameState.map.pirates[i].position.x,
                                                                                               mGameState.map.pirates[i].position.y)) + (2.0f * sin((nsf + i * 100.0f) * 2.0f)),
                                                     mGameState.map.pirates[i].position.y));
 
@@ -179,19 +179,13 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
                 (double) 0.05f * cos((nsf + i * 100.0f) * 2.0f) * cos(3.14f / 2.0f + 0.0f / 2.0f)));
     }
 
-    // quikfix for water color circle bug weird
-    Ogre::Vector3 camDir = mCamera->getDirection();
-    camDir.y = -camDir.y;
-    camDir.x = -camDir.x;
-    camDir.z = -camDir.z;
+    // TODO quikfix for water color circle bug weird
+    // Ogre::Vector3 camDir = mCamera->getDirection();
+    // camDir.y = -camDir.y;
+    // camDir.x = -camDir.x;
+    // camDir.z = -camDir.z;
 
-    mHydrax->setWaterColor(mSkyX->getAtmosphereManager()->getColorAt(camDir));
-
-    // mTerrainGroup->getTerrain(0,0)->dirty();
-    // mTerrainGroup->getTerrain(0,0)->update();
-
-    // mTerrainGroup->getTerrain(0,0)->dirtyLightmap();
-    // mTerrainGroup->getTerrain(0,0)->updateDerivedData();
+    // mHydrax->setWaterColor(mSkyX->getAtmosphereManager()->getColorAt(camDir));
 
     float lastFPS = mWindow->getLastFPS();
     terrainLabel->setText("FPS: " + to_string(lastFPS));
@@ -364,31 +358,36 @@ void BasicApp::createCamera() {
 }
  
 void BasicApp::createScene() {
-    mSceneMgr->setAmbientLight(Ogre::ColourValue(0,0,0));
-    mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_MODULATIVE);
-    // mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_NONE);
-
     mCamera->setPosition(40, 900, 580);
     mCamera->pitch(Ogre::Degree(-30));
     mCamera->yaw(Ogre::Degree(-45));
     mCamera->setNearClipDistance(0.1);
     mCamera->setFarClipDistance(50000);
 
+    mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5,0.5,0.5));
+    // mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_NONE);
+
+
     // mCamera->setPolygonMode(Ogre::PM_WIREFRAME);
 
-    // Create SkyX
+    /**
+     * Create SkyX
+     */
     mBasicController = new SkyX::BasicController();
     mSkyX = new SkyX::SkyX(mSceneMgr, mBasicController);
     mSkyX->create();
 
     mSkyX->getVCloudsManager()->getVClouds()->setDistanceFallingParams(Ogre::Vector2(2,-1));
-
+    
     // Register SkyX listeners
     mRoot->addFrameListener(mSkyX);
     mWindow->addListener(mSkyX);
 
     setPreset(mPresets[mCurrentPreset], mCamera);
 
+    /** 
+     * Setup Terrain
+     */
     Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
  
     Ogre::Light* light = mSceneMgr->createLight("SceneLight");
@@ -398,41 +397,29 @@ void BasicApp::createScene() {
                             mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
                             mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
     light->setSpecularColour(Ogre::ColourValue(0.2, 0.18, 0.18));
+    // light->setCastShadows(true);
 
-    light->setCastShadows(true);
+    // mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_MODULATIVE);
+
 
     setupTerrain(light);
- 
+
+
+
+
+    /**
+     * Setup CEGUI
+     */
     CEGUI::WindowManager& wmgr = CEGUI::WindowManager::getSingleton();
     CEGUI::Window* rootWin = wmgr.loadLayoutFromFile("test.layout");
  
     CEGUI::System::getSingleton().getDefaultGUIContext().setRootWindow(rootWin);
 
-    /** Create the "boat" we will be using - a fish. */
-    Ogre::Entity* ent = mSceneMgr->createEntity("Cube.010.mesh");
- 
-    mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    mCurObject->setPosition(Ogre::Vector3(0.0, 800.0, 0.0));
-    mCurObject->setScale(30.0, 30.0, 30.0);
-    mCurObject->attachObject(ent);
-
-    mBikeObject = mCurObject;
-
-    for (int i = 0; i < mGameState.map.pirates.size(); i++) {
-        Ogre::Entity* ent = mSceneMgr->createEntity("Cube.010.mesh");
-
-        mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-        mCurObject->setPosition(Ogre::Vector3(mGameState.map.pirates[i].position.x, 800.0, mGameState.map.pirates[i].position.y));
-        mCurObject->setScale(30.0, 30.0, 30.0);
-        mCurObject->attachObject(ent);
-
-        mOtherPirates[i] = mCurObject;
-    }
-
-    // Create Hydrax object
+    /**
+     * Setup HydraX
+     */
     mHydrax = new Hydrax::Hydrax(mSceneMgr, mCamera, mWindow->getViewport(0));
 
-    // Create our projected grid module  
     Hydrax::Module::ProjectedGrid *mModule 
         = new Hydrax::Module::ProjectedGrid(// Hydrax parent pointer
                                             mHydrax,
@@ -445,40 +432,52 @@ void BasicApp::createScene() {
                                             // Projected grid options
                                             Hydrax::Module::ProjectedGrid::Options(/*264 /*Generic one*/));
 
-    // Set our module
     mHydrax->setModule(static_cast<Hydrax::Module::Module*>(mModule));
-
-    // Load all parameters from config file
-    // Remarks: The config file must be in Hydrax resource group.
-    // All parameters can be set/updated directly by code(Like previous versions),
-    // but due to the high number of customizable parameters, since 0.4 version, Hydrax allows save/load config files.
     mHydrax->loadCfg("HydraxDemo.hdx");
-
-    // Create water
     mHydrax->create();
-
     mHydrax->getMaterialManager()->addDepthTechnique(
         mTerrainGroup->getTerrain(0, 0)->getMaterial()
         ->createTechnique());
-
-    mTerrainGroup->getTerrain(0, 0)->getMaterial()->setReceiveShadows(false);
-
-    // Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
-    mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
-    mSceneMgr->getLight("SceneLight")->setDiffuseColour(mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
-                                                        mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
-                                                        mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
-
-    mHydrax->setSunPosition(mSkyX->getController()->getSunDirection()*mCamera->getFarClipDistance()*0.5f);
+    
+    // mHydrax->getMaterialManager()->addDepthTechnique( 
+    //     static_cast<Ogre::MaterialPtr>(Ogre::MaterialManager::getSingleton().getByName("Island")) 
+    //     ->createTechnique());
+// 
+    mHydrax->setSunPosition(mSkyX->getController()->getSunDirection()*mCamera->getFarClipDistance()*50.0f);
     mHydrax->setSunColor(mSkyX->getVCloudsManager()->getVClouds()->getSunColor());
 
-    // quikfix for water color circle bug weird
-    Ogre::Vector3 camDir = mCamera->getDirection();
-    camDir.y = -camDir.y;
-    camDir.x = -camDir.x;
-    camDir.z = -camDir.z;
+    // TODO: quikfix for water color circle bug weird
+    // Ogre::Vector3 camDir = mCamera->getDirection();
+    // camDir.y = -camDir.y;
+    // camDir.x = -camDir.x;
+    // camDir.z = -camDir.z;
+    // mHydrax->setWaterColor(mSkyX->getAtmosphereManager()->getColorAt(camDir));
 
-    mHydrax->setWaterColor(mSkyX->getAtmosphereManager()->getColorAt(camDir));
+    /**
+     * Setup Entities
+     */
+    Ogre::Entity* ent = mSceneMgr->createEntity("cube.mesh");
+    ent->setMaterialName("Examples/CelShading");
+ 
+    mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    mCurObject->setPosition(Ogre::Vector3(0.0, 800.0, 0.0));
+    mCurObject->setScale(1.000, 1.000, 1.000);
+    mCurObject->attachObject(ent);
+
+    mBikeObject = mCurObject;
+
+    for (int i = 0; i < mGameState.map.pirates.size(); i++) {
+        Ogre::Entity* ent = mSceneMgr->createEntity("cube.mesh");
+
+        mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+        mCurObject->setPosition(Ogre::Vector3(mGameState.map.pirates[i].position.x, 800.0, mGameState.map.pirates[i].position.y));
+        mCurObject->setScale(1.000, 1.000, 1.000);
+        mCurObject->attachObject(ent);
+
+        mOtherPirates[i] = mCurObject;
+    }
+
+
 }
  
 void BasicApp::destroyScene() {
@@ -580,9 +579,7 @@ void BasicApp::setupTerrain(Ogre::Light* light) {
     mTerrainGroup = OGRE_NEW Ogre::TerrainGroup(
         mSceneMgr,
         Ogre::Terrain::ALIGN_X_Z, 513, 12000.0);
-    mTerrainGroup->setFilenameConvention(
-        Ogre::String("terrain"),
-        Ogre::String("dat"));
+    mTerrainGroup->setFilenameConvention(Ogre::String("terrain"),Ogre::String("dat"));
     mTerrainGroup->setOrigin(Ogre::Vector3::ZERO);
  
     configureTerrainDefaults(light);
@@ -604,7 +601,8 @@ void BasicApp::setupTerrain(Ogre::Light* light) {
  
     mTerrainGroup->freeTemporaryResources();
 
-    mTerrainGroup->setAutoUpdateLod(NULL);
+    // Toggle LOD updating
+    // mTerrainGroup->setAutoUpdateLod(NULL);
 
 }
  
@@ -663,15 +661,11 @@ void BasicApp::initBlendMaps(Ogre::Terrain* terrain) {
 void BasicApp::configureTerrainDefaults(Ogre::Light* light) {
     mTerrainGlobals->setMaxPixelError(8);
     mTerrainGlobals->setCompositeMapDistance(3000);
-    // mTerrainGlobals->setLightMapDirection(light->getDerivedDirection());
+
+    mTerrainGlobals->setLightMapDirection(light->getDerivedDirection());
     mTerrainGlobals->setCompositeMapAmbient(mSceneMgr->getAmbientLight());
-    // mTerrainGlobals->setCompositeMapDiffuse(light->getDiffuseColour());
-    mTerrainGlobals->setLightMapDirection(mSceneMgr->getLight("SceneLight")->getDerivedDirection());
-    mTerrainGlobals->setCompositeMapDiffuse(mSceneMgr->getLight("SceneLight")->getDiffuseColour());
+    mTerrainGlobals->setCompositeMapDiffuse(light->getDiffuseColour());
 
-
-
- 
     Ogre::Terrain::ImportData& importData = mTerrainGroup->getDefaultImportSettings();
     importData.terrainSize = 513;
     importData.worldSize = 12000.0f;
@@ -679,21 +673,21 @@ void BasicApp::configureTerrainDefaults(Ogre::Light* light) {
     importData.minBatchSize = 33; //33
     importData.maxBatchSize = 65; // 65
 
-    importData.layerList.resize(6);
+    importData.layerList.resize(3);
 
-    importData.layerList[2].worldSize = 50;
+    importData.layerList[2].worldSize = 10;
     importData.layerList[2].textureNames.push_back(
         "dirt_grayrocky_diffusespecular.dds");
     importData.layerList[2].textureNames.push_back(
         "dirt_grayrocky_normalheight.dds");
 
-    importData.layerList[0].worldSize = 250;
+    importData.layerList[0].worldSize = 50;
     importData.layerList[0].textureNames.push_back(
         "growth_weirdfungus-03_diffusespecular.dds");
     importData.layerList[0].textureNames.push_back(
         "growth_weirdfungus-03_normalheight.dds");
 
-    importData.layerList[1].worldSize = 80;
+    importData.layerList[1].worldSize = 16;
     importData.layerList[1].textureNames.push_back(
         "grass_green-01_diffusespecular.dds");
     importData.layerList[1].textureNames.push_back(

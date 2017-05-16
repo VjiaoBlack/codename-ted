@@ -10,6 +10,7 @@ set (CMAKE_CXX_STANDARD 11)
 project(OgreApp)
 
 include(cmake/FindCEGUI.cmake)
+
  
 set(CMAKE_MODULE_PATH "/home/vjiaoblack/Classes/CMSC-23800/codename-ted/cmake/;${CMAKE_MODULE_PATH}")
 
@@ -57,6 +58,11 @@ endif()
 
 find_package(Boost QUIET)
 
+
+find_package(CEGUI REQUIRED)
+if (NOT CEGUI_FOUND)
+	message(SEND_ERROR "Failed to find CEGUI.")
+endif()
 
 link_directories( /usr/lib )
 link_directories( /home/lib )
@@ -191,11 +197,14 @@ include_directories(
 	${OGRE_Overlay_INCLUDE_DIRS}
     ${CEGUI_INCLUDE_DIRS})
 
+include_directories(/usr/local/include/cegui-0/CEGUI/)
+
  
 add_executable(OgreApp WIN32 ${HDRS} ${SRCS})
  
 set_target_properties(OgreApp PROPERTIES DEBUG_POSTFIX _d)
-find_package(CEGUI REQUIRED OGRE)
+
+
  
 target_link_libraries(
   OgreApp
