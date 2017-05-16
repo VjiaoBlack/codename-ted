@@ -17,6 +17,66 @@ float velocity_cap = .1;
 
 int verbose = 0;
 
+PiGameMap update_position(PiGameMap gm, int current_boat){
+
+  //Commented until I know how to get maptile
+  /*
+  float currStr = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentStrength;
+  float windStr = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windStrength;
+  float windDirx = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windDirection.x;
+  float windDiry = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windDirection.y;
+  float currDiry = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentDirection.y;
+  float currDirx = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentDirection.x;
+
+  gm.merchants[current_boat].acceleration.x += currStr * currDirx;
+  gm.merchants[current_boat].acceleration.y += currStr * currDiry;
+
+  gm.merchants[current_boat].acceleration.x += windStr * windDirx;
+  gm.merchants[current_boat].acceleration.y += windStr * windDiry;
+  */
+
+  //Enforce acceleration caps:
+  if(gm.merchants[current_boat].acceleration.Length() > acceleration_cap){
+    gm.merchants[current_boat].acceleration = gm.merchants[current_boat].acceleration.Normalize();
+  }
+
+  gm.merchants[current_boat].orientation += (.01) * gm.merchants[current_boat].rudderRot;
+  gm.merchants[current_boat].velocity.x += gm.merchants[current_boat].acceleration.x;
+  gm.merchants[current_boat].velocity.y += gm.merchants[current_boat].acceleration.y;
+
+  if(gm.merchants[current_boat].velocity.Length() > acceleration_cap){
+    gm.merchants[current_boat].velocity = gm.merchants[current_boat].velocity.Normalize();
+  }
+
+  //Updating position, we also update the map tiles
+  /*Again getting rid of until jigar says so
+  if(current_boat == 0){
+    gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].is_ship = 0;
+  }
+  */
+
+  gm.merchants[current_boat].coord_pos.x += gm.merchants[current_boat].velocity.x;
+  gm.merchants[current_boat].coord_pos.y += gm.merchants[current_boat].velocity.y;
+  /* Again getting rid of until jigar says so
+  if(current_boat == 0)
+    gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].is_ship = 1;
+  */
+
+  //Normal slowdown of acceleration
+  if(gm.merchants[current_boat].acceleration.x > 0)
+    gm.merchants[current_boat].acceleration.x -= acceleration_normal_slowdown_factor;
+  else if(gm.merchants[current_boat].acceleration.x < 0){
+    gm.merchants[current_boat].acceleration.x += acceleration_normal_slowdown_factor;
+  }
+  if(gm.merchants[current_boat].acceleration.y > 0)
+    gm.merchants[current_boat].acceleration.y -= acceleration_normal_slowdown_factor;
+  else if(gm.merchants[current_boat].acceleration.y < 0){
+    gm.merchants[current_boat].acceleration.y += acceleration_normal_slowdown_factor;
+  }
+
+  return gm;
+}
+
 bool is_colliding(vec2 a, vec2 b) {
 
     if(verbose)
@@ -126,59 +186,7 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
 
   for(current_boat = 0; current_boat<gm.merchants.size(); current_boat++) {
 
-    //Commented until I know how to get maptile
-    /*
-    float currStr = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentStrength;
-    float windStr = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windStrength;
-    float windDirx = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windDirection.x;
-    float windDiry = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windDirection.y;
-    float currDiry = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentDirection.y;
-    float currDirx = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentDirection.x;
-
-    gm.merchants[current_boat].acceleration.x += currStr * currDirx;
-    gm.merchants[current_boat].acceleration.y += currStr * currDiry;
-
-    gm.merchants[current_boat].acceleration.x += windStr * windDirx;
-    gm.merchants[current_boat].acceleration.y += windStr * windDiry;
-    */
-
-    //Enforce acceleration caps:
-    if(gm.merchants[current_boat].acceleration.Length() > acceleration_cap){
-      gm.merchants[current_boat].acceleration = gm.merchants[current_boat].acceleration.Normalize();
-    }
-
-    gm.merchants[current_boat].orientation += (.01) * gm.merchants[current_boat].rudderRot;
-    gm.merchants[current_boat].velocity.x += gm.merchants[current_boat].acceleration.x;
-    gm.merchants[current_boat].velocity.y += gm.merchants[current_boat].acceleration.y;
-
-    if(gm.merchants[current_boat].velocity.Length() > acceleration_cap){
-      gm.merchants[current_boat].velocity = gm.merchants[current_boat].velocity.Normalize();
-    }
-
-    //Updating position, we also update the map tiles
-    /*Again getting rid of until jigar says so
-    if(current_boat == 0){
-      gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].is_ship = 0;
-    }
-    */
-    gm.merchants[current_boat].coord_pos.x += gm.merchants[current_boat].velocity.x;
-    gm.merchants[current_boat].coord_pos.y += gm.merchants[current_boat].velocity.y;
-    /* Again getting rid of until jigar says so
-    if(current_boat == 0)
-      gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].is_ship = 1;
-    */
-
-    //Normal slowdown of acceleration
-    if(gm.merchants[current_boat].acceleration.x > 0)
-      gm.merchants[current_boat].acceleration.x -= acceleration_normal_slowdown_factor;
-    else if(gm.merchants[current_boat].acceleration.x < 0){
-      gm.merchants[current_boat].acceleration.x += acceleration_normal_slowdown_factor;
-    }
-    if(gm.merchants[current_boat].acceleration.y > 0)
-      gm.merchants[current_boat].acceleration.y -= acceleration_normal_slowdown_factor;
-    else if(gm.merchants[current_boat].acceleration.y < 0){
-      gm.merchants[current_boat].acceleration.y += acceleration_normal_slowdown_factor;
-    }
+    gm = update_position(gm, current_boat);
 
     //Collision Detection.  This is barebones and I am sure box2D will do something better. This is of n^2 complexity so boohoo
     int boat_to_compare;
@@ -204,11 +212,8 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
         }
       }
     }
-
     //TODO collision with land
-
   }
-
   return gm;
 }
 
