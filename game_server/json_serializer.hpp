@@ -3,7 +3,7 @@
  *
  * David Woldenberg
  *
- * functions to serialize/deserilize game state via JSON/maps
+ * functions to serialize/deserialize game state via JSON/maps
  */
 
 #include <stdlib.h>
@@ -34,7 +34,7 @@ class keystrokes_obj {
 		}
 };
 
-keystrokes_obj deserilize_keystrokes(string JSON);
+keystrokes_obj deserialize_keystrokes(string JSON);
 
 string serialize_keystrokes(keystrokes_obj ks);
 

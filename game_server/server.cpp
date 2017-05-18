@@ -14,6 +14,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/asio.hpp>
 #include "json_serializer.hpp"
+#include "../physics_ck/physics_tryout.hpp"
 
 
 using boost::asio::ip::udp;
@@ -58,6 +59,26 @@ private:
                                                   boost::asio::placeholders::error,
                                                   boost::asio::placeholders::bytes_transferred));
             } else {
+                // We've got some keystrokes!
+                keystrokes_obj ks = deserialize_keystrokes(incoming_message);
+                unordered_map<string, vector<string> > input_object;
+                vector<string> player;
+                vector<string> keystrokes;
+                vector<string> raw_strokes;
+                raw_strokes.push_back("U");
+                raw_strokes.push_back("D");
+                raw_strokes.push_back("L");
+                raw_strokes.push_back("R");
+                player.push_back("victor");
+                input_object["player_name"] = player;
+
+                for (int i = 0; i < ks.keystrokes.size(); ++i) {
+                    keystrokes.push_back(raw_strokes[ks.keystrokes[i]]);
+                }
+
+                input_object["keystrokes"] = keystrokes;
+
+                currentGameState_.map = compute_gamestate(input_object, currentGameState_.map);
                 std::cout << incoming_message << std::endl;
             }
 
@@ -73,7 +94,7 @@ private:
     udp::socket socket_;
     udp::endpoint remote_endpoint_;
     boost::array<char, MAX_RECV_LENGTH> recv_buffer_;
-   PiGameState currentGameState_;
+    PiGameState currentGameState_;
 };
 
 int main(int argc, char *argv[1]) {

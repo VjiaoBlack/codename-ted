@@ -17,5 +17,5 @@
 using namespace std;
 using namespace std::chrono;
 
-PiGameState compute_gamestate(unordered_map<string, vector<string> > input_object, PiGameState gameState);
+PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object, PiGameMap gm);
 void print_boat(PiGameMap gmap);
