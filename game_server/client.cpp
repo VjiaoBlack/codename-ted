@@ -1,7 +1,7 @@
 /**
  * client.cpp
  *
- * Jigar and Chris worked on this
+ * Chris worked on this
  */
 
 #include "client.hpp"

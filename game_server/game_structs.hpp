@@ -147,11 +147,11 @@ class PiGameMap {
 public:
     // ATTRIBUTES
     vector<vector<PiMapTile> > mapTiles;
-    int x_size;
-    int y_size;
+    int x_size; // for tiles
+    int y_size; // for tiles
     vector<PiPirate> pirates;
     vector<PiMerchant> merchants;
-    vec3 size;
+    vec3 size; // Charlie, pls confirm this is for coord
 
     // CONSTRUCTOR
     PiGameMap(vector< vector<PiMapTile> > a, int b, int c,
@@ -164,6 +164,7 @@ public:
         , size(f) {};
 
     // TODO size in num tiles I suppose??
+    // Jigar: I didn't create it, but I was assuming its coord size.
     PiGameMap(int sz)
         : x_size(sz)
         , y_size(sz)
@@ -210,5 +211,8 @@ public:
 bool compare_vec(vec2 a, vec2 b);
 void move_pirate(PiGameMap& m, vec2 pos1, vec2 pos2);
 void move_merchant(PiGameMap& map, vec2 pos1, vec2 pos2);
+void shift_pirate(PiGameMap& p, vec2 coord1, vec2 coord2);
+void shift_merchant(PiGameMap& m, vec2 coord1, vec2 coord2);
+vec2 convert_coord_tile(PiGameMap& m, vec2 coord); 
 
 #endif
