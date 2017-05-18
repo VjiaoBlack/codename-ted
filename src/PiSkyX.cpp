@@ -28,7 +28,8 @@ const SkyXSettings mPresets[] = {
     // Desert
     SkyXSettings(Ogre::Vector3(7.59f, 7.5f, 20.5f), 0, -0.8f, SkyX::AtmosphereManager::Options(9.77501f, 10.2963f, 0.01f, 0.0072f, 0.000925f, 30, Ogre::Vector3(0.71f, 0.59f, 0.53f), -0.997f, 2.5f, 1), true),
     // Night
-    SkyXSettings(Ogre::Vector3(21.5f, 7.5, 20.5), 0.03, -0.25, SkyX::AtmosphereManager::Options(), true)
+    // SkyXSettings(Ogre::Vector3(21.5f, 7.5, 20.5), 0.03, -0.25, SkyX::AtmosphereManager::Options(), true)
+    SkyXSettings(Ogre::Vector3(21.5f, 7.5, 20.5), 0.4, -0.25, SkyX::AtmosphereManager::Options(), true)
 };
 
 void setPreset(const SkyXSettings& preset, Ogre::Camera* camera) {
@@ -66,24 +67,24 @@ void setPreset(const SkyXSettings& preset, Ogre::Camera* camera) {
     vclouds->setAmbientFactors(preset.vcAmbientFactors);
     vclouds->setWheater(preset.vcWheater.x, preset.vcWheater.y, false);
 
-    // if (preset.volumetricClouds)
-    // {
-    //     // Create VClouds
-    //     if (!mSkyX->getVCloudsManager()->isCreated())
-    //     {
-    //         // SkyX::MeshManager::getSkydomeRadius(...) works for both finite and infinite(=0) camera far clip distances
-    //         mSkyX->getVCloudsManager()->create(mSkyX->getMeshManager()->getSkydomeRadius(camera));
-    //         // mSkyX->getVCloudsManager()->create(999999);
-    //     }
-    // }
-    // else
-    // {
-    //     // Remove VClouds
-    //     if (mSkyX->getVCloudsManager()->isCreated())
-    //     {
-    //         mSkyX->getVCloudsManager()->remove();
-    //     }
-    // }
+    if (preset.volumetricClouds)
+    {
+        // Create VClouds
+        if (!mSkyX->getVCloudsManager()->isCreated())
+        {
+            // SkyX::MeshManager::getSkydomeRadius(...) works for both finite and infinite(=0) camera far clip distances
+            mSkyX->getVCloudsManager()->create(mSkyX->getMeshManager()->getSkydomeRadius(camera));
+            // mSkyX->getVCloudsManager()->create(999999);
+        }
+    }
+    else
+    {
+        // Remove VClouds
+        if (mSkyX->getVCloudsManager()->isCreated())
+        {
+            mSkyX->getVCloudsManager()->remove();
+        }
+    }
 
     vclouds->getLightningManager()->setEnabled(preset.vcLightnings);
     vclouds->getLightningManager()->setAverageLightningApparitionTime(preset.vcLightningsAT);

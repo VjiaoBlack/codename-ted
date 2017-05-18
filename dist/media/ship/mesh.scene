@@ -1,0 +1,24 @@
+<scene exported_by="vjiaoblack" export_time="1495128263.6962793" previous_export_time="0" formatVersion="1.0.1" >
+  <nodes >
+    <node name="boat" >
+      <position y="0.000000" x="0.000000" z="-0.000000" />
+      <rotation qw="1.000000" qx="0.000000" qy="0.000000" qz="-0.000000" />
+      <scale y="1.000000" x="1.000000" z="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <entity ghost="False" friction_x="1.0" mass_radius="1.0" anisotropic_friction="False" friction_y="1.0" lock_trans_y="False" actor="False" lock_trans_x="False" inertia_tensor="0.4000000059604645" name="Cube" velocity_min="0.0" lock_trans_z="False" lock_rot_z="False" mass="1.0" lock_rot_y="False" friction_z="1.0" damping_rot="0.10000000149011612" lock_rot_x="False" damping_trans="0.03999999910593033" velocity_max="0.0" meshFile="Cube.mesh" physics_type="STATIC" />
+    </node>
+  </nodes>
+  <externals >
+    <item type="material" >
+      <file name="/home/vjiaoblack/Classes/CMSC-23800/codename-ted/dist/media/ship/ship_material.material" />
+    </item>
+  </externals>
+  <environment >
+    <colourDiffuse b="0.05087608844041824" r="0.05087608844041824" g="0.05087608844041824" />
+    <colourBackground b="0.05087608844041824" r="0.05087608844041824" g="0.05087608844041824" />
+    <colourAmbient b="0.0" r="0.0" g="0.0" />
+  </environment>
+</scene>

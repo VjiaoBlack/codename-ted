@@ -73,21 +73,129 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
     if (mKeyboard->isKeyDown(OIS::KC_1)) {
         mCurrentPreset = 0;
         setPreset(mPresets[mCurrentPreset], mCamera); 
+        Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
+ 
+        mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
+        mSceneMgr->getLight("SceneLight")->setDiffuseColour(mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
+                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
+                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
+
+        mTerrainGlobals->setLightMapDirection(mSceneMgr->getLight("SceneLight")->getDerivedDirection());
+        mTerrainGlobals->setCompositeMapDiffuse(mSceneMgr->getLight("SceneLight")->getDiffuseColour());
+
+        mHydrax->setSunPosition(mSkyX->getController()->getSunDirection()*mCamera->getFarClipDistance()*50.0f);
+        mHydrax->setSunColor(mSkyX->getVCloudsManager()->getVClouds()->getSunColor());
+        
+        mTerrainGroup->getTerrain(0,0)->dirty();
+        mTerrainGroup->getTerrain(0,0)->update();
+
+        mTerrainGroup->getTerrain(0,0)->dirtyLightmap();
+        mTerrainGroup->getTerrain(0,0)->updateDerivedData();
     } else if (mKeyboard->isKeyDown(OIS::KC_2)) {
         mCurrentPreset = 1;
         setPreset(mPresets[mCurrentPreset], mCamera); 
+        Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
+ 
+        mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
+        mSceneMgr->getLight("SceneLight")->setDiffuseColour(mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
+                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
+                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
+
+        mTerrainGlobals->setLightMapDirection(mSceneMgr->getLight("SceneLight")->getDerivedDirection());
+        mTerrainGlobals->setCompositeMapDiffuse(mSceneMgr->getLight("SceneLight")->getDiffuseColour());
+
+        mHydrax->setSunPosition(mSkyX->getController()->getSunDirection()*mCamera->getFarClipDistance()*50.0f);
+        mHydrax->setSunColor(mSkyX->getVCloudsManager()->getVClouds()->getSunColor());
+        
+        mTerrainGroup->getTerrain(0,0)->dirty();
+        mTerrainGroup->getTerrain(0,0)->update();
+
+        mTerrainGroup->getTerrain(0,0)->dirtyLightmap();
+        mTerrainGroup->getTerrain(0,0)->updateDerivedData();
     } else if (mKeyboard->isKeyDown(OIS::KC_3)) {
         mCurrentPreset = 2;
         setPreset(mPresets[mCurrentPreset], mCamera); 
+        Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
+ 
+        mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
+        mSceneMgr->getLight("SceneLight")->setDiffuseColour(mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
+                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
+                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
+
+        mTerrainGlobals->setLightMapDirection(mSceneMgr->getLight("SceneLight")->getDerivedDirection());
+        mTerrainGlobals->setCompositeMapDiffuse(mSceneMgr->getLight("SceneLight")->getDiffuseColour());
+
+        mHydrax->setSunPosition(mSkyX->getController()->getSunDirection()*mCamera->getFarClipDistance()*50.0f);
+        mHydrax->setSunColor(mSkyX->getVCloudsManager()->getVClouds()->getSunColor());
+        
+        mTerrainGroup->getTerrain(0,0)->dirty();
+        mTerrainGroup->getTerrain(0,0)->update();
+
+        mTerrainGroup->getTerrain(0,0)->dirtyLightmap();
+        mTerrainGroup->getTerrain(0,0)->updateDerivedData();
     } else if (mKeyboard->isKeyDown(OIS::KC_4)) {
         mCurrentPreset = 3;
         setPreset(mPresets[mCurrentPreset], mCamera); 
+        Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
+ 
+        mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
+        mSceneMgr->getLight("SceneLight")->setDiffuseColour(mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
+                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
+                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
+
+        mTerrainGlobals->setLightMapDirection(mSceneMgr->getLight("SceneLight")->getDerivedDirection());
+        mTerrainGlobals->setCompositeMapDiffuse(mSceneMgr->getLight("SceneLight")->getDiffuseColour());
+
+        mHydrax->setSunPosition(mSkyX->getController()->getSunDirection()*mCamera->getFarClipDistance()*50.0f);
+        mHydrax->setSunColor(mSkyX->getVCloudsManager()->getVClouds()->getSunColor());
+        
+        mTerrainGroup->getTerrain(0,0)->dirty();
+        mTerrainGroup->getTerrain(0,0)->update();
+
+        mTerrainGroup->getTerrain(0,0)->dirtyLightmap();
+        mTerrainGroup->getTerrain(0,0)->updateDerivedData();
     } else if (mKeyboard->isKeyDown(OIS::KC_5)) {
         mCurrentPreset = 4;
         setPreset(mPresets[mCurrentPreset], mCamera); 
+        Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
+ 
+        mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
+        mSceneMgr->getLight("SceneLight")->setDiffuseColour(mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
+                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
+                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
+
+        mTerrainGlobals->setLightMapDirection(mSceneMgr->getLight("SceneLight")->getDerivedDirection());
+        mTerrainGlobals->setCompositeMapDiffuse(mSceneMgr->getLight("SceneLight")->getDiffuseColour());
+
+        mHydrax->setSunPosition(mSkyX->getController()->getSunDirection()*mCamera->getFarClipDistance()*50.0f);
+        mHydrax->setSunColor(mSkyX->getVCloudsManager()->getVClouds()->getSunColor());
+        
+        mTerrainGroup->getTerrain(0,0)->dirty();
+        mTerrainGroup->getTerrain(0,0)->update();
+
+        mTerrainGroup->getTerrain(0,0)->dirtyLightmap();
+        mTerrainGroup->getTerrain(0,0)->updateDerivedData();
     } else if (mKeyboard->isKeyDown(OIS::KC_6)) {
         mCurrentPreset = 5;
         setPreset(mPresets[mCurrentPreset], mCamera); 
+        Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
+ 
+        mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
+        mSceneMgr->getLight("SceneLight")->setDiffuseColour(mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
+                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
+                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
+
+        mTerrainGlobals->setLightMapDirection(mSceneMgr->getLight("SceneLight")->getDerivedDirection());
+        mTerrainGlobals->setCompositeMapDiffuse(mSceneMgr->getLight("SceneLight")->getDiffuseColour());
+
+        mHydrax->setSunPosition(mSkyX->getController()->getSunDirection()*mCamera->getFarClipDistance()*50.0f);
+        mHydrax->setSunColor(mSkyX->getVCloudsManager()->getVClouds()->getSunColor());
+        
+        mTerrainGroup->getTerrain(0,0)->dirty();
+        mTerrainGroup->getTerrain(0,0)->update();
+
+        mTerrainGroup->getTerrain(0,0)->dirtyLightmap();
+        mTerrainGroup->getTerrain(0,0)->updateDerivedData();
     }
 
     mBike.processInput(mKeyboard);
@@ -155,7 +263,7 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
     nsf /= 1000000000.0f;
 
     // whoo hoo i figured out quaternions yay neverforgetti pls
-    mBikeObject->setPosition(Ogre::Vector3(mBike.x,  -10.0f * 0 + 100.0f + mHydrax->getHeigth(Ogre::Vector2(mBike.x, mBike.y)) + (2.0f * sin(nsf * 2.0f)), mBike.y));
+    mBikeObject->setPosition(Ogre::Vector3(mBike.x,  -10.0f + mHydrax->getHeigth(Ogre::Vector2(mBike.x, mBike.y)) + (2.0f * sin(nsf * 2.0f)), mBike.y));
 
     // fake bob
     // TODO: create REAL bob physics WOW
@@ -168,7 +276,7 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
 
     for (int i = 0; i < mGameState.map.pirates.size(); i++) {
         mOtherPirates[i]->setPosition(Ogre::Vector3(mGameState.map.pirates[i].position.x,  
-                                                    -10.0f * 0 + 100.0f + mHydrax->getHeigth(Ogre::Vector2(mGameState.map.pirates[i].position.x,
+                                                    -10.0f + mHydrax->getHeigth(Ogre::Vector2(mGameState.map.pirates[i].position.x,
                                                                                               mGameState.map.pirates[i].position.y)) + (2.0f * sin((nsf + i * 100.0f) * 2.0f)),
                                                     mGameState.map.pirates[i].position.y));
 
@@ -456,23 +564,27 @@ void BasicApp::createScene() {
     /**
      * Setup Entities
      */
-    Ogre::Entity* ent = mSceneMgr->createEntity("cube.mesh");
-    ent->setMaterialName("Examples/CelShading");
+    Ogre::Entity* ent = mSceneMgr->createEntity("Cube.mesh");
+    // ent->setMaterialName("Examples/CelShading");
+    ent->setMaterialName("Ship/Material");
  
     mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
     mCurObject->setPosition(Ogre::Vector3(0.0, 800.0, 0.0));
-    mCurObject->setScale(1.000, 1.000, 1.000);
+    mCurObject->setScale(30.0, 30.0, 30.0);
     mCurObject->attachObject(ent);
+
 
     mBikeObject = mCurObject;
 
     for (int i = 0; i < mGameState.map.pirates.size(); i++) {
-        Ogre::Entity* ent = mSceneMgr->createEntity("cube.mesh");
+        Ogre::Entity* ent = mSceneMgr->createEntity("Cube.mesh");
+        ent->setMaterialName("Ship/Material");
 
         mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
         mCurObject->setPosition(Ogre::Vector3(mGameState.map.pirates[i].position.x, 800.0, mGameState.map.pirates[i].position.y));
-        mCurObject->setScale(1.000, 1.000, 1.000);
+        mCurObject->setScale(30.0, 30.0, 30.0);
         mCurObject->attachObject(ent);
+
 
         mOtherPirates[i] = mCurObject;
     }
@@ -578,7 +690,7 @@ void BasicApp::setupTerrain(Ogre::Light* light) {
     mTerrainGlobals = OGRE_NEW Ogre::TerrainGlobalOptions();
     mTerrainGroup = OGRE_NEW Ogre::TerrainGroup(
         mSceneMgr,
-        Ogre::Terrain::ALIGN_X_Z, 513, 48000.0);
+        Ogre::Terrain::ALIGN_X_Z, 513, 36000.0);
     mTerrainGroup->setFilenameConvention(Ogre::String("terrain"),Ogre::String("dat"));
     mTerrainGroup->setOrigin(Ogre::Vector3::ZERO);
  
@@ -608,7 +720,7 @@ void BasicApp::setupTerrain(Ogre::Light* light) {
  
 // Terrain helper function
 void getTerrainImage(bool flip_x, bool flip_y, Ogre::Image& img) {
-    img.load("victor_terrain.png", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    img.load("victor2_terrain.png", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
  
     if (flip_x)
         img.flipAroundY();
@@ -668,7 +780,7 @@ void BasicApp::configureTerrainDefaults(Ogre::Light* light) {
 
     Ogre::Terrain::ImportData& importData = mTerrainGroup->getDefaultImportSettings();
     importData.terrainSize = 513;
-    importData.worldSize = 48000.0f;
+    importData.worldSize = 36000.0f;
     importData.inputScale = 2000;
     importData.minBatchSize = 33; //33
     importData.maxBatchSize = 65; // 65
