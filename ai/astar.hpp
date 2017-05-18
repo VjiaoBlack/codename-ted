@@ -5,6 +5,7 @@
 #include <functional>
 #include <queue>
 #include <vector>
+
 using namespace std;
 
 // DATA STRUCTURES 
@@ -25,7 +26,8 @@ struct PriorityComp
 };
 
 // FUNCTION HEADERS
-void astar_main(); 
+void astar_trial();
+void run_astar(PiGameMap gm);
 vector<vec2> retrieve_ship_positions(PiGameMap gm); 
 vector<vec2> retrieve_next_positions(vec2 curr, int max_x, int max_y);
 float distance(vec2 pos1, vec2 pos2);

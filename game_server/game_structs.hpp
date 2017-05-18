@@ -77,6 +77,7 @@ public:
             orientation(d), rudderRot(e), goldAmount(f),
             AI(g), coord_pos(h) {};
     // Methods
+
 };
 
 class PiPirate : public PiShip {
@@ -164,7 +165,7 @@ public:
         , size(f) {};
 
     // TODO size in num tiles I suppose??
-    // Jigar: I didn't create it, but I was assuming its coord size.
+    // Jigar: I didn't create it, but I was assuming its coord dimensions.
     PiGameMap(int sz)
         : x_size(sz)
         , y_size(sz)

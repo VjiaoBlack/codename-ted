@@ -12,7 +12,11 @@
 
 using namespace std;
 
-void astar_main() {
+void run_astar(PiGameMap gm) {
+
+} 
+
+void astar_trial() {
     PiGameMap map = PiGameMap::createRandomMap();
     int ticks = 0;
     for (ticks = 0; ticks < 5; ticks++) {
@@ -109,6 +113,6 @@ float distance(vec2 pos1, vec2 pos2) {
 
 int main() {
     cout << "Staring A Star Algorithm\n";
-    astar_main();
+    astar_trial();
     cout << "A Star Algorithm Complete\n";
 }
