@@ -1,5 +1,5 @@
 /**
- * JSON.cpp
+ * json_serializer.cpp
  *
  * David Woldenberg
  *
@@ -129,13 +129,15 @@ string serialize_gamestate(PiGameState gstate, bool withMapTiles) {
     //not doing lobbies
     //not doing heightmap
 
+    //std::cout << "JSON from serialize: " << main_obj.dump() << "\n";
+
     return main_obj.dump();
 }
 
 PiGameState deserialize_gamestate(string JSON, bool withMapTiles) {
     auto j = json::parse(JSON);
 
-    std::cout << "JSON from deserialize: " << JSON << "\n";
+    //std::cout << "JSON from deserialize: " << JSON << "\n";
 
     //TODO: fix for no constructor, NEEDS TO BE ADDRESSED
     PiGameState gstate;
@@ -241,7 +243,7 @@ string serialize_keystrokes(keystrokes_obj ks) {
 
     main_obj["keystrokes"] = keys;
 
-    std::cout << "JSON from serialize: " << main_obj.dump() << "\n";
+    //std::cout << "JSON from serialize: " << main_obj.dump() << "\n";
 
     return main_obj.dump();
 }
@@ -250,7 +252,7 @@ keystrokes_obj deserialize_keystrokes(string JSON) {
 
     auto j = json::parse(JSON);
 
-    std::cout << "JSON from deserialize: " << JSON << "\n";
+    //std::cout << "JSON from deserialize: " << JSON << "\n";
 
     int uid = j["unique_id"];
 
