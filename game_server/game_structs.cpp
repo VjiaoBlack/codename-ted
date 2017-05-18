@@ -18,7 +18,6 @@
 using namespace std;
 
 // CLASS METHODS 
-
 void vec2::print_vec2() {
     cout << "{" << x << ", " << y << "}\n"; 
 } 
@@ -43,7 +42,6 @@ vec2 vec2::Normalize(){
 
     return vector;
 }
-
 
 void vec3::print_vec3() {
     cout << "{" << x << ", " << y << ", " << z <<  "}\n"; 
@@ -150,6 +148,13 @@ vec2 convert_coord_tile(PiGameMap& m, vec2 coord) {
     float x_ratio = m.x_size / m.size.x; 
     float y_ratio = m.y_size / m.size.y;
     vec2 tile = vec2(x_ratio * coord.x, y_ratio * coord.y);
+    return tile; 
+}
+// Converts a tile position to a coord position
+vec2 convert_tile_coord(PiGameMap& m, vec2 pos) {
+    float x_ratio = m.size.x / m.x_size; 
+    float y_ratio = m.size.y / m.y_size;
+    vec2 tile = vec2(x_ratio * pos.x, y_ratio * pos.y);
     return tile; 
 }
 

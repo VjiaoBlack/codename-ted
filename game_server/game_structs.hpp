@@ -87,13 +87,18 @@ public:
     // Attributes
     string pirate_name;
     // Constructor
-    // TODO construct map tile position from coordinate position
     PiPirate(string a, vec2 b, vec2 c, vec2 d,
              float e, float f, int g, bool h, vec2 i)
         : pirate_name(a)
         , PiShip(b, c, d, e, f, g, h, i) {
     };
-    PiPirate(vec2 loc) : PiPirate("Vader", loc, vec2(0,0), vec2(0,0), 0, 0, 0, true, vec2(0,0)) {}
+    // Note that location in this constructor is starting TILE 
+    PiPirate(vec2 loc) : PiPirate("Vader", 
+            loc, 
+            loc, 
+            vec2(0,0), 
+            0, 0, 0, true, 
+            vec2(0,0)) {}
     PiPirate() : PiPirate(vec2(0,0)) {}
 };
 
@@ -215,5 +220,6 @@ void move_merchant(PiGameMap& map, vec2 pos1, vec2 pos2);
 void shift_pirate(PiGameMap& p, vec2 coord1, vec2 coord2);
 void shift_merchant(PiGameMap& m, vec2 coord1, vec2 coord2);
 vec2 convert_coord_tile(PiGameMap& m, vec2 coord); 
+vec2 convert_tile_coord(PiGameMap& m, vec2 pos); 
 
 #endif
