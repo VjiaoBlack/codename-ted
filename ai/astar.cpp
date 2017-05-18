@@ -12,8 +12,35 @@
 
 using namespace std;
 
-void run_astar(PiGameMap gm) {
-
+void run_astar(PiGameMap map) {
+    priority_queue<q_elem, vector<q_elem>, PriorityComp> main_q; 
+    bool goal_reached = false;
+    vector<vec2> positions = retrieve_ship_positions(map);
+    vector<vec2> coords = retrieve_ship_coords(map);
+    vec2 pirate_pos = positions[0]; // Hacky way to get PiPirate position
+    pirate_pos.print_vec2();
+    vec2 target_pos = get_target(positions);
+    vec2 selected_pos = pirate_pos;
+    main_q.push(q_elem(selected_pos, vec2(-1, -1), 0));
+    while (!goal_reached) {
+        q_elem selected_q = main_q.top();
+        selected_pos = selected_q.pos;
+        main_q.pop();
+        vector<vec2> next_positions = retrieve_next_positions(selected_pos, 
+                                        map.x_size, map.y_size);
+        for (vec2 pos : next_positions) {
+            // f(n) = g(n) + h(n)
+            float g = distance(pirate_pos, selected_pos);
+            float h = distance(selected_pos, target_pos);
+            float priority = g + h;
+            vec2 start = (selected_q.start.x == -1) ? pos : selected_q.start; 
+            main_q.push(q_elem(pos, start, priority));
+        }
+        goal_reached = compare_vec(selected_pos, target_pos);
+        if (goal_reached) {
+            move_pirate(map, pirate_pos, selected_q.start);
+        }
+    }
 } 
 
 void astar_trial() {
@@ -68,6 +95,17 @@ vector<vec2> retrieve_ship_positions(PiGameMap gm) {
         positions.push_back(m.position);
     }
     return positions; 
+}
+
+vector<vec2> retrieve_ship_coords(PiGameMap gm) {
+    vector<vec2> coords; 
+    for(PiPirate p: gm.pirates) {
+        coords.push_back(p.coord_pos);
+    }
+    for(PiMerchant m: gm.merchants) {
+        coords.push_back(m.coord_pos);
+    }
+    return coords;
 }
 
 vector<vec2> retrieve_next_positions(vec2 curr, int max_x, int max_y) {
