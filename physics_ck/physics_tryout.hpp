@@ -12,8 +12,10 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/time.h>
+#include <chrono>
 
 using namespace std;
+using namespace std::chrono;
 
 PiGameState compute_gamestate(unordered_map<string, vector<string> > input_object, PiGameState gameState);
 void print_boat(PiGameMap gmap);

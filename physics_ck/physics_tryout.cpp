@@ -4,7 +4,7 @@ using namespace std;
 
 //Magic numbers
 float acceleration_normal_slowdown_factor = 0.05;
-float acceleration_increase = 0.05;
+float acceleration_increase = 0.001;
 float pioveroneeighty = 0.01745329251;
 int turning_speed = 1;
 
@@ -12,66 +12,77 @@ float firstOrderCollisionBuffer = 0.1;
 float y_extension = 1;
 float x_extension = 1;
 
-float acceleration_cap = .1;
-float velocity_cap = .1;
+float acceleration_cap = .01;
+float velocity_cap = .01;
 
 int verbose = 0;
 
 PiGameMap update_position(PiGameMap gm, int current_boat){
 
-  //Commented until I know how to get maptile
-  /*
-  float currStr = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentStrength;
-  float windStr = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windStrength;
-  float windDirx = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windDirection.x;
-  float windDiry = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windDirection.y;
-  float currDiry = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentDirection.y;
-  float currDirx = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentDirection.x;
+  //This next chunk of code can cause of a seg fault if I go off the map.  It'll try to read a tile that isn't there.  Therefore I added the if.
 
-  gm.merchants[current_boat].acceleration.x += currStr * currDirx;
-  gm.merchants[current_boat].acceleration.y += currStr * currDiry;
+if(gm.merchants[current_boat].position.x < 25 && 
+    gm.merchants[current_boat].position.y < 25 && 
+    gm.merchants[current_boat].position.x > 0 && 
+    gm.merchants[current_boat].position.x > 0){
+    float currStr = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentStrength;
+    float windStr = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windStrength;
+    float windDirx = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windDirection.x;
+    float windDiry = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windDirection.y;
+    float currDiry = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentDirection.y;
+    float currDirx = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentDirection.x;
 
-  gm.merchants[current_boat].acceleration.x += windStr * windDirx;
-  gm.merchants[current_boat].acceleration.y += windStr * windDiry;
-  */
+    gm.merchants[current_boat].acceleration.x += (.0001) * currStr * currDirx;
+    gm.merchants[current_boat].acceleration.y += (.0001) * currStr * currDiry;
+
+    gm.merchants[current_boat].acceleration.x += (.0001) * windStr * windDirx;
+    gm.merchants[current_boat].acceleration.y += (.0001) * windStr * windDiry;
+  }
 
   //Enforce acceleration caps:
   if(gm.merchants[current_boat].acceleration.Length() > acceleration_cap){
-    gm.merchants[current_boat].acceleration = gm.merchants[current_boat].acceleration.Normalize();
+    //gm.merchants[current_boat].acceleration = gm.merchants[current_boat].acceleration.Normalize();
   }
 
+  //New orientation
   gm.merchants[current_boat].orientation += (.01) * gm.merchants[current_boat].rudderRot;
+
+  //Natural rudder rot back to straigh
+  if(gm.merchants[current_boat].rudderRot > 3)
+    gm.merchants[current_boat].rudderRot -= 1;
+  else if(gm.merchants[current_boat].rudderRot < -3){
+    gm.merchants[current_boat].rudderRot += 1;
+  }
+
+  //New velocity
   gm.merchants[current_boat].velocity.x += gm.merchants[current_boat].acceleration.x;
   gm.merchants[current_boat].velocity.y += gm.merchants[current_boat].acceleration.y;
 
+  //Velocity Cap
   if(gm.merchants[current_boat].velocity.Length() > acceleration_cap){
-    gm.merchants[current_boat].velocity = gm.merchants[current_boat].velocity.Normalize();
+    //gm.merchants[current_boat].velocity = gm.merchants[current_boat].velocity.Normalize();
+    gm.merchants[current_boat].velocity.x *= .75;
+    gm.merchants[current_boat].velocity.y *= .75;
   }
 
-  //Updating position, we also update the map tiles
-  /*Again getting rid of until jigar says so
-  if(current_boat == 0){
-    gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].is_ship = 0;
-  }
-  */
-
+  //Manually setting new positions
   gm.merchants[current_boat].coord_pos.x += gm.merchants[current_boat].velocity.x;
   gm.merchants[current_boat].coord_pos.y += gm.merchants[current_boat].velocity.y;
-  /* Again getting rid of until jigar says so
-  if(current_boat == 0)
-    gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].is_ship = 1;
-  */
+
+  //Moving the merchant to the appropriate tile
+  vec2 newLoc = vec2(gm.merchants[current_boat].coord_pos.x,gm.merchants[current_boat].coord_pos.y);
+  gm.merchants[current_boat].position = convert_coord_tile(gm, newLoc);
 
   //Normal slowdown of acceleration
   if(gm.merchants[current_boat].acceleration.x > 0)
-    gm.merchants[current_boat].acceleration.x -= acceleration_normal_slowdown_factor;
+    gm.merchants[current_boat].acceleration.x *= .75;
   else if(gm.merchants[current_boat].acceleration.x < 0){
-    gm.merchants[current_boat].acceleration.x += acceleration_normal_slowdown_factor;
+    gm.merchants[current_boat].acceleration.x *= .75;
   }
   if(gm.merchants[current_boat].acceleration.y > 0)
-    gm.merchants[current_boat].acceleration.y -= acceleration_normal_slowdown_factor;
+    gm.merchants[current_boat].acceleration.y *= .75;
   else if(gm.merchants[current_boat].acceleration.y < 0){
-    gm.merchants[current_boat].acceleration.y += acceleration_normal_slowdown_factor;
+    gm.merchants[current_boat].acceleration.y *= .75;
   }
 
   return gm;
@@ -149,10 +160,13 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
             gm.merchants[current_boat].acceleration.y += acceleration_increase * (float)sin(gm.merchants[current_boat].orientation*pioveroneeighty);
             break;
           case 'D':
-            gm.merchants[current_boat].acceleration.x -= acceleration_increase * (float)cos(gm.merchants[current_boat].orientation*pioveroneeighty);
-            gm.merchants[current_boat].acceleration.y -= acceleration_increase * (float)sin(gm.merchants[current_boat].orientation*pioveroneeighty);
+            // gm.merchants[current_boat].acceleration.x -= acceleration_increase * (float)cos(gm.merchants[current_boat].orientation*pioveroneeighty);
+            // gm.merchants[current_boat].acceleration.y -= acceleration_increase * (float)sin(gm.merchants[current_boat].orientation*pioveroneeighty);
+            gm.merchants[current_boat].acceleration.x *= .5;
+            gm.merchants[current_boat].acceleration.y *= .5;
             break;
           case 'L':
+            printf("L Is this happening\n");
             gm.merchants[current_boat].rudderRot -= turning_speed;
 
             //I am aware this is bad practice
@@ -165,6 +179,7 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
 
             break;
           case 'R':
+            printf("R Is this happening\n");
             gm.merchants[current_boat].rudderRot += turning_speed;
 
             //I am aware that this is bad practice
@@ -227,7 +242,7 @@ void print_boat(PiGameMap gmap){
   float orient = gmap.merchants[0].orientation;
   float rot = gmap.merchants[0].rudderRot;
 
-  // if(verbose)
+  if(verbose)
     printf("Name: %s\nPosition %f,%f\nVelocity %f,%f\nAcceleration %f,%f\nOrientation: %f\n, rudderRot: %f\n", gmap.merchants[0].merchant_name.c_str(), posx, posy, velx, vely, accx, accy, orient,rot);
 }
 
@@ -283,14 +298,34 @@ int main(int argc, char* argv[]){
   //   printf("%s\n", m.merchant_name.c_str());
   // }
 
-  unordered_map<string, vector<string> > input_object;
-  // Inserting data in std::map
-  vector<string> msg;
-  msg.push_back("our_guy");
-  vector<string> content;
-  input_object["player_name"] = msg;
+  //framerate limiter
+  milliseconds now = duration_cast< milliseconds >(
+    system_clock::now().time_since_epoch()
+  );
+  milliseconds lastFrame = duration_cast< milliseconds >(
+    system_clock::now().time_since_epoch()
+  );
+
+  //printf("here we have it%lld\n", lastFrame.count());
 
   while(!quit) {
+
+    unordered_map<string, vector<string> > input_object;
+    // Inserting data in std::map
+    vector<string> msg;
+    msg.push_back("our_guy");
+    vector<string> content;
+    input_object["player_name"] = msg;
+
+    now = duration_cast< milliseconds >(system_clock::now().time_since_epoch());
+    long long int delta = now.count() - lastFrame.count();
+    lastFrame = now;
+
+    if(delta < 33)
+    {
+        usleep(33 - delta);
+    }
+
     while (SDL_PollEvent(&e) != 0) {
         /* user requests QUIT */
         if (e.type == SDL_QUIT) {
@@ -313,6 +348,7 @@ int main(int argc, char* argv[]){
 
     // TODO make sure the angles don't just keep increasing infinitely
     if (keysDown.count(SDLK_LEFT)) {
+      printf("Detected Left\n");
       content.push_back("LEFT");
       input_object["keystrokes"] = content;
       map = compute_gamestate(input_object, map);
@@ -334,6 +370,7 @@ int main(int argc, char* argv[]){
     }
 
     if (keysDown.count(SDLK_UP)) {
+      printf("Detected Up\n");
       content.push_back("UP");
       input_object["keystrokes"] = content;
       map = compute_gamestate(input_object, map);
@@ -354,6 +391,15 @@ int main(int argc, char* argv[]){
       if(verbose)
         printf("\n\n\n");
     }
+
+    //I want it to run regardless
+    input_object["keystrokes"] = content;
+      map = compute_gamestate(input_object, map);
+      if(verbose)
+        map.print_game_map();
+      print_boat(map);
+      if(verbose)
+        printf("\n\n\n");
 
       /** Clear screen */
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
