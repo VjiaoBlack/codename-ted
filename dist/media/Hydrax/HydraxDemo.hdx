@@ -4,17 +4,19 @@
 HydraxVersion=0.5.1
 
 #Main options field
-<vector3>Position=-5000x740x-5000
+<vector3>Position=-5000x780x-5000
 <float>PlanesError=10.5
 #Shader mode: 0=HLSL, 1=CG, 2=GLSL
 <int>ShaderMode=1
 <float>FullReflectionDistance=1e+9
-<float>GlobalTransparency=0.4
+<float>GlobalTransparency=0.0
 <float>NormalDistortion=0.1
-<vector3>WaterColor=0.139765x0.359464x0.425373
+<vector3>WaterColor=0.06x0.20x0.30
 
 #Components field
-Components=Sun|Depth|Foam|Caustics|Smooth|Underwater|UnderwaterReflections|UnderwaterGodRays
+Components=Sun|Depth|Foam|Smooth|Underwater|UnderwaterReflections|UnderwaterGodRays
+# Caustics broken rn
+
 #Sun parameters
 <vector3>SunPosition=0x10000x0
 <float>SunStrength=1.75
@@ -24,7 +26,7 @@ Components=Sun|Depth|Foam|Caustics|Smooth|Underwater|UnderwaterReflections|Under
 #Foam parameters
 <float>FoamMaxDistance=7.5e+007
 <float>FoamScale=0.0075
-<float>FoamStart=0
+<float>FoamStart=-0.2
 <float>FoamTransparency=1
 
 #Depth parameters
@@ -36,7 +38,7 @@ Components=Sun|Depth|Foam|Caustics|Smooth|Underwater|UnderwaterReflections|Under
 #Caustics parameters
 <float>CausticsScale=135
 <float>CausticsPower=10.5
-<float>CausticsEnd=0.8
+<float>CausticsEnd=0.8 # or 10
 
 #God rays parameters
 <vector3>GodRaysExposure=0.76x2.46x2.29
@@ -56,7 +58,7 @@ Components=Sun|Depth|Foam|Caustics|Smooth|Underwater|UnderwaterReflections|Under
 #Module options
 Module=ProjectedGridVertex
 
-<float>PG_ChoopyStrength=3.75
+<float>PG_ChoopyStrength=0.00375
 <bool>PG_ChoppyWaves=true
 <int>PG_Complexity=264
 <float>PG_Elevation=50

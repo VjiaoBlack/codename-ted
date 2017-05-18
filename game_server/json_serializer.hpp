@@ -38,7 +38,7 @@ keystrokes_obj deserilize_keystrokes(string JSON);
 
 string serialize_keystrokes(keystrokes_obj ks);
 
-PiGameState deserilize_gamestate(string JSON, bool withMapTiles=false);
+PiGameState deserialize_gamestate(string JSON, bool withMapTiles=false);
 
 string serialize_gamestate(PiGameState g, bool withMapTiles=false);
 

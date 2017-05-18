@@ -36,7 +36,7 @@ public:
 
     size_t send(const std::string &message);
     void send_keystrokes(std::vector<int> keystrokes, int ship_id);
-    void get_gamestate();
+    PiGameState get_gamestate();
 
 private:
     boost::asio::io_service &io_service_;

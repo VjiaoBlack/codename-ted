@@ -695,13 +695,13 @@ namespace Hydrax
 								FragmentProgramData += Ogre::String(
 								"float2 depth = tex2D(uDepthMap,ProjectionCoord.xy-pixelNormalModified).rg;\n") +
 								"refraction *= 1+depth.y*uCausticsPower;\n" +
-								"refraction = lerp(uWaterColor,refraction,depth.x);\n";
+								"refraction = lerp(uWaterColor,refraction,saturate(0.5 + 0.000001 * depth.x));\n"; // TODO EDITED BY VICTOR JIAO
 						    }
 							else
 							{
 								FragmentProgramData += Ogre::String(
 								"float depth = tex2D(uDepthMap,ProjectionCoord.xy-pixelNormalModified).r;\n") +
-								"refraction = lerp(uWaterColor,refraction,depth);\n";
+								"refraction = lerp(uWaterColor,refraction,saturate(0.5 + 0.000001 * depth));\n"; // TODO EDITED BY VICTOR JIAO
 							}
 						}
 
@@ -732,6 +732,9 @@ namespace Hydrax
 							FragmentProgramData += 
 								"oColor.xyz = lerp(tex2D(uRefractionMap,ProjectionCoord.xy).xyz,oColor.xyz,saturate((1-tex2D(uDepthMap,ProjectionCoord.xy).r)*uSmoothPower));\n";
 						}
+
+						// FragmentProgramData += 
+						// 		"oColor.xyz = oColor.xyz * 0.001 + float3(depth.x, depth.x, depth.x);\n"; // TOOD VICTOR
 
 						FragmentProgramData +=
 							"}\n";
@@ -1495,7 +1498,7 @@ namespace Hydrax
 						else
 						{
 							FragmentProgramData +=
-								"float3 reflection=uWaterColor;\n";
+								"float3 reflection= uWaterColor;\n";
 						}
 
 						if (cDepth && cUReflections)
@@ -1505,12 +1508,14 @@ namespace Hydrax
 								FragmentProgramData += Ogre::String(
 								"float2 depth = tex2D(uDepthReflectionMap,ProjectionCoord.xy+pixelNormalModified).rg;\n") +
 								"reflection *= 1+depth.y*uCausticsPower;\n" +
+								//TODO
 								"reflection = lerp(uWaterColor,reflection,depth.x);\n";
 						    }
 							else
 							{
 								FragmentProgramData += Ogre::String(
 								"float depth = tex2D(uDepthReflectionMap,ProjectionCoord.xy-pixelNormalModified).r;\n") +
+								//TODO
 								"reflection = lerp(uWaterColor,reflection,depth);\n";
 							}
 						}
@@ -1751,7 +1756,7 @@ namespace Hydrax
 					FragmentProgramData += 
 						Ogre::String(
 						"float2 depth = tex2D(uDepthMap, iUV+distortUV).xy;\n") +
-						"oColor = float4(lerp(uWaterColor,tex2D(uOriginalMap, iUV+distortUV)*(1+depth.y*uCausticsPower), depth.x),1);\n";
+						"oColor = float4(lerp(uWaterColor,tex2D(uOriginalMap, iUV+distortUV)*((1+depth.y*uCausticsPower)*0.001 + 0.999),  saturate(0.5 + 0.000001 * depth.x)),1);\n"; // TODO EDITED BY VICTOR JIAO
 						if (cGodRays)
 						{
 						FragmentProgramData +=
@@ -1768,7 +1773,7 @@ namespace Hydrax
 					else if (cDepth) // Depth, no caustics
 					{
 				    FragmentProgramData += 
-						"oColor = float4(lerp(uWaterColor,tex2D(uOriginalMap, iUV+distortUV).xyz,tex2D(uDepthMap, iUV+distortUV).r),1);\n";
+						"oColor = float4(lerp(uWaterColor,tex2D(uOriginalMap, iUV+distortUV).xyz, saturate(0.5 + 0.000001 * tex2D(uDepthMap, iUV+distortUV).x)),1);\n"; // TODO EDITED BY VICTOR JIAO
 					    if (cGodRays)
 						{
 						FragmentProgramData +=

@@ -6,13 +6,13 @@ INCLUDE=
 all: physics_tryout
 
 physics_tryout: build/physics_tryout.o build/game_structs.o
-	$(CC) $(CFLAGS) build/physics_tryout.o build/game_structs.o $(INCLUDE) -o physics_tryout
+	$(CC) $(CFLAGS) build/physics_tryout.o build/game_structs.o $(INCLUDE) -lSDL2 -o physics_tryout
 
 build/physics_tryout.o: physics_tryout.cpp physics_tryout.hpp
-	$(CC) $(CFLAGS) -c physics_tryout.cpp $(INCLUDE) -o build/physics_tryout.o
+	$(CC) $(CFLAGS) -c physics_tryout.cpp $(INCLUDE) -lSDL2 -o build/physics_tryout.o
 
 build/game_structs.o: ../game_server/game_structs.cpp ../game_server/game_structs.hpp
-	$(CC) $(CFLAGS) -c ../game_server/game_structs.cpp $(INCLUDE) -o build/game_structs.o
+	$(CC) $(CFLAGS) -c ../game_server/game_structs.cpp $(INCLUDE) -lSDL2 -o build/game_structs.o
 
 
 
