@@ -18,6 +18,7 @@ void run_astar(PiGameMap map) {
     vector<vec2> positions = retrieve_ship_positions(map);
     vector<vec2> coords = retrieve_ship_coords(map);
     vec2 pirate_pos = positions[0]; // Hacky way to get PiPirate position
+    vec2 pirate_coord = coords[0]; // Hacky way to get PiPirate coord
     pirate_pos.print_vec2();
     vec2 target_pos = get_target(positions);
     vec2 selected_pos = pirate_pos;
@@ -38,7 +39,8 @@ void run_astar(PiGameMap map) {
         }
         goal_reached = compare_vec(selected_pos, target_pos);
         if (goal_reached) {
-            move_pirate(map, pirate_pos, selected_q.start);
+            shift_pirate(map, pirate_coord, 
+                    convert_coord_tile(selected_q.start)); // fix later
         }
     }
 } 
