@@ -82,10 +82,13 @@ PiGameState::PiGameState(PiGameMap map, PiPirate Pirate,
 }
 
 // HELPER FUNCTIONS
+
+// Checks if two vectors are the same
 bool compare_vec(vec2 a, vec2 b) {
     return (a.x == b.x && a.y == b.y);
 }
 
+// Creates a random tile, with placements for pirates, etc.
 PiMapTile PiMapTile::createRandomTile(int PiPirate) {
     float wdx = rand() % 5; 
     float wdy = rand() % 5; 
@@ -109,6 +112,7 @@ PiMapTile PiMapTile::createRandomTile(int PiPirate) {
     return random_tile;
 }
 
+// Creates a randomly generated map, 25 tiles by 25 tiles
 PiGameMap PiGameMap::createRandomMap() {
     int x_len = 25; 
     int y_len = 25;
@@ -141,13 +145,42 @@ PiGameMap PiGameMap::createRandomMap() {
     return random_map;
 }
 
+// Converts a coordinate position to a tile position
+vec2 convert_coord_tile(PiGameMap& m, vec2 coord) {
+    float x_ratio = m.x_size / m.size.x; 
+    float y_ratio = m.y_size / m.size.y;
+    vec2 tile = vec2(x_ratio * coord.x, y_ratio * coord.y);
+    return tile; 
+}
 
+// Shifts pirate from one coordinate location to another 
+void shift_pirate(PiGameMap& map, vec2 coord1, vec2 coord2) {
+    vector<PiPirate> pirates; 
+    for(PiPirate p : map.pirates) {
+        if(compare_vec(p.coord_pos, coord1)) {
+            p.coord_pos = coord2;
+            p.position = convert_coord_tile(map, coord2);
+        }
+        pirates.push_back(p);
+    }
+    map.pirates = pirates;
+}
 
+// Shifts merchant from one coordinate location to another 
+void shift_merchant(PiGameMap& map, vec2 coord1, vec2 coord2) {
+    vector<PiMerchant> merchants;
+    for(PiMerchant m : map.merchants) {
+        if (compare_vec(m.coord_pos, coord1)) { 
+            m.coord_pos = coord2;
+            m.position = convert_coord_tile(map, coord2);
+        }
+        merchants.push_back(m);
+    }
+    map.merchants = merchants;
+}
 
-
-// TODO: comment these functions please! I'm not sure what you're trying to do!
-// Felt like it'd be better to ask rather than assume.
-// - Victor
+// Moves pirate from one tile to another in maptile view
+// Called within the shift functions
 void move_pirate(PiGameMap& m, vec2 pos1, vec2 pos2) {
     vector<PiPirate> pirates;
     for(PiPirate p : m.pirates) {
@@ -160,6 +193,8 @@ void move_pirate(PiGameMap& m, vec2 pos1, vec2 pos2) {
     m.mapTiles[pos2.x][pos2.y].is_ship = 2;
 }
 
+// Moves merchant from one tile to another on maptile view
+// Called within the shift functions
 void move_merchant(PiGameMap& map, vec2 pos1, vec2 pos2) {
     vector<PiMerchant> merchants;
     for(PiMerchant m : map.merchants) {
