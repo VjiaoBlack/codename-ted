@@ -40,7 +40,7 @@ void run_astar(PiGameMap map) {
         goal_reached = compare_vec(selected_pos, target_pos);
         if (goal_reached) {
             shift_pirate(map, pirate_coord, 
-                    convert_coord_tile(selected_q.start)); // fix later
+                    convert_coord_tile(map, selected_q.start)); // fix later
         }
     }
 } 
