@@ -79,6 +79,17 @@ PiGameState::PiGameState(PiGameMap map, PiPirate Pirate,
 
 }
 
+void PiGameState::add_player(int uID, float x, 
+        float y, bool registered, string name) {
+    PiPlayer player = PiPlayer(uID, x, y, registered, name);
+    players.insert(make_pair(uID, player));
+}
+
+void PiGameState::add_pirate(float x, float y) {
+    PiPirate pir = PiPirate(vec2(x, y));
+    Pirate = pir;
+}
+
 // HELPER FUNCTIONS
 
 // Checks if two vectors are the same
@@ -211,3 +222,4 @@ void move_merchant(PiGameMap& map, vec2 pos1, vec2 pos2) {
     map.mapTiles[pos1.x][pos1.y].is_ship = 0;
     map.mapTiles[pos2.x][pos2.y].is_ship = 1;
 }
+

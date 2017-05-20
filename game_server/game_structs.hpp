@@ -57,6 +57,10 @@ public:
     float y;
     bool registered;
     string name;
+    PiPlayer(int a, float b, float c, 
+            bool d, string e) : 
+            uID(a), x(b), y(c), 
+            registered(d), name(e) {};
 };
 
 class PiShip {
@@ -194,6 +198,7 @@ public:
 
 class PiGameState {
 public:
+    // Attributes
     long id;
     PiGameMap map;
     PiPirate Pirate;
@@ -201,6 +206,7 @@ public:
     unordered_map<int, PiLobby> lobbies;
     float **heightMap;
 
+    // Constructors
     PiGameState(PiGameMap map, PiPirate Pirate,
                 unordered_map<int, PiPlayer> players,
                 unordered_map<int, PiLobby> lobbies);
@@ -212,6 +218,10 @@ public:
         , players()
         , lobbies()
         , heightMap(NULL) {}
+    
+    // Methods
+    void add_player(int uID, float x, float y, bool registered, string name);
+    void add_pirate(float x, float y);
 };
 
 bool compare_vec(vec2 a, vec2 b);
