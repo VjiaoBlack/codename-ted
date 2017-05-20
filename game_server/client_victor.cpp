@@ -17,10 +17,7 @@ int main(int argc, char* argv[]) {
             usleep(100000);
 
             vector<int> keystrokes;
-            keystrokes.push_back(0);
             keystrokes.push_back(1);
-            keystrokes.push_back(2);
-            keystrokes.push_back(3);
 
             client.send_keystrokes(keystrokes, 20);
             PiGameState state = client.get_gamestate();

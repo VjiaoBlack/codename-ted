@@ -40,9 +40,10 @@ string serialize_gamestate(PiGameState gstate, bool withMapTiles) {
         }
 
         main_obj["map"]["mapTiles"] = maptiles;
-        main_obj["map"]["x_size"] = gstate.map.x_size;
-        main_obj["map"]["y_size"] = gstate.map.y_size;
     }
+
+    main_obj["map"]["x_size"] = gstate.map.x_size;
+    main_obj["map"]["y_size"] = gstate.map.y_size;
 
     json pirates;
 
@@ -107,26 +108,16 @@ string serialize_gamestate(PiGameState gstate, bool withMapTiles) {
 
     json players;
 
-    printf("ASDSDF\n");
     for (auto player : gstate.players) {
         json p;
-
-        printf("1\n");
         p["uID"] = player.second.uID;
-        printf("2\n");
-        p[0] = player.second.x;
-        printf("3\n");
-        p[1] = player.second.y;
-        printf("4\n");
+        p["x"] = player.second.x;
+        p["y"] = player.second.y;
         p["registered"] = player.second.registered;
-        printf("5\n");
         p["name"] = player.second.name;
-        printf("6\n");
 
-        players.emplace_back(player.first,p);
+        players.emplace_back(p);
     }
-    printf("ASDSD222222F\n");
-
 
     main_obj["players"] = players;
 
@@ -136,19 +127,19 @@ string serialize_gamestate(PiGameState gstate, bool withMapTiles) {
 
     // std::cout << "JSON from serialize: " << main_obj.dump() << "\n";
 
+
     return main_obj.dump();
 }
 
 PiGameState deserialize_gamestate(string JSON, bool withMapTiles) {
-    std::cout << JSON << std::endl;
     auto j = json::parse(JSON);
 
-    //TODO: fix for no constructor, NEEDS TO BE ADDRESSED
+    // TODO: fix for no constructor, NEEDS TO BE ADDRESSED
     PiGameState gstate;
 
     gstate.id = j["id"];
 
-    //build map
+    // build map
     vector< vector<PiMapTile> > mapTiles;
 
     if (withMapTiles) {
@@ -157,8 +148,8 @@ PiGameState deserialize_gamestate(string JSON, bool withMapTiles) {
             vector<PiMapTile> mapTile_col;
 
             for(auto tile : tiles) {
-                PiMapTile temp = PiMapTile(vec2(tile["currentDirection"][0], tile["currentDirection"][1]), tile["currentStrength"],
-                    vec2(tile["windDirection"][0], tile["windDirection"][1]), tile["currentStrength"], tile["is_ship"]);
+                PiMapTile temp = PiMapTile(vec2(tile["currentDirection"]["x"], tile["currentDirection"]["y"]), tile["currentStrength"],
+                    vec2(tile["windDirection"]["x"], tile["windDirection"]["y"]), tile["currentStrength"], tile["is_ship"]);
                 temp.start_finish = tile["start_finish"];
                 temp.land_water = tile["land_water"];
 
@@ -206,18 +197,16 @@ PiGameState deserialize_gamestate(string JSON, bool withMapTiles) {
                              vec2(j["Pirate"]["coord_pos"][0], j["Pirate"]["coord_pos"][1]));
 
     // PiPirate done
-
     // build players
     unordered_map<int, PiPlayer> players;
 
     for(auto player_temp : j["players"]) {
         PiPlayer p;
         p.uID = player_temp["uID"];
-        p.x = player_temp[0];
-        p.y = player_temp[1];
+        p.x = player_temp["x"];
+        p.y = player_temp["y"];
         p.registered = player_temp["registered"];
         p.name = player_temp["name"];
-
         players[p.uID] = p;
     }
 
@@ -241,6 +230,8 @@ string serialize_keystrokes(keystrokes_obj ks) {
 
 keystrokes_obj deserialize_keystrokes(string JSON) {
     auto j = json::parse(JSON);
+
+    // std::cout << "Deserialize: " << JSON << std::endl;
 
     int uid = j["unique_id"];
 
