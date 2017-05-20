@@ -12,7 +12,6 @@ int main(int argc, char* argv[]) {
 
         vector<int> keystrokes;
         keystrokes.push_back(1);
-        keystrokes.push_back(3);
 
         client.send_keystrokes(keystrokes, 20);
         client.get_gamestate();

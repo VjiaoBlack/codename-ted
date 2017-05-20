@@ -31,11 +31,12 @@ BasicApp::BasicApp()
     , mBikeObject(0) 
     , mGameLoopClient(NULL)
     , mGameState()
-    , mOtherPirates() {
+    , mOtherPlayers() {
 
     // create more pirates 
-    mGameState.map.pirates.push_back(PiPirate(vec2(200.0f, 200.0f)));
-    mGameState.map.pirates.push_back(PiPirate(vec2(100.0f, 300.0f)));
+    PiPlayer p = PiPlayer();
+    p.uID = 20;
+    mGameState.players[20] = p;
 }
 
 BasicApp::~BasicApp() {
@@ -210,6 +211,7 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
     // TODO make camera respond differently to keys
     mCameraMan->frameRenderingQueued(fe);
         
+    // CLIENT CODE
     std::vector<int> pressedKeysToSend;
     mKeyboard->copyKeyStates(mCurPressedKeys);
     for (int i = 0; i < 256; i++) {
@@ -217,22 +219,21 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
             pressedKeysToSend.push_back(i);
         }
     }
+    
+    if (pressedKeysToSend.size() > 0) {
+        mGameLoopClient->send_keystrokes(pressedKeysToSend, 20);
+    }
 
-    // std::stringstream tempJsonStream;
-    // std::string tempJson;
+    PiGameState state = mGameLoopClient->get_gamestate();
+    printf("%d\n", state.players.size());
+    for (auto player = state.players.begin(); player != state.players.end(); player++) {
+        mGameState.players[player->first].x = player->second.x;
+        mGameState.players[player->first].y = player->second.y;
+        printf("player->first: %d\n", player->first);
+    }
 
-    // for (auto it = pressedKeysToSend.begin(); it != pressedKeysToSend.end(); it++) {
-    //     tempJsonStream << *it << ":";
-    // }
-    // tempJsonStream >> tempJson;
 
-    // // std::cout << tempJson << std::endl;
-
-    // mGameLoopClient->send(tempJson);
-        
-    // TODO: get server team to finish registration
-    // mGameLoopClient->send_keystrokes(pressedKeysToSend, "victor");
- 
+    // update game state
     CEGUI::System::getSingleton().injectTimePulse(fe.timeSinceLastFrame);
  
     CEGUI::Window* terrainLabel =
@@ -263,7 +264,7 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
     nsf /= 1000000000.0f;
 
     // whoo hoo i figured out quaternions yay neverforgetti pls
-    mBikeObject->setPosition(Ogre::Vector3(mBike.x,  -10.0f + mHydrax->getHeigth(Ogre::Vector2(mBike.x, mBike.y)) + (2.0f * sin(nsf * 2.0f)), mBike.y));
+    mBikeObject->setPosition(Ogre::Vector3(mBike.x, -10.0f + mHydrax->getHeigth(Ogre::Vector2(mBike.x, mBike.y)) + (2.0f * sin(nsf * 2.0f)), mBike.y));
 
     // fake bob
     // TODO: create REAL bob physics WOW
@@ -274,17 +275,20 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
             (double) 0.05f * cos(nsf * 2.0f) * cos(3.14f / 2.0f + mBike.dir / 2.0f)));
 
 
-    for (int i = 0; i < mGameState.map.pirates.size(); i++) {
-        mOtherPirates[i]->setPosition(Ogre::Vector3(mGameState.map.pirates[i].position.x,  
-                                                    -10.0f + mHydrax->getHeigth(Ogre::Vector2(mGameState.map.pirates[i].position.x,
-                                                                                              mGameState.map.pirates[i].position.y)) + (2.0f * sin((nsf + i * 100.0f) * 2.0f)),
-                                                    mGameState.map.pirates[i].position.y));
+    for (auto id_ent : mOtherPlayers) {
 
-        mOtherPirates[i]->setOrientation(Ogre::Quaternion(
+
+        printf("%d %f\n", id_ent.first, mGameState.players[id_ent.first].x);
+        id_ent.second->setPosition(Ogre::Vector3(mGameState.players[id_ent.first].x,  
+                                                    -10.0f + mHydrax->getHeigth(Ogre::Vector2(mGameState.players[id_ent.first].x,
+                                                                                              mGameState.players[id_ent.first].y)) + (2.0f * sin((nsf + id_ent.first * 100.0f) * 2.0f)),
+                                                    mGameState.players[id_ent.first].y));
+
+        id_ent.second->setOrientation(Ogre::Quaternion(
                 (double) cos(0.0f / (2.0f)),   
-                (double) 0.05f * cos((nsf + i * 100.0f) * 2.0f) * cos(0.0f / 2.0f), 
+                (double) 0.05f * cos((nsf + id_ent.first * 100.0f) * 2.0f) * cos(0.0f / 2.0f), 
                 (double) sin(0.0f / (2.0f)), 
-                (double) 0.05f * cos((nsf + i * 100.0f) * 2.0f) * cos(3.14f / 2.0f + 0.0f / 2.0f)));
+                (double) 0.05f * cos((nsf + id_ent.first * 100.0f) * 2.0f) * cos(3.14f / 2.0f + 0.0f / 2.0f)));
     }
 
     // TODO quikfix for water color circle bug weird
@@ -576,19 +580,30 @@ void BasicApp::createScene() {
 
     mBikeObject = mCurObject;
 
-    for (int i = 0; i < mGameState.map.pirates.size(); i++) {
+    // for (int i = 0; i < mGameState.map.pirates.size(); i++) {
+    //     Ogre::Entity* ent = mSceneMgr->createEntity("Cube.mesh");
+    //     ent->setMaterialName("Ship/Material");
+
+    //     mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    //     mCurObject->setPosition(Ogre::Vector3(mGameState.players[id_ent.first].x, 800.0, mGameState.players[id_ent.first].y));
+    //     mCurObject->setScale(30.0, 30.0, 30.0);
+    //     mCurObject->attachObject(ent);
+
+
+    //     mOtherPlayers[i] = mCurObject;
+    // }
+
+    for (auto id_player : mGameState.players) {
         Ogre::Entity* ent = mSceneMgr->createEntity("Cube.mesh");
         ent->setMaterialName("Ship/Material");
 
         mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-        mCurObject->setPosition(Ogre::Vector3(mGameState.map.pirates[i].position.x, 800.0, mGameState.map.pirates[i].position.y));
+        mCurObject->setPosition(Ogre::Vector3(id_player.second.x, 800.0, id_player.second.y));
         mCurObject->setScale(30.0, 30.0, 30.0);
         mCurObject->attachObject(ent);
 
-
-        mOtherPirates[i] = mCurObject;
+        mOtherPlayers[id_player.first] = mCurObject;
     }
-
 
 }
  

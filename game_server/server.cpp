@@ -16,10 +16,10 @@
 #include "json_serializer.hpp"
 #include "../physics_ck/physics_tryout.hpp"
 
-#define UP 1
-#define DOWN 2
-#define LEFT 3
-#define RIGHT 4
+#define UP KC_I
+#define DOWN KC_K
+#define LEFT KC_J
+#define RIGHT KC_L
 
 using boost::asio::ip::udp;
 
@@ -38,10 +38,13 @@ public:
         : socket_(io_service, udp::endpoint(udp::v4(), port))
         , currentGameState_() { 
 
-        std::cout << serialize_gamestate(currentGameState_, false) << endl;
 
         // create test player
         currentGameState_.players[20] = PiPlayer();
+        currentGameState_.players[20].uID = 20;
+
+        std::cout << serialize_gamestate(currentGameState_, false) << endl;
+
 
         start_receive();
         
@@ -73,35 +76,45 @@ private:
             std::string incoming_message(recv_buffer_.data(), bytes_transferred);
             std::string gamestate_signal("gamestate");
 
+            printf("%d --- \n", bytes_transferred);
+
             if (!incoming_message.compare(gamestate_signal)) {
                 std::string serialized_gamestate = serialize_gamestate(currentGameState_);
+                cout << serialized_gamestate << endl;
                 boost::shared_ptr<std::string> message(new std::string(serialized_gamestate));
 
                 socket_.async_send_to(boost::asio::buffer(*message), remote_endpoint_,
                                       boost::bind(&GameLoopServer::handle_send, this, message,
                                                   boost::asio::placeholders::error,
                                                   boost::asio::placeholders::bytes_transferred));
+                
+                
+                currentGameState_.players[20].x += 0.2;
             } else {
+
                 // We've got some keystrokes!
+                // 
+                std::cout << incoming_message << std::endl;
                 keystrokes_obj ks = deserialize_keystrokes(incoming_message);
                 unordered_map<string, vector<string> > input_object;
-                vector<string> player;
-                vector<string> keystrokes;
-                vector<string> raw_strokes;
-                raw_strokes.push_back("U");
-                raw_strokes.push_back("D");
-                raw_strokes.push_back("L");
-                raw_strokes.push_back("R");
-                player.push_back("victor");
-                input_object["player_name"] = player;
 
                 for (int i = 0; i < ks.keystrokes.size(); ++i) {
-                    keystrokes.push_back(raw_strokes[ks.keystrokes[i]]);
+                    std::string key_str = translate_keystroke(ks.keystrokes[i]);
+                    input_object["keystrokes"].push_back(key_str);
+
+                    if (ks.keystrokes[i] == KC_W) {
+                        currentGameState_.players[20].y += 20.0;
+                    }
+
+                    if (ks.keystrokes[i] == KC_A) {
+                        currentGameState_.players[20].y -= 20.0;
+                    }
                 }
 
-                input_object["keystrokes"] = keystrokes;
-
                 currentGameState_.map = compute_gamestate(input_object, currentGameState_.map);
+                
+
+
                 std::cout << incoming_message << std::endl;
             }
 

@@ -7,10 +7,12 @@
  */
 
 
-#ifndef _TD_BIKE_H_
-#define _TD_BIKE_H_
+
 
 #include "PiratePanic.h"
+
+#ifndef _TD_BIKE_H_
+#define _TD_BIKE_H_
 
 #define PI 3.1415926535897
 

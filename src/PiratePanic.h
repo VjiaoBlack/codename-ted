@@ -1,6 +1,7 @@
+
 #ifndef BASICAPP_H
 #define BASICAPP_H
- 
+
 #include <OgreRoot.h>
 #include <OgreCamera.h>
 #include <OgreCommon.h>
@@ -49,6 +50,9 @@
 #include <stdio.h>
 #include <time.h>
 #include <map>
+
+
+
 
 #define _def_SkyBoxNum 3
 
@@ -144,7 +148,7 @@ private:
     UDPClient* mGameLoopClient;
 
     // TODO make these pointers... holy FUCK
-    std::map<int, Ogre::SceneNode*> mOtherPirates;
+    std::map<int, Ogre::SceneNode*> mOtherPlayers;
 
    PiGameState mGameState;
 };
