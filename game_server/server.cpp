@@ -32,7 +32,13 @@ public:
 
     GameLoopServer(boost::asio::io_service& io_service, int port)
         : socket_(io_service, udp::endpoint(udp::v4(), port))
-        , currentGameState_() {
+        , currentGameState_() { 
+
+        std::cout << serialize_gamestate(currentGameState_, false) << endl;
+
+        // create test player
+        currentGameState_.players[20] = PiPlayer();
+
         start_receive();
     }
 

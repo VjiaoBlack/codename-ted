@@ -12,16 +12,19 @@ int main(int argc, char* argv[]) {
     try {
         boost::asio::io_service io_service;
         UDPClient client(io_service, "localhost", "8888");
-        
-        
-        vector<int> keystrokes;
-        keystrokes.push_back(0);
-        keystrokes.push_back(1);
-        keystrokes.push_back(2);
-        keystrokes.push_back(3);
 
-        client.send_keystrokes(keystrokes, 20);
-        PiGameState state = client.get_gamestate();
+        while(true) {
+            usleep(100000);
+
+            vector<int> keystrokes;
+            keystrokes.push_back(0);
+            keystrokes.push_back(1);
+            keystrokes.push_back(2);
+            keystrokes.push_back(3);
+
+            client.send_keystrokes(keystrokes, 20);
+            PiGameState state = client.get_gamestate();
+        }
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
     }

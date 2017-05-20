@@ -24,7 +24,7 @@ class keystrokes_obj {
 	public:
 
 		//attributes
-		string unique_id;
+		int unique_id;
 		vector<int> keystrokes;
 
 		//Constructor

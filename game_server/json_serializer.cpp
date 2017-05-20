@@ -9,13 +9,11 @@
 #include "json_serializer.hpp"
 
 string serialize_gamestate(PiGameState gstate, bool withMapTiles) {
-    //example serialize from given structs in Slack
-    //assuming some game state, "gstate"
-
+    // example serialize from given structs in Slack
+    // assuming some game state, "gstate"
     json main_obj;
 
-    //map start
-
+    // map start
     main_obj["id"] = gstate.id;
 
     json maptiles;
@@ -87,9 +85,7 @@ string serialize_gamestate(PiGameState gstate, bool withMapTiles) {
     main_obj["map"]["merchants"] = merchants;
     main_obj["map"]["size"] = {gstate.map.size.x, gstate.map.size.y, gstate.map.size.z};
 
-    //map done
-
-    //PiPirate start
+    // PiPirate start
 
     json the_pirate;
 
@@ -105,36 +101,46 @@ string serialize_gamestate(PiGameState gstate, bool withMapTiles) {
 
     main_obj["Pirate"] = the_pirate;
 
-    //PiPirate done
+    // PiPirate done
 
-    //players start
+    // players start
 
     json players;
 
-    for(auto player : gstate.players) {
+    printf("ASDSDF\n");
+    for (auto player : gstate.players) {
         json p;
 
+        printf("1\n");
         p["uID"] = player.second.uID;
-        p["x"] = player.second.x;
-        p["y"] = player.second.y;
+        printf("2\n");
+        p[0] = player.second.x;
+        printf("3\n");
+        p[1] = player.second.y;
+        printf("4\n");
         p["registered"] = player.second.registered;
+        printf("5\n");
         p["name"] = player.second.name;
+        printf("6\n");
 
         players.emplace_back(player.first,p);
     }
+    printf("ASDSD222222F\n");
+
 
     main_obj["players"] = players;
 
-    //players done
-    //not doing lobbies
-    //not doing heightmap
+    // players done
+    // not doing lobbies
+    // not doing heightmap
 
-    //std::cout << "JSON from serialize: " << main_obj.dump() << "\n";
+    // std::cout << "JSON from serialize: " << main_obj.dump() << "\n";
 
     return main_obj.dump();
 }
 
 PiGameState deserialize_gamestate(string JSON, bool withMapTiles) {
+    std::cout << JSON << std::endl;
     auto j = json::parse(JSON);
 
     //TODO: fix for no constructor, NEEDS TO BE ADDRESSED
@@ -151,8 +157,8 @@ PiGameState deserialize_gamestate(string JSON, bool withMapTiles) {
             vector<PiMapTile> mapTile_col;
 
             for(auto tile : tiles) {
-                PiMapTile temp = PiMapTile(vec2(tile["currentDirection"]["x"], tile["currentDirection"]["y"]), tile["currentStrength"],
-                    vec2(tile["windDirection"]["x"], tile["windDirection"]["y"]), tile["currentStrength"], tile["is_ship"]);
+                PiMapTile temp = PiMapTile(vec2(tile["currentDirection"][0], tile["currentDirection"][1]), tile["currentStrength"],
+                    vec2(tile["windDirection"][0], tile["windDirection"][1]), tile["currentStrength"], tile["is_ship"]);
                 temp.start_finish = tile["start_finish"];
                 temp.land_water = tile["land_water"];
 
@@ -164,15 +170,14 @@ PiGameState deserialize_gamestate(string JSON, bool withMapTiles) {
     }
 
     vector<PiPirate> pirates;
-
     for(auto pirate_temp : j["map"]["pirates"]) {
         PiPirate p = PiPirate(pirate_temp["pirate_name"],
-            vec2(pirate_temp["position"]["x"], pirate_temp["position"]["y"]),
-            vec2(pirate_temp["velocity"]["x"], pirate_temp["velocity"]["y"]),
-            vec2(pirate_temp["acceleration"]["x"], pirate_temp["acceleration"]["y"]),
+            vec2(pirate_temp["position"][0], pirate_temp["position"][1]),
+            vec2(pirate_temp["velocity"][0], pirate_temp["velocity"][1]),
+            vec2(pirate_temp["acceleration"][0], pirate_temp["acceleration"][1]),
             pirate_temp["orientation"], pirate_temp["rudderRot"],
             pirate_temp["goldAmount"], pirate_temp["AI"],
-            vec2(pirate_temp["coord_pos"]["x"], pirate_temp["coord_pos"]["y"]));
+            vec2(pirate_temp["coord_pos"][0], pirate_temp["coord_pos"][1]));
 
         pirates.push_back(p);
     }
@@ -181,50 +186,40 @@ PiGameState deserialize_gamestate(string JSON, bool withMapTiles) {
 
     for(auto merchant_temp : j["map"]["merchants"]) {
         PiMerchant m = PiMerchant(merchant_temp["merchant_name"],
-            vec2(merchant_temp["position"]["x"], merchant_temp["position"]["y"]),
-            vec2(merchant_temp["velocity"]["x"], merchant_temp["velocity"]["y"]),
-            vec2(merchant_temp["acceleration"]["x"], merchant_temp["acceleration"]["y"]),
+            vec2(merchant_temp["position"][0], merchant_temp["position"][1]),
+            vec2(merchant_temp["velocity"][0], merchant_temp["velocity"][1]),
+            vec2(merchant_temp["acceleration"][0], merchant_temp["acceleration"][1]),
             merchant_temp["orientation"], merchant_temp["rudderRot"],
             merchant_temp["goldAmount"], merchant_temp["AI"],
-            vec2(merchant_temp["coord_pos"]["x"], merchant_temp["coord_pos"]["y"]));
+            vec2(merchant_temp["coord_pos"][0], merchant_temp["coord_pos"][1]));
 
         merchants.push_back(m);
     }
 
-    vec3 size(j["map"]["size"][0], j["map"]["size"][1], j["map"]["size"][2]);
-
-    gstate.map = PiGameMap(mapTiles, j["map"]["x_size"], j["map"]["y_size"], pirates, merchants, size);
-
-    //map done
-
-    //build PiPirate
-
+    // build PiPirate
     gstate.Pirate = PiPirate(j["Pirate"]["pirate_name"],
-        vec2(j["Pirate"]["position"]["x"], j["Pirate"]["position"]["y"]),
-        vec2(j["Pirate"]["velocity"]["x"], j["Pirate"]["velocity"]["y"]),
-        vec2(j["Pirate"]["acceleration"]["x"], j["Pirate"]["acceleration"]["y"]),
-        j["Pirate"]["orientation"], j["Pirate"]["rudderRot"],
-        j["Pirate"]["goldAmount"], j["Pirate"]["AI"],
-        vec2(j["Pirate"]["coord_pos"]["x"], j["Pirate"]["coord_pos"]["y"]));
+                             vec2(j["Pirate"]["position"][0], j["Pirate"]["position"][1]),
+                             vec2(j["Pirate"]["velocity"][0], j["Pirate"]["velocity"][1]),
+                             vec2(j["Pirate"]["acceleration"][0], j["Pirate"]["acceleration"][1]),
+                             j["Pirate"]["orientation"], j["Pirate"]["rudderRot"],
+                             j["Pirate"]["goldAmount"], j["Pirate"]["AI"],
+                             vec2(j["Pirate"]["coord_pos"][0], j["Pirate"]["coord_pos"][1]));
 
-    //PiPirate done
+    // PiPirate done
 
-    //build players
-
+    // build players
     unordered_map<int, PiPlayer> players;
 
     for(auto player_temp : j["players"]) {
         PiPlayer p;
         p.uID = player_temp["uID"];
-        p.x = player_temp["x"];
-        p.y = player_temp["y"];
+        p.x = player_temp[0];
+        p.y = player_temp[1];
         p.registered = player_temp["registered"];
         p.name = player_temp["name"];
 
         players[p.uID] = p;
     }
-
-    //players done
 
     return gstate;
 }
@@ -245,7 +240,6 @@ string serialize_keystrokes(keystrokes_obj ks) {
 }
 
 keystrokes_obj deserialize_keystrokes(string JSON) {
-
     auto j = json::parse(JSON);
 
     int uid = j["unique_id"];

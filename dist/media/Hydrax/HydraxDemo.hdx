@@ -25,7 +25,7 @@ Components=Sun|Depth|Foam|Smooth|Underwater|UnderwaterReflections|UnderwaterGodR
 
 #Foam parameters
 <float>FoamMaxDistance=7.5e+007
-<float>FoamScale=0.0025
+<float>FoamScale=0.002 5
 <float>FoamStart=-0.2
 <float>FoamTransparency=1
 
