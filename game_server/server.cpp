@@ -16,6 +16,10 @@
 #include "json_serializer.hpp"
 #include "../physics_ck/physics_tryout.hpp"
 
+#define UP 1
+#define DOWN 2
+#define LEFT 3
+#define RIGHT 4
 
 using boost::asio::ip::udp;
 
@@ -40,9 +44,22 @@ public:
         currentGameState_.players[20] = PiPlayer();
 
         start_receive();
+        
     }
 
 private:
+    string translate_keystroke(int ks) {
+
+        unordered_map<int, std::string> keystroke_map({
+            {UP, "UP"},
+            {DOWN, "DOWN"},
+            {LEFT, "LEFT"},
+            {RIGHT, "RIGHT"}
+        });
+        return keystroke_map[ks];
+    }
+
+
     void start_receive() {
         socket_.async_receive_from(boost::asio::buffer(recv_buffer_), remote_endpoint_,
                                    boost::bind(&GameLoopServer::handle_receive, this,
@@ -96,6 +113,8 @@ private:
                      const boost::system::error_code& /*error*/,
                      std::size_t /*bytes_transferred*/) {
     }
+
+    unordered_map<int, string> keystroke_translator;
 
     udp::socket socket_;
     udp::endpoint remote_endpoint_;
