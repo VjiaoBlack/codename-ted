@@ -53,14 +53,15 @@ public:
 class PiPlayer {
 public:
     int uID;
-    float x;
-    float y;
-    bool registered;
+    float x; // don't use 
+    float y; // don't use 
+    // bool registered; 
+    bool is_pirate;
     string name;
     PiPlayer(int a, float b, float c, 
             bool d, string e) : 
             uID(a), x(b), y(c), 
-            registered(d), name(e) {};
+            is_pirate(d), name(e) {};
 };
 
 class PiShip {
