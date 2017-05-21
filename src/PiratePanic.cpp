@@ -34,9 +34,7 @@ BasicApp::BasicApp()
     , mOtherPlayers() {
 
     // create more pirates 
-    PiPlayer p = PiPlayer();
-    p.uID = 20;
-    mGameState.players[20] = p;
+    mGameState.add_player(0,0,0,true,"Clone");
 }
 
 BasicApp::~BasicApp() {
@@ -227,9 +225,20 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
     PiGameState state = mGameLoopClient->get_gamestate();
     printf("%d\n", state.players.size());
     for (auto player = state.players.begin(); player != state.players.end(); player++) {
-        mGameState.players[player->first].x = player->second.x;
-        mGameState.players[player->first].y = player->second.y;
-        printf("player->first: %d\n", player->first);
+        // id = player.first;
+        
+        printf("asdf %f\n", mGameState.map.merchants[player->first].coord_pos.x);
+        printf("ijsdfadsfkl %d\n", state.map.merchants.size());
+        printf("ijkl %f\n", state.map.merchants[0].coord_pos.x);
+
+
+        mGameState.map.merchants[player->first].coord_pos.x = state.map.merchants[player->first].coord_pos.x;
+        mGameState.map.merchants[player->first].coord_pos.y = state.map.merchants[player->first].coord_pos.y;
+        // mGameState = state;
+
+        mGameState.map.merchants[player->first].coord_pos.x *= 50.0;
+        mGameState.map.merchants[player->first].coord_pos.y *= 50.0;
+        printf("player->first: %d... %f\n", player->first, mGameState.map.merchants[player->first].coord_pos.x);
     }
 
 
@@ -277,12 +286,12 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
 
     for (auto id_ent : mOtherPlayers) {
 
+        printf("why %f\n", mGameState.map.merchants[id_ent.first].coord_pos.x);
 
-        printf("%d %f\n", id_ent.first, mGameState.players[id_ent.first].x);
-        id_ent.second->setPosition(Ogre::Vector3(mGameState.players[id_ent.first].x,  
-                                                    -10.0f + mHydrax->getHeigth(Ogre::Vector2(mGameState.players[id_ent.first].x,
-                                                                                              mGameState.players[id_ent.first].y)) + (2.0f * sin((nsf + id_ent.first * 100.0f) * 2.0f)),
-                                                    mGameState.players[id_ent.first].y));
+        id_ent.second->setPosition(Ogre::Vector3(mGameState.map.merchants[id_ent.first].coord_pos.x,  
+                                                    -10.0f + mHydrax->getHeigth(Ogre::Vector2(mGameState.map.merchants[id_ent.first].coord_pos.x,
+                                                                                              mGameState.map.merchants[id_ent.first].coord_pos.y)) + (2.0f * sin((nsf + id_ent.first * 100.0f) * 2.0f)),
+                                                    mGameState.map.merchants[id_ent.first].coord_pos.y));
 
         id_ent.second->setOrientation(Ogre::Quaternion(
                 (double) cos(0.0f / (2.0f)),   
@@ -598,7 +607,7 @@ void BasicApp::createScene() {
         ent->setMaterialName("Ship/Material");
 
         mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-        mCurObject->setPosition(Ogre::Vector3(id_player.second.x, 800.0, id_player.second.y));
+        mCurObject->setPosition(Ogre::Vector3(mGameState.map.merchants[id_player.first].coord_pos.x, 800.0, mGameState.map.merchants[id_player.first].coord_pos.y));
         mCurObject->setScale(30.0, 30.0, 30.0);
         mCurObject->attachObject(ent);
 

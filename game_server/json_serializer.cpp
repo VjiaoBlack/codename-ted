@@ -140,6 +140,8 @@ PiGameState deserialize_gamestate(string JSON, bool withMapTiles) {
     gstate.id = j["id"];
 
     // build map
+    // um no
+    // TODO this is broken
     vector< vector<PiMapTile> > mapTiles;
 
     if (withMapTiles) {
@@ -160,7 +162,6 @@ PiGameState deserialize_gamestate(string JSON, bool withMapTiles) {
         }
     }
 
-    vector<PiPirate> pirates;
     for(auto pirate_temp : j["map"]["pirates"]) {
         PiPirate p = PiPirate(pirate_temp["pirate_name"],
             vec2(pirate_temp["position"][0], pirate_temp["position"][1]),
@@ -170,10 +171,8 @@ PiGameState deserialize_gamestate(string JSON, bool withMapTiles) {
             pirate_temp["goldAmount"], pirate_temp["AI"],
             vec2(pirate_temp["coord_pos"][0], pirate_temp["coord_pos"][1]));
 
-        pirates.push_back(p);
+        gstate.map.pirates.push_back(p);
     }
-
-    vector<PiMerchant> merchants;
 
     for(auto merchant_temp : j["map"]["merchants"]) {
         PiMerchant m = PiMerchant(merchant_temp["merchant_name"],
@@ -184,7 +183,7 @@ PiGameState deserialize_gamestate(string JSON, bool withMapTiles) {
             merchant_temp["goldAmount"], merchant_temp["AI"],
             vec2(merchant_temp["coord_pos"][0], merchant_temp["coord_pos"][1]));
 
-        merchants.push_back(m);
+        gstate.map.merchants.push_back(m);
     }
 
     // build PiPirate

@@ -43,7 +43,7 @@ public:
         // currentGameState_.add_player(0, 0, 0, true, "our_guy");
 
         // currentGameState_.map = PiGameMap map(25);
-        currentGameState_.map.add_merchant(PiMerchant());
+        currentGameState_.add_player(0,0,0,true,"Clone");
 
 
         std::cout << serialize_gamestate(currentGameState_, false) << endl;
