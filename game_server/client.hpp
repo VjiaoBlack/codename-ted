@@ -8,6 +8,8 @@
 #include <boost/asio.hpp>
 
 #include "json_serializer.hpp"
+#include "../physics_ck/physics_tryout.hpp"
+
 
 #ifndef _CLIENT_HPP_
 #define _CLIENT_HPP_

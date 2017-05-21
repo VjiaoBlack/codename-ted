@@ -290,9 +290,9 @@ void print_boat(PiGameMap gmap){
 
   bool quit = false;
 
-  PiGameMap map = PiGameMap::createRandomMap();
-
-  map.merchants[0].merchant_name = "our_guy";
+  PiGameMap map(25);
+  map.add_merchant(PiMerchant());
+  // map.merchants[0].merchant_name = "our_guy";
 
   // for(merchant m: map.merchants) { //Cycle through every merchant
   //   printf("%s\n", m.merchant_name.c_str());

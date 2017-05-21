@@ -40,9 +40,13 @@ public:
 
 
         // create test player
-        currentGameState_.add_player(0, 0, 0, true, "our_guy");
-        std::cout << serialize_gamestate(currentGameState_, false) << endl;
+        // currentGameState_.add_player(0, 0, 0, true, "our_guy");
 
+        // currentGameState_.map = PiGameMap map(25);
+        currentGameState_.map.add_merchant(PiMerchant());
+
+
+        std::cout << serialize_gamestate(currentGameState_, false) << endl;
 
         start_receive();
 
@@ -111,6 +115,8 @@ private:
                         currentGameState_.players[20].y -= 20.0;
                     }
                 }
+
+                input_object["player_name"].push_back("Clone");
 
                 currentGameState_.map = compute_gamestate(input_object, currentGameState_.map);
 
