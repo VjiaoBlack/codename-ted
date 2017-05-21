@@ -83,7 +83,8 @@ void PiGameState::add_player(int uID, float x,
         float y, bool registered, string name) {
     PiPlayer player = PiPlayer(uID, x, y, registered, name);
     players.insert(make_pair(uID, player));
-    map.add_merchant(x, y); 
+    map.add_merchant(PiMerchant());
+
 }
 
 void PiGameState::add_pirate(float x, float y) {
@@ -91,9 +92,8 @@ void PiGameState::add_pirate(float x, float y) {
     Pirate = pir;
 }
 
-void PiGameMap::add_merchant(float x, float y) {
-    PiMerchant mer = PiMerchant(vec2(x, y));
-    merchants.push_back(mer);
+void PiGameMap::add_merchant(PiMerchant merchant) {
+    merchants.push_back(merchant);
 }
 
 // HELPER FUNCTIONS

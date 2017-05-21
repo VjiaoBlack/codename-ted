@@ -34,7 +34,7 @@ public:
     void print_vec2();
 
     float Length();
- 
+
     // Normalizes the vector
     vec2 Normalize();
 };
@@ -53,14 +53,14 @@ public:
 class PiPlayer {
 public:
     int uID;
-    float x; // don't use 
-    float y; // don't use 
-    // bool registered; 
+    float x; // don't use
+    float y; // don't use
+    // bool registered;
     bool is_pirate;
     string name;
-    PiPlayer(int a, float b, float c, 
-            bool d, string e) : 
-            uID(a), x(b), y(c), 
+    PiPlayer(int a, float b, float c,
+            bool d, string e) :
+            uID(a), x(b), y(c),
             is_pirate(d), name(e) {};
     PiPlayer()
         : PiPlayer(0, 0.0, 0.0, false, "Jigar"){};
@@ -99,12 +99,12 @@ public:
         : pirate_name(a)
         , PiShip(b, c, d, e, f, g, h, i) {
     };
-    // Note that location in this constructor is starting TILE 
-    PiPirate(vec2 loc) : PiPirate("Vader", 
-            loc, 
-            loc, 
-            vec2(0,0), 
-            0, 0, 0, true, 
+    // Note that location in this constructor is starting TILE
+    PiPirate(vec2 loc) : PiPirate("Vader",
+            loc,
+            loc,
+            vec2(0,0),
+            0, 0, 0, true,
             vec2(0,0)) {}
     PiPirate() : PiPirate(vec2(0,0)) {}
 };
@@ -118,9 +118,9 @@ public:
                float e, float f, int g, bool h, vec2 i)
         : merchant_name(a)
         , PiShip(b, c, d, e, f, g, h, i) {};
-    PiMerchant(vec2 loc) 
+    PiMerchant(vec2 loc)
         : PiMerchant("Clone", loc, vec2(0,0), vec2(0,0), 0, 0, 0, true, vec2(0,0)) {}
-    PiMerchant() : PiMerchant(vec2(0,0)) {} 
+    PiMerchant() : PiMerchant(vec2(0,0)) {}
 };
 
 class PiLobby {
@@ -168,7 +168,7 @@ public:
 
     // CONSTRUCTOR
     PiGameMap(vector< vector<PiMapTile> > a, int b, int c,
-              vector<PiPirate> d, vector <PiMerchant> e, vec3 f) 
+              vector<PiPirate> d, vector <PiMerchant> e, vec3 f)
         : mapTiles(a)
         , x_size(b)
         , y_size(c)
@@ -184,7 +184,7 @@ public:
         , size(sz, sz, sz) {
         vec3 size(sz, sz, sz);
         for(int i = 0; i < sz; i++) {
-            vector<PiMapTile> curr_row; 
+            vector<PiMapTile> curr_row;
             for (int j = 0; j < sz; j++) {
                 curr_row.push_back(PiMapTile());
             }
@@ -197,7 +197,7 @@ public:
 
     // METHODS
     void print_game_map();
-    void add_merchant(float x, float y); 
+    void add_merchant(PiMerchant merchant); 
 };
 
 class PiGameState {
@@ -222,11 +222,11 @@ public:
         , players()
         , lobbies()
         , heightMap(NULL) {}
-    
+
     // Methods
     void add_player(int uID, float x, float y, bool registered, string name);
     void add_pirate(float x, float y);
- 
+
 };
 
 bool compare_vec(vec2 a, vec2 b);
@@ -234,7 +234,7 @@ void move_pirate(PiGameMap& m, vec2 pos1, vec2 pos2);
 void move_merchant(PiGameMap& map, vec2 pos1, vec2 pos2);
 void shift_pirate(PiGameMap& p, vec2 coord1, vec2 coord2);
 void shift_merchant(PiGameMap& m, vec2 coord1, vec2 coord2);
-vec2 convert_coord_tile(PiGameMap& m, vec2 coord); 
-vec2 convert_tile_coord(PiGameMap& m, vec2 pos); 
+vec2 convert_coord_tile(PiGameMap& m, vec2 coord);
+vec2 convert_tile_coord(PiGameMap& m, vec2 pos);
 
 #endif

@@ -40,7 +40,7 @@ public:
 
 
         // create test player
-        currentGameState_.add_player(0, 0, 0, true, "swag");
+        currentGameState_.add_player(0, 0, 0, true, "our_guy");
         std::cout << serialize_gamestate(currentGameState_, false) << endl;
 
 
