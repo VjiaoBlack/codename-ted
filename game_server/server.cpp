@@ -17,6 +17,7 @@
 
 
 using boost::asio::ip::udp;
+using boost::asio::ip::tcp;
 
 #define MAX_RECV_LENGTH 1000000
 
@@ -33,6 +34,11 @@ public:
         : socket_(io_service, udp::endpoint(udp::v4(), port))
         , currentGameState_() {
         start_receive();
+    }
+
+    int tcp_register(boost::asio::io_service& io_service, int port)
+    {
+        
     }
 
 private:
@@ -85,6 +91,7 @@ int main(int argc, char *argv[1]) {
     try {
         boost::asio::io_service io_service;
         int port = atoi(argv[1]);
+        tcp_register(io_service, port);
         GameLoopServer server(io_service, port);
         io_service.run();
     } catch (std::exception& e) {

@@ -26,3 +26,8 @@ void UDPClient::get_gamestate() {
     std::cout << serialized_gamestate << std::endl;
     // return deserilize_gamestate(serialized_gamestate, false);
 }
+
+void TCPClient::send_keystrokes(int uid) {
+    string msg = std::to_string(uid)
+    socket_.send_to(boost::asio::buffer(msg, strlen(msg)), receiver_endpoint_);
+}
