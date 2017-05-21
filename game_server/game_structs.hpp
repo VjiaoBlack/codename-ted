@@ -62,6 +62,8 @@ public:
             bool d, string e) : 
             uID(a), x(b), y(c), 
             is_pirate(d), name(e) {};
+    PiPlayer()
+        : PiPlayer(0, 0.0, 0.0, false, "Jigar"){};
 };
 
 class PiShip {
