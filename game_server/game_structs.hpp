@@ -197,6 +197,7 @@ public:
 
     // METHODS
     void print_game_map();
+    void add_merchant(float x, float y); 
 };
 
 class PiGameState {
@@ -225,6 +226,7 @@ public:
     // Methods
     void add_player(int uID, float x, float y, bool registered, string name);
     void add_pirate(float x, float y);
+ 
 };
 
 bool compare_vec(vec2 a, vec2 b);
