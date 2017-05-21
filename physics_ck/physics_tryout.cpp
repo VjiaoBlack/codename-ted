@@ -246,7 +246,8 @@ void print_boat(PiGameMap gmap){
     printf("Name: %s\nPosition %f,%f\nVelocity %f,%f\nAcceleration %f,%f\nOrientation: %f\n, rudderRot: %f\n", gmap.merchants[0].merchant_name.c_str(), posx, posy, velx, vely, accx, accy, orient,rot);
 }
 
-/* int main(int argc, char* argv[]){
+/*
+int main(int argc, char* argv[]){
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
       printf("Could not initialize SDL: %s\n", SDL_GetError());
       exit(1);
@@ -422,4 +423,5 @@ void print_boat(PiGameMap gmap){
   }
 
   return 0;
-} */
+} 
+*/

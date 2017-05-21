@@ -198,20 +198,16 @@ PiGameState deserialize_gamestate(string JSON, bool withMapTiles) {
 
     // PiPirate done
     // build players
-    printf("help\n");
     for(auto player_temp : j["players"]) {
-        printf("are there PLAYERS PLEASE oH YGOD\n");
         PiPlayer p;
         p.uID = player_temp["uID"];
         p.x = player_temp["x"];
         p.y = player_temp["y"];
-        printf("DOOT %f, %f\n", p.x, p.y);
         //p.registered = player_temp["registered"];
         p.name = player_temp["name"];
         gstate.players[p.uID] = p;
     }
 
-    printf("help hlel\n");
     return gstate;
 }
 
