@@ -36,18 +36,16 @@ public:
 
     GameLoopServer(boost::asio::io_service& io_service, int port)
         : socket_(io_service, udp::endpoint(udp::v4(), port))
-        , currentGameState_() { 
+        , currentGameState_() {
 
 
         // create test player
-        currentGameState_.players[20] = PiPlayer();
-        currentGameState_.players[20].uID = 20;
-
+        currentGameState_.add_player(0, 0, 0, true, "swag");
         std::cout << serialize_gamestate(currentGameState_, false) << endl;
 
 
         start_receive();
-        
+
     }
 
 private:
@@ -87,13 +85,16 @@ private:
                                       boost::bind(&GameLoopServer::handle_send, this, message,
                                                   boost::asio::placeholders::error,
                                                   boost::asio::placeholders::bytes_transferred));
-                
-                
-                currentGameState_.players[20].x += 0.2;
+
+
+                if (currentGameState_.players.size()) {
+
+                }
+
             } else {
 
                 // We've got some keystrokes!
-                // 
+                //
                 std::cout << incoming_message << std::endl;
                 keystrokes_obj ks = deserialize_keystrokes(incoming_message);
                 unordered_map<string, vector<string> > input_object;
@@ -112,7 +113,7 @@ private:
                 }
 
                 currentGameState_.map = compute_gamestate(input_object, currentGameState_.map);
-                
+
 
 
                 std::cout << incoming_message << std::endl;

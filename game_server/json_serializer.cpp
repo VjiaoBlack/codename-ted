@@ -107,13 +107,13 @@ string serialize_gamestate(PiGameState gstate, bool withMapTiles) {
     // players start
 
     json players;
-
+    
     for (auto player : gstate.players) {
         json p;
         p["uID"] = player.second.uID;
         p["x"] = player.second.x;
         p["y"] = player.second.y;
-        p["registered"] = player.second.registered;
+        //p["registered"] = player.second.registered;
         p["name"] = player.second.name;
 
         players.emplace_back(p);
@@ -206,7 +206,7 @@ PiGameState deserialize_gamestate(string JSON, bool withMapTiles) {
         p.x = player_temp["x"];
         p.y = player_temp["y"];
         printf("DOOT %f, %f\n", p.x, p.y);
-        p.registered = player_temp["registered"];
+        //p.registered = player_temp["registered"];
         p.name = player_temp["name"];
         gstate.players[p.uID] = p;
     }
