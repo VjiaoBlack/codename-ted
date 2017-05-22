@@ -3,10 +3,13 @@ CFLAGS=-std=c++11
 INCLUDE=
 
 
-all: astar
+all: test_ai 
 
-astar: build/astar.o build/game_structs.o
-	$(CC) $(CFLAGS) build/astar.o build/game_structs.o $(INCLUDE) -o astar
+test_ai: build/astar.o build/game_structs.o build/test_ai.o
+	$(CC) $(CFLAGS) build/astar.o build/game_structs.o build/test_ai.o $(INCLUDE) -o test_ai 
+
+build/test_ai.o: test_ai.cpp
+	$(CC) $(CFLAGS) -c test_ai.cpp $(INCLUDE) -o build/test_ai.o
 
 build/astar.o: astar.cpp astar.hpp
 	$(CC) $(CFLAGS) -c astar.cpp $(INCLUDE) -o build/astar.o

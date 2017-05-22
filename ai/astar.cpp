@@ -151,8 +151,3 @@ float distance(vec2 pos1, vec2 pos2) {
     return dist;
 }
 
-int main() {
-    cout << "Staring A Star Algorithm\n";
-    astar_trial();
-    cout << "A Star Algorithm Complete\n";
-}
