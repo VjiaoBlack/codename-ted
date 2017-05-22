@@ -166,6 +166,7 @@ void update_pirate_physics(PiGameMap m, PiPirate &p, vec2 goal_node) {
     float delta_magnitude = sqrt(pow(delta_x, 2) + pow(delta_y, 2));
     float v_x = -1 * delta_x * (v_magnitude / delta_magnitude);
     float v_y = -1 * delta_y * (v_magnitude / delta_magnitude);
+    // TODO: Update orientation
     // Print Status
     cout << "*** New Cycle *** \n";
     p.position.print_vec2();

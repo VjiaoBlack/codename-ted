@@ -65,6 +65,7 @@ int main() {
 
     // Create Game Map
     PiGameMap map = PiGameMap::createRandomMap();
+    int update_count = 0;
 
     while(!quit) {
         while (SDL_PollEvent(&e) != 0) {
@@ -97,12 +98,15 @@ int main() {
     	SDL_RenderDrawRect(renderer, &wholeRect);
 
         /** Update Game Map (Basic Physics Engine) */ 
-        run_astar(map);
+        if (!update_count)
+            run_astar(map);
         for(PiPirate p: map.pirates) {
             float new_x = p.coord_pos.x + p.velocity.x;
             float new_y = p.coord_pos.y + p.velocity.y; 
             shift_pirate(map, p.coord_pos, vec2(new_x, new_y));   
         }  
+        update_count++;
+        update_count = update_count < 10 ? update_count : 0;
 
         /** Draw Game Map */ 
         for(PiPirate p : map.pirates) {
