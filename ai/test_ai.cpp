@@ -11,6 +11,7 @@
 #include "astar.hpp"
 #include <unordered_set>
 #include <sys/time.h>
+#include "../game_server/game_structs.hpp"
 
 using namespace std;
 
@@ -94,8 +95,23 @@ int main() {
 	    SDL_Rect wholeRect = {25 * 2, 25 * 2, 500, 500};
     	SDL_RenderDrawRect(renderer, &wholeRect);
 
-        /** Update/Draw GameMap */
+        /** Update Game Map */
 
+
+        /** Draw Game Map */ 
+        for(PiPirate p : map.pirates) {
+    	    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+            SDL_Rect pirateRect = {50 + (int)p.coord_pos.x, 
+                                    50 + (int)p.coord_pos.y, 10, 10}; 
+    	    SDL_RenderDrawRect(renderer, &pirateRect);
+        }
+
+        for(PiMerchant m: map.merchants) {
+            SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+            SDL_Rect merchantRect = {50 + (int)m.coord_pos.x, 
+                                    50 + (int)m.coord_pos.y, 10, 10}; 
+            SDL_RenderDrawRect(renderer, &merchantRect);
+        }
 
 	    /** Update screen */
 	    SDL_RenderPresent(renderer);

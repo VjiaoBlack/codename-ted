@@ -77,7 +77,7 @@ public:
     float rudderRot;
     int goldAmount;
     bool AI;
-    // Constructor
+    // Constructor (Note that coord_pos is last)
     PiShip(vec2 a, vec2 b, vec2 c, float d,
             float e, int f, bool g, vec2 h) :
             position(a), velocity(b), acceleration(c),
@@ -109,10 +109,10 @@ public:
     // MAKE SURE COORD IS IN LOC!! 
     PiPirate(vec2 loc, vec2 coord) : PiPirate("Vader",
             loc,
-            coord,
+            vec2(0,0),
             vec2(0,0),
             0, 0, 0, true,
-            vec2(0,0)) {}
+            coord) {}
     PiPirate() : PiPirate(vec2(0,0)) {}
 
 };
@@ -131,7 +131,7 @@ public:
         : PiMerchant("Clone", loc, vec2(0,0), vec2(0,0), 0, 0, 0, true, vec2(0,0)) {}
     // MAKE SURE COORD IS IN LOC!! 
     PiMerchant(vec2 loc, vec2 coord)
-        : PiMerchant("Clone", loc, coord, vec2(0,0), 0, 0, 0, true, vec2(0,0)) {}
+        : PiMerchant("Clone", loc, vec2(1,1), vec2(0,0), 0, 0, 0, true, coord) {}
     PiMerchant() : PiMerchant(vec2(0,0)) {}
 };
 
