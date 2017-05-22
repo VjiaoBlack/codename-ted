@@ -131,7 +131,7 @@ PiMapTile PiMapTile::createRandomTile(int PiPirate) {
 vec2 convert_coord_tile(PiGameMap& m, vec2 coord) {
     float x_ratio = m.x_size / m.size.x;
     float y_ratio = m.y_size / m.size.y;
-    vec2 tile = vec2(x_ratio * coord.x, y_ratio * coord.y);
+    vec2 tile = vec2(int(x_ratio * coord.x), int(y_ratio * coord.y));
     return tile;
 }
 // Converts a tile position to a coord position
@@ -210,7 +210,7 @@ void shift_merchant(PiGameMap& map, vec2 coord1, vec2 coord2) {
 void move_pirate(PiGameMap& m, vec2 pos1, vec2 pos2) {
     vector<PiPirate> pirates;
     for(PiPirate p : m.pirates) {
-        if (compare_vec(p.position, pos1))
+        if (compare_vec(p.position, pos1)) // hacky
             p.position = pos2;
         pirates.push_back(p);
     }
@@ -224,7 +224,7 @@ void move_pirate(PiGameMap& m, vec2 pos1, vec2 pos2) {
 void move_merchant(PiGameMap& map, vec2 pos1, vec2 pos2) {
     vector<PiMerchant> merchants;
     for(PiMerchant m : map.merchants) {
-        if (compare_vec(m.position, pos1))
+        if (compare_vec(m.position, pos1)) // hacky
             m.position = pos2;
         merchants.push_back(m);
     }

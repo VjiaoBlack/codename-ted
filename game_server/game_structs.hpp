@@ -109,7 +109,7 @@ public:
     // MAKE SURE COORD IS IN LOC!! 
     PiPirate(vec2 loc, vec2 coord) : PiPirate("Vader",
             loc,
-            vec2(0,0),
+            vec2(-1,-1),
             vec2(0,0),
             0, 0, 0, true,
             coord) {}

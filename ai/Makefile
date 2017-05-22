@@ -17,10 +17,6 @@ build/astar.o: astar.cpp astar.hpp
 build/game_structs.o: ../game_server/game_structs.cpp ../game_server/game_structs.hpp
 	$(CC) $(CFLAGS) -c ../game_server/game_structs.cpp $(INCLUDE) -o build/game_structs.o
 
-
-
-
-
 clean:
 	rm -rf *.o
 	rm -rf build/*

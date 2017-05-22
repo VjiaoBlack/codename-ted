@@ -12,6 +12,7 @@
 #include <unordered_set>
 #include <sys/time.h>
 #include "../game_server/game_structs.hpp"
+#include <unistd.h>
 
 using namespace std;
 
@@ -95,8 +96,13 @@ int main() {
 	    SDL_Rect wholeRect = {25 * 2, 25 * 2, 500, 500};
     	SDL_RenderDrawRect(renderer, &wholeRect);
 
-        /** Update Game Map */
-
+        /** Update Game Map (Basic Physics Engine) */ 
+        run_astar(map);
+        for(PiPirate p: map.pirates) {
+            float new_x = p.coord_pos.x + p.velocity.x;
+            float new_y = p.coord_pos.y + p.velocity.y; 
+            shift_pirate(map, p.coord_pos, vec2(new_x, new_y));   
+        }  
 
         /** Draw Game Map */ 
         for(PiPirate p : map.pirates) {
@@ -119,7 +125,7 @@ int main() {
 	    /** Update the surface */
 	    SDL_UpdateWindowSurface(window);
 
-        // usleep(3000);
+        usleep(9000);
     }
     return 0;
 }

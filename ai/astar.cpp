@@ -14,7 +14,7 @@ using namespace std;
 
 // Called by game in order to update pirate physics
 // based on AI
-void run_astar(PiGameMap map) {
+void run_astar(PiGameMap &map) {
     priority_queue<q_elem, vector<q_elem>, PriorityComp> main_q; 
     bool goal_reached = false;
     vector<vec2> positions = retrieve_ship_positions(map);
@@ -41,8 +41,7 @@ void run_astar(PiGameMap map) {
         }
         goal_reached = compare_vec(selected_pos, target_pos);
         if (goal_reached) {
-            shift_pirate(map, pirate_coord, 
-                    convert_coord_tile(map, selected_q.start)); // fix later
+            update_pirate_physics(map, map.pirates[0], selected_q.start);
         }
     }
 } 
@@ -158,3 +157,14 @@ float distance(vec2 pos1, vec2 pos2) {
     return dist;
 }
 
+// Update pirate physics based on next goal node
+void update_pirate_physics(PiGameMap m, PiPirate &p, vec2 goal_node) {
+    vec2 goal_coord = convert_tile_coord(m, goal_node); 
+    float delta_x = p.coord_pos.x - goal_coord.x;
+    float delta_y = p.coord_pos.y - goal_coord.y;
+    float abs_sum = abs(delta_x) + abs(delta_y);
+    float v_magnitude = sqrt(pow(p.velocity.x, 2) + pow(p.velocity.y, 2));
+    float v_x = v_magnitude * (delta_x / abs_sum);
+    float v_y = v_magnitude * (delta_y / abs_sum);
+    p.velocity = vec2(v_x, v_y);
+}
