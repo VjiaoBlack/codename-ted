@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=-std=c++11
-INCLUDE=
+INCLUDE=`pkg-config --cflags --libs sdl2`
 
 
 all: test_ai 
