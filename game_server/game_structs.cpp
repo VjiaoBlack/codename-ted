@@ -127,39 +127,6 @@ PiMapTile PiMapTile::createRandomTile(int PiPirate) {
     return random_tile;
 }
 
-// Creates a randomly generated map, 25 tiles by 25 tiles
-PiGameMap PiGameMap::createRandomMap() {
-    int x_len = 25;
-    int y_len = 25;
-    int rand_i = rand() % 25;
-    int rand_j = rand() % 25;
-    vector< vector<PiMapTile> > tiles;
-    vector<PiPirate> pirates;
-    vector<PiMerchant> merchants;
-    vec3 size(250, 250, 250);
-    for(int i = 0; i < x_len; i++) {
-        vector<PiMapTile> curr_row;
-        for (int j = 0; j < y_len; j++) {
-            if (i == rand_i && j == rand_j) {
-                PiMapTile curr_tile = PiMapTile::createRandomTile(1);
-                curr_row.push_back(curr_tile);
-                PiPirate curr_pirate = PiPirate(vec2(i, j));
-                pirates.push_back(curr_pirate);
-            } else {
-                PiMapTile curr_tile = PiMapTile::createRandomTile(0);
-                curr_row.push_back(curr_tile);
-                if (curr_tile.is_ship) {
-                    PiMerchant curr_merch = PiMerchant(vec2(i, j));
-                    merchants.push_back(curr_merch);
-                }
-            }
-        }
-        tiles.push_back(curr_row);
-    }
-    PiGameMap random_map(tiles, x_len, y_len, pirates, merchants, size);
-    return random_map;
-}
-
 // Converts a coordinate position to a tile position
 vec2 convert_coord_tile(PiGameMap& m, vec2 coord) {
     float x_ratio = m.x_size / m.size.x;
@@ -173,6 +140,43 @@ vec2 convert_tile_coord(PiGameMap& m, vec2 pos) {
     float y_ratio = m.size.y / m.y_size;
     vec2 tile = vec2(x_ratio * pos.x, y_ratio * pos.y);
     return tile;
+}
+
+// Creates a randomly generated map, 25 tiles by 25 tiles
+PiGameMap PiGameMap::createRandomMap() {
+    int x_len = 25;
+    int y_len = 25;
+    int rand_i = rand() % 25;
+    int rand_j = rand() % 25;
+    vector< vector<PiMapTile> > tiles;
+    vector<PiPirate> pirates;
+    vector<PiMerchant> merchants;
+    vec3 size(500, 500, 500);
+    for(int i = 0; i < x_len; i++) {
+        vector<PiMapTile> curr_row;
+        for (int j = 0; j < y_len; j++) {
+            if (i == rand_i && j == rand_j) {
+                PiMapTile curr_tile = PiMapTile::createRandomTile(1);
+                curr_row.push_back(curr_tile);
+                int c_x = i * 500/25; 
+                int c_y = j * 500/25;
+                PiPirate curr_pirate = PiPirate(vec2(i, j), vec2(c_x, c_y));
+                pirates.push_back(curr_pirate);
+            } else {
+                PiMapTile curr_tile = PiMapTile::createRandomTile(0);
+                curr_row.push_back(curr_tile);
+                if (curr_tile.is_ship) {
+                    int c_x = i * 500/25; 
+                    int c_y = j * 500/25;
+                    PiMerchant curr_merch = PiMerchant(vec2(i, j), vec2(c_x, c_y)); 
+                    merchants.push_back(curr_merch);
+                }
+            }
+        }
+        tiles.push_back(curr_row);
+    }
+    PiGameMap random_map(tiles, x_len, y_len, pirates, merchants, size);
+    return random_map;
 }
 
 // Shifts pirate from one coordinate location to another

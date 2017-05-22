@@ -99,14 +99,22 @@ public:
         : pirate_name(a)
         , PiShip(b, c, d, e, f, g, h, i) {
     };
-    // Note that location in this constructor is starting TILE
+    // BAD CONSTRUCTOR - STOP USING EVENTUALLY 
     PiPirate(vec2 loc) : PiPirate("Vader",
             loc,
             loc,
             vec2(0,0),
             0, 0, 0, true,
             vec2(0,0)) {}
+    // MAKE SURE COORD IS IN LOC!! 
+    PiPirate(vec2 loc, vec2 coord) : PiPirate("Vader",
+            loc,
+            coord,
+            vec2(0,0),
+            0, 0, 0, true,
+            vec2(0,0)) {}
     PiPirate() : PiPirate(vec2(0,0)) {}
+
 };
 
 class PiMerchant : public PiShip {
@@ -118,8 +126,12 @@ public:
                float e, float f, int g, bool h, vec2 i)
         : merchant_name(a)
         , PiShip(b, c, d, e, f, g, h, i) {};
+    // BAD CONSTRUCTOR - STOP USING EVENTUALLY 
     PiMerchant(vec2 loc)
         : PiMerchant("Clone", loc, vec2(0,0), vec2(0,0), 0, 0, 0, true, vec2(0,0)) {}
+    // MAKE SURE COORD IS IN LOC!! 
+    PiMerchant(vec2 loc, vec2 coord)
+        : PiMerchant("Clone", loc, coord, vec2(0,0), 0, 0, 0, true, vec2(0,0)) {}
     PiMerchant() : PiMerchant(vec2(0,0)) {}
 };
 
@@ -164,7 +176,7 @@ public:
     int y_size; // for tiles
     vector<PiPirate> pirates;
     vector<PiMerchant> merchants;
-    vec3 size; // Charlie, pls confirm this is for coord
+    vec3 size; // this is for coord
 
     // CONSTRUCTOR
     PiGameMap(vector< vector<PiMapTile> > a, int b, int c,
@@ -176,8 +188,6 @@ public:
         , merchants(e)
         , size(f) {};
 
-    // TODO size in num tiles I suppose??
-    // Jigar: I didn't create it, but I was assuming its coord dimensions.
     PiGameMap(int sz)
         : x_size(sz)
         , y_size(sz)

@@ -30,9 +30,9 @@ int main() {
         exit(1);
     }
     /** Create window */
-    window = SDL_CreateWindow("test_driving",
+    window = SDL_CreateWindow("test_ai",
                                SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                               1024 * 2, 768 * 2, SDL_WINDOW_SHOWN);
+                               600, 600, SDL_WINDOW_SHOWN);
     if (window == NULL) {
         printf("Window could not be created - SDL Error: %s\n", SDL_GetError());
         exit(1);
@@ -45,6 +45,7 @@ int main() {
         printf("Renderer could not be created - SDL Error: %s\n", SDL_GetError());
         exit(1);
     }
+
     /** Initialize renderer color to white */
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
@@ -59,6 +60,9 @@ int main() {
     unordered_set<char> buttonsDown;
 
     bool quit = false;
+
+    // Create Game Map
+    PiGameMap map = PiGameMap::createRandomMap();
 
     while(!quit) {
         while (SDL_PollEvent(&e) != 0) {
@@ -87,8 +91,11 @@ int main() {
 
 	    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 
-	    SDL_Rect wholeRect = {25 * 2, 25 * 2, (1024 - 50) * 2, (768 - 50) * 2};
+	    SDL_Rect wholeRect = {25 * 2, 25 * 2, 500, 500};
     	SDL_RenderDrawRect(renderer, &wholeRect);
+
+        /** Update/Draw GameMap */
+
 
 	    /** Update screen */
 	    SDL_RenderPresent(renderer);

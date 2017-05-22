@@ -12,6 +12,8 @@
 
 using namespace std;
 
+// Called by game in order to update pirate physics
+// based on AI
 void run_astar(PiGameMap map) {
     priority_queue<q_elem, vector<q_elem>, PriorityComp> main_q; 
     bool goal_reached = false;
@@ -45,6 +47,7 @@ void run_astar(PiGameMap map) {
     }
 } 
 
+// Used for astar ascii printing demo
 void astar_trial() {
     PiGameMap map = PiGameMap::createRandomMap();
     int ticks = 0;
@@ -82,12 +85,14 @@ void astar_trial() {
     map.print_game_map(); 
 }
 
+// Simulate merchant moves for trial
 void merchant_moves(PiGameMap& gm) {
     for (PiMerchant m : gm.merchants) {
         move_merchant(gm, m.position, vec2(m.position.x - 2, m.position.y));
     } 
 }
 
+// Retrieve where each pirate/merchant ship is
 vector<vec2> retrieve_ship_positions(PiGameMap gm) {
     vector<vec2> positions; 
     for(PiPirate p: gm.pirates) {
@@ -99,6 +104,7 @@ vector<vec2> retrieve_ship_positions(PiGameMap gm) {
     return positions; 
 }
 
+// retrieve coordinates of a ship
 vector<vec2> retrieve_ship_coords(PiGameMap gm) {
     vector<vec2> coords; 
     for(PiPirate p: gm.pirates) {
@@ -110,6 +116,7 @@ vector<vec2> retrieve_ship_coords(PiGameMap gm) {
     return coords;
 }
 
+// Retreive all possible tiles where ship can go next
 vector<vec2> retrieve_next_positions(vec2 curr, int max_x, int max_y) {
     vector<vec2> next; 
     int x; 
@@ -128,7 +135,7 @@ vector<vec2> retrieve_next_positions(vec2 curr, int max_x, int max_y) {
     return next; 
 }
 
-
+// Select merchant ship to go after
 vec2 get_target(vector<vec2> positions) {
     vec2 start_pos = positions[0]; // hacky way to get PiPirate
     vec2 min_pos = start_pos; 
