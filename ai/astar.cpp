@@ -9,6 +9,7 @@
 
 #include "astar.hpp"
 #include <math.h>
+#define PI 3.14159265
 
 using namespace std;
 
@@ -21,7 +22,6 @@ void run_astar(PiGameMap &map) {
     vector<vec2> coords = retrieve_ship_coords(map);
     vec2 pirate_pos = positions[0]; // Hacky way to get PiPirate position
     vec2 pirate_coord = coords[0]; // Hacky way to get PiPirate coord
-    pirate_pos.print_vec2();
     vec2 target_pos = get_target(positions);
     vec2 selected_pos = pirate_pos;
     main_q.push(q_elem(selected_pos, vec2(-1, -1), 0));
@@ -162,9 +162,16 @@ void update_pirate_physics(PiGameMap m, PiPirate &p, vec2 goal_node) {
     vec2 goal_coord = convert_tile_coord(m, goal_node); 
     float delta_x = p.coord_pos.x - goal_coord.x;
     float delta_y = p.coord_pos.y - goal_coord.y;
-    float abs_sum = abs(delta_x) + abs(delta_y);
     float v_magnitude = sqrt(pow(p.velocity.x, 2) + pow(p.velocity.y, 2));
-    float v_x = v_magnitude * (delta_x / abs_sum);
-    float v_y = v_magnitude * (delta_y / abs_sum);
+    float delta_magnitude = sqrt(pow(delta_x, 2) + pow(delta_y, 2));
+    float v_x = -1 * delta_x * (v_magnitude / delta_magnitude);
+    float v_y = -1 * delta_y * (v_magnitude / delta_magnitude);
+    // Print Status
+    cout << "*** New Cycle *** \n";
+    p.position.print_vec2();
+    goal_node.print_vec2();
+    p.coord_pos.print_vec2();
+    p.velocity.print_vec2();
+    // Update Velocity
     p.velocity = vec2(v_x, v_y);
 }

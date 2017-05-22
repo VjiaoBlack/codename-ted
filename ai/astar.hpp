@@ -35,4 +35,4 @@ bool q_elem_compare(q_elem a, q_elem b);
 vec2 get_target(vector<vec2> positions);
 void merchant_moves(PiGameMap& gm);
 vector<vec2> retrieve_ship_coords(PiGameMap gm); 
-void update_pirate_physics(PiGameMap m, PiPirate &p, vec2 goal_node); 
+void update_pirate_physics(PiGameMap m, PiPirate &p, vec2 goal_node);

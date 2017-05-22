@@ -125,7 +125,7 @@ int main() {
 	    /** Update the surface */
 	    SDL_UpdateWindowSurface(window);
 
-        usleep(9000);
+        usleep(20000);
     }
     return 0;
 }
