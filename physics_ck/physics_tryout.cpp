@@ -246,6 +246,8 @@ void print_boat(PiGameMap gmap){
     printf("Name: %s\nPosition %f,%f\nVelocity %f,%f\nAcceleration %f,%f\nOrientation: %f\n, rudderRot: %f\n", gmap.merchants[0].merchant_name.c_str(), posx, posy, velx, vely, accx, accy, orient,rot);
 }
 
+
+
 /*
 int main(int argc, char* argv[]){
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -293,7 +295,7 @@ int main(int argc, char* argv[]){
 
   PiGameMap map(25);
   map.add_merchant(PiMerchant());
-  // map.merchants[0].merchant_name = "our_guy";
+  map.merchants[0].merchant_name = "our_guy";
 
   // for(merchant m: map.merchants) { //Cycle through every merchant
   //   printf("%s\n", m.merchant_name.c_str());
@@ -423,5 +425,4 @@ int main(int argc, char* argv[]){
   }
 
   return 0;
-} 
-*/
+} */

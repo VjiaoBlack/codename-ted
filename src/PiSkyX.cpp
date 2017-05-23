@@ -12,7 +12,7 @@
 
 SkyX::SkyX* mSkyX = 0;
 SkyX::BasicController* mBasicController = 0;
-Ogre::uint32 mCurrentPreset = 0;
+Ogre::uint32 mCurrentPreset = 1;
 
 const SkyXSettings mPresets[] = {
     // Sunset

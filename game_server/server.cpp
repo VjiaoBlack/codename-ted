@@ -90,10 +90,13 @@ private:
                                                   boost::asio::placeholders::error,
                                                   boost::asio::placeholders::bytes_transferred));
 
+                // if i have this here, physics updates twice when keys are pressed
+                // unordered_map<string, vector<string> > input_object;
+                // input_object["player_name"].push_back("Clone");
 
-                if (currentGameState_.players.size()) {
-
-                }
+                // if (currentGameState_.players.size()) {
+                //     currentGameState_.map = compute_gamestate(input_object, currentGameState_.map);
+                // }
 
             } else {
 
@@ -102,18 +105,17 @@ private:
                 std::cout << incoming_message << std::endl;
                 keystrokes_obj ks = deserialize_keystrokes(incoming_message);
                 unordered_map<string, vector<string> > input_object;
-
                 for (int i = 0; i < ks.keystrokes.size(); ++i) {
                     std::string key_str = translate_keystroke(ks.keystrokes[i]);
                     input_object["keystrokes"].push_back(key_str);
 
-                    if (ks.keystrokes[i] == KC_W) {
-                        currentGameState_.players[20].y += 20.0;
-                    }
+                    // if (ks.keystrokes[i] == KC_W) {
+                    //     currentGameState_.players[20].y += 20.0;
+                    // }
 
-                    if (ks.keystrokes[i] == KC_A) {
-                        currentGameState_.players[20].y -= 20.0;
-                    }
+                    // if (ks.keystrokes[i] == KC_A) {
+                    //     currentGameState_.players[20].y -= 20.0;
+                    // }
                 }
 
                 input_object["player_name"].push_back("Clone");

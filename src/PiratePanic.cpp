@@ -6,6 +6,8 @@
 
 #include "PiratePanic.h"
 
+
+
 BasicApp::BasicApp()
     : mShutdown(false)
     , mRoot(0)
@@ -69,114 +71,34 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
         return false;
 
     // Switch SkyX presets 
+    bool update = false;
     if (mKeyboard->isKeyDown(OIS::KC_1)) {
         mCurrentPreset = 0;
+        update = true;
         setPreset(mPresets[mCurrentPreset], mCamera); 
-        Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
- 
-        mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
-        mSceneMgr->getLight("SceneLight")->setDiffuseColour(mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
-                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
-                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
-
-        mTerrainGlobals->setLightMapDirection(mSceneMgr->getLight("SceneLight")->getDerivedDirection());
-        mTerrainGlobals->setCompositeMapDiffuse(mSceneMgr->getLight("SceneLight")->getDiffuseColour());
-
-        mHydrax->setSunPosition(mSkyX->getController()->getSunDirection()*mCamera->getFarClipDistance()*50.0f);
-        mHydrax->setSunColor(mSkyX->getVCloudsManager()->getVClouds()->getSunColor());
-        
-        mTerrainGroup->getTerrain(0,0)->dirty();
-        mTerrainGroup->getTerrain(0,0)->update();
-
-        mTerrainGroup->getTerrain(0,0)->dirtyLightmap();
-        mTerrainGroup->getTerrain(0,0)->updateDerivedData();
     } else if (mKeyboard->isKeyDown(OIS::KC_2)) {
         mCurrentPreset = 1;
+        update = true;
         setPreset(mPresets[mCurrentPreset], mCamera); 
-        Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
- 
-        mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
-        mSceneMgr->getLight("SceneLight")->setDiffuseColour(mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
-                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
-                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
-
-        mTerrainGlobals->setLightMapDirection(mSceneMgr->getLight("SceneLight")->getDerivedDirection());
-        mTerrainGlobals->setCompositeMapDiffuse(mSceneMgr->getLight("SceneLight")->getDiffuseColour());
-
-        mHydrax->setSunPosition(mSkyX->getController()->getSunDirection()*mCamera->getFarClipDistance()*50.0f);
-        mHydrax->setSunColor(mSkyX->getVCloudsManager()->getVClouds()->getSunColor());
-        
-        mTerrainGroup->getTerrain(0,0)->dirty();
-        mTerrainGroup->getTerrain(0,0)->update();
-
-        mTerrainGroup->getTerrain(0,0)->dirtyLightmap();
-        mTerrainGroup->getTerrain(0,0)->updateDerivedData();
     } else if (mKeyboard->isKeyDown(OIS::KC_3)) {
         mCurrentPreset = 2;
+        update = true;
         setPreset(mPresets[mCurrentPreset], mCamera); 
-        Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
- 
-        mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
-        mSceneMgr->getLight("SceneLight")->setDiffuseColour(mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
-                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
-                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
-
-        mTerrainGlobals->setLightMapDirection(mSceneMgr->getLight("SceneLight")->getDerivedDirection());
-        mTerrainGlobals->setCompositeMapDiffuse(mSceneMgr->getLight("SceneLight")->getDiffuseColour());
-
-        mHydrax->setSunPosition(mSkyX->getController()->getSunDirection()*mCamera->getFarClipDistance()*50.0f);
-        mHydrax->setSunColor(mSkyX->getVCloudsManager()->getVClouds()->getSunColor());
-        
-        mTerrainGroup->getTerrain(0,0)->dirty();
-        mTerrainGroup->getTerrain(0,0)->update();
-
-        mTerrainGroup->getTerrain(0,0)->dirtyLightmap();
-        mTerrainGroup->getTerrain(0,0)->updateDerivedData();
     } else if (mKeyboard->isKeyDown(OIS::KC_4)) {
         mCurrentPreset = 3;
+        update = true;
         setPreset(mPresets[mCurrentPreset], mCamera); 
-        Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
- 
-        mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
-        mSceneMgr->getLight("SceneLight")->setDiffuseColour(mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
-                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
-                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
-
-        mTerrainGlobals->setLightMapDirection(mSceneMgr->getLight("SceneLight")->getDerivedDirection());
-        mTerrainGlobals->setCompositeMapDiffuse(mSceneMgr->getLight("SceneLight")->getDiffuseColour());
-
-        mHydrax->setSunPosition(mSkyX->getController()->getSunDirection()*mCamera->getFarClipDistance()*50.0f);
-        mHydrax->setSunColor(mSkyX->getVCloudsManager()->getVClouds()->getSunColor());
-        
-        mTerrainGroup->getTerrain(0,0)->dirty();
-        mTerrainGroup->getTerrain(0,0)->update();
-
-        mTerrainGroup->getTerrain(0,0)->dirtyLightmap();
-        mTerrainGroup->getTerrain(0,0)->updateDerivedData();
     } else if (mKeyboard->isKeyDown(OIS::KC_5)) {
         mCurrentPreset = 4;
+        update = true;
         setPreset(mPresets[mCurrentPreset], mCamera); 
-        Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
- 
-        mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
-        mSceneMgr->getLight("SceneLight")->setDiffuseColour(mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
-                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
-                                mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
-
-        mTerrainGlobals->setLightMapDirection(mSceneMgr->getLight("SceneLight")->getDerivedDirection());
-        mTerrainGlobals->setCompositeMapDiffuse(mSceneMgr->getLight("SceneLight")->getDiffuseColour());
-
-        mHydrax->setSunPosition(mSkyX->getController()->getSunDirection()*mCamera->getFarClipDistance()*50.0f);
-        mHydrax->setSunColor(mSkyX->getVCloudsManager()->getVClouds()->getSunColor());
-        
-        mTerrainGroup->getTerrain(0,0)->dirty();
-        mTerrainGroup->getTerrain(0,0)->update();
-
-        mTerrainGroup->getTerrain(0,0)->dirtyLightmap();
-        mTerrainGroup->getTerrain(0,0)->updateDerivedData();
     } else if (mKeyboard->isKeyDown(OIS::KC_6)) {
         mCurrentPreset = 5;
+        update = true;
         setPreset(mPresets[mCurrentPreset], mCamera); 
+    }
+
+    if (update) {
         Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
  
         mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
@@ -195,6 +117,8 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
 
         mTerrainGroup->getTerrain(0,0)->dirtyLightmap();
         mTerrainGroup->getTerrain(0,0)->updateDerivedData();
+
+        update = false;
     }
 
     mBike.processInput(mKeyboard);
@@ -236,8 +160,8 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
         mGameState.map.merchants[player->first].coord_pos.y = state.map.merchants[player->first].coord_pos.y;
         // mGameState = state;
 
-        mGameState.map.merchants[player->first].coord_pos.x *= 50.0;
-        mGameState.map.merchants[player->first].coord_pos.y *= 50.0;
+        mGameState.map.merchants[player->first].coord_pos.x *= 250.0;
+        mGameState.map.merchants[player->first].coord_pos.y *= 250.0;
         printf("player->first: %d... %f\n", player->first, mGameState.map.merchants[player->first].coord_pos.x);
     }
 
@@ -288,10 +212,10 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
 
         printf("why %f\n", mGameState.map.merchants[id_ent.first].coord_pos.x);
 
-        id_ent.second->setPosition(Ogre::Vector3(mGameState.map.merchants[id_ent.first].coord_pos.x,  
+        id_ent.second->setPosition(Ogre::Vector3(mGameState.map.merchants[id_ent.first].coord_pos.y,  
                                                     -10.0f + mHydrax->getHeigth(Ogre::Vector2(mGameState.map.merchants[id_ent.first].coord_pos.x,
                                                                                               mGameState.map.merchants[id_ent.first].coord_pos.y)) + (2.0f * sin((nsf + id_ent.first * 100.0f) * 2.0f)),
-                                                    mGameState.map.merchants[id_ent.first].coord_pos.y));
+                                                    mGameState.map.merchants[id_ent.first].coord_pos.x));
 
         id_ent.second->setOrientation(Ogre::Quaternion(
                 (double) cos(0.0f / (2.0f)),   

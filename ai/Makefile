@@ -1,11 +1,11 @@
 CC=g++
 CFLAGS=-std=c++11
-INCLUDE=`pkg-config --cflags --libs sdl2`
+INCLUDE=`pkg-config --cflags --libs sdl2 SDL2_image`
 
 
 all: test_ai 
 
-test_ai: build/astar.o build/game_structs.o build/test_ai.o
+test_ai: build/astar.o build/game_structs.o build/test_ai.o PNGwrapper.h
 	$(CC) $(CFLAGS) build/astar.o build/game_structs.o build/test_ai.o $(INCLUDE) -o test_ai 
 
 build/test_ai.o: test_ai.cpp

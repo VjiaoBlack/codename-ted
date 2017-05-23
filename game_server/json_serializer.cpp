@@ -150,8 +150,14 @@ PiGameState deserialize_gamestate(string JSON, bool withMapTiles) {
             vector<PiMapTile> mapTile_col;
 
             for(auto tile : tiles) {
-                PiMapTile temp = PiMapTile(vec2(tile["currentDirection"]["x"], tile["currentDirection"]["y"]), tile["currentStrength"],
-                    vec2(tile["windDirection"]["x"], tile["windDirection"]["y"]), tile["currentStrength"], tile["is_ship"]);
+                PiMapTile temp = 
+                        PiMapTile(vec2(tile["currentDirection"]["x"], tile["currentDirection"]["y"]),
+                                  tile["currentStrength"],
+                                  vec2(tile["windDirection"]["x"], tile["windDirection"]["y"]), 
+                                  tile["currentStrength"], 
+                                  tile["is_ship"], 0); // TODO: hardcode 0 for water for now
+               
+
                 temp.start_finish = tile["start_finish"];
                 temp.land_water = tile["land_water"];
 
