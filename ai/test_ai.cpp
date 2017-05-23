@@ -107,7 +107,11 @@ int main() {
         }  
         update_count++;
         update_count = update_count < 10 ? update_count : 0;
-
+        for(PiMerchant m: map.merchants) {
+            float new_x = m.coord_pos.x + m.velocity.x;
+            float new_y = m.coord_pos.y + m.velocity.y; 
+            shift_merchant(map, m.coord_pos, vec2(new_x, new_y));   
+        } 
         /** Draw Game Map */ 
         for(PiPirate p : map.pirates) {
     	    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);

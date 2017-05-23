@@ -181,6 +181,9 @@ PiGameMap PiGameMap::createRandomMap() {
 
 // Shifts pirate from one coordinate location to another
 void shift_pirate(PiGameMap& map, vec2 coord1, vec2 coord2) {
+    if (coord2.x < 10 || coord2.x > map.size.x - 10 || 
+        coord2.y < 10 || coord2.y > map.size.y - 10)
+        return;
     vector<PiPirate> pirates;
     for(PiPirate p : map.pirates) {
         if(compare_vec(p.coord_pos, coord1)) {
@@ -194,6 +197,9 @@ void shift_pirate(PiGameMap& map, vec2 coord1, vec2 coord2) {
 
 // Shifts merchant from one coordinate location to another
 void shift_merchant(PiGameMap& map, vec2 coord1, vec2 coord2) {
+    if (coord2.x < 10 || coord2.x > map.size.x - 10 || 
+        coord2.y < 10 || coord2.y > map.size.y - 10)
+        return;
     vector<PiMerchant> merchants;
     for(PiMerchant m : map.merchants) {
         if (compare_vec(m.coord_pos, coord1)) {
