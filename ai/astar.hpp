@@ -29,7 +29,7 @@ struct PriorityComp
 void astar_trial();
 void run_astar(PiGameMap &map);
 vector<vec2> retrieve_ship_positions(PiGameMap gm); 
-vector<vec2> retrieve_next_positions(vec2 curr, int max_x, int max_y);
+vector<vec2> retrieve_next_positions(PiGameMap m, vec2 curr, int max_x, int max_y);
 float distance(vec2 pos1, vec2 pos2);
 bool q_elem_compare(q_elem a, q_elem b);
 vec2 get_target(vector<vec2> positions);

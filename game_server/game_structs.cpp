@@ -112,6 +112,7 @@ PiMapTile PiMapTile::createRandomTile(int PiPirate) {
     float ws = rand() % 10;
     float cs = rand() % 10;
     int ship = rand() % 100;
+    int land = rand() % 100; 
     vec2 wind_dir = vec2(wdx, wdy);
     vec2 curr_dir = vec2(cdx, cdy);
     float wind_str = ws;
@@ -123,7 +124,10 @@ PiMapTile PiMapTile::createRandomTile(int PiPirate) {
         is_ship = 0;
     else
         is_ship = 1;
-    PiMapTile random_tile(curr_dir, curr_str, wind_dir, wind_str, is_ship);
+    int is_land;
+    is_land = land < 99 ? 0 : 1;
+    PiMapTile random_tile(curr_dir, curr_str, wind_dir, 
+                            wind_str, is_ship, is_land);
     return random_tile;
 }
 
@@ -181,8 +185,8 @@ PiGameMap PiGameMap::createRandomMap() {
 
 // Shifts pirate from one coordinate location to another
 void shift_pirate(PiGameMap& map, vec2 coord1, vec2 coord2) {
-    if (coord2.x < 10 || coord2.x > map.size.x - 10 || 
-        coord2.y < 10 || coord2.y > map.size.y - 10)
+    if (coord2.x < 1 || coord2.x > map.size.x - 1 || 
+        coord2.y < 1 || coord2.y > map.size.y - 1)
         return;
     vector<PiPirate> pirates;
     for(PiPirate p : map.pirates) {
@@ -197,8 +201,8 @@ void shift_pirate(PiGameMap& map, vec2 coord1, vec2 coord2) {
 
 // Shifts merchant from one coordinate location to another
 void shift_merchant(PiGameMap& map, vec2 coord1, vec2 coord2) {
-    if (coord2.x < 10 || coord2.x > map.size.x - 10 || 
-        coord2.y < 10 || coord2.y > map.size.y - 10)
+    if (coord2.x < 20 || coord2.x > map.size.x - 20 || 
+        coord2.y < 20 || coord2.y > map.size.y - 20)
         return;
     vector<PiMerchant> merchants;
     for(PiMerchant m : map.merchants) {
@@ -238,3 +242,4 @@ void move_merchant(PiGameMap& map, vec2 pos1, vec2 pos2) {
     map.mapTiles[pos1.x][pos1.y].is_ship = 0;
     map.mapTiles[pos2.x][pos2.y].is_ship = 1;
 }
+

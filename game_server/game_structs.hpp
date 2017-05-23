@@ -154,14 +154,15 @@ public:
     int land_water; // 1 if land, 0 if water
 
     // CONSTRUCTOR
-    PiMapTile(vec2 a, float b, vec2 c, float d, int e)
+    PiMapTile(vec2 a, float b, vec2 c, float d, int e, int f)
         : currentDirection(a)
         , currentStrength(b)
         , windDirection(a)
         , windStrength(b)
-        , is_ship(e) {};
+        , is_ship(e) 
+        , land_water(f) {};
 
-    PiMapTile() : PiMapTile(vec2(0,0), 0, vec2(0,0), 0, 0) {};
+    PiMapTile() : PiMapTile(vec2(0,0), 0, vec2(0,0), 0, 0, 0) {};
 
     static PiMapTile createRandomTile(int PiPirate);
     // METHODS

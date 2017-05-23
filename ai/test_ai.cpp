@@ -116,15 +116,27 @@ int main() {
         for(PiPirate p : map.pirates) {
     	    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
             SDL_Rect pirateRect = {50 + (int)p.coord_pos.x, 
-                                    50 + (int)p.coord_pos.y, 10, 10}; 
+                                    50 + (int)p.coord_pos.y, 20, 20}; 
     	    SDL_RenderDrawRect(renderer, &pirateRect);
         }
 
         for(PiMerchant m: map.merchants) {
             SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
             SDL_Rect merchantRect = {50 + (int)m.coord_pos.x, 
-                                    50 + (int)m.coord_pos.y, 10, 10}; 
+                                    50 + (int)m.coord_pos.y, 20, 20}; 
             SDL_RenderDrawRect(renderer, &merchantRect);
+        }
+
+        for(int i = 0; i < map.x_size; i++) {
+            for(int j = 0; j < map.y_size; j++) {
+                if (map.mapTiles[i][j].land_water == 1) {
+                    vec2 coord = convert_tile_coord(map, vec2(i, j));
+                    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+                    SDL_Rect landRect = {50 + (int)coord.x, 
+                                    50 + (int)coord.y, 20, 20}; 
+                    SDL_RenderDrawRect(renderer, &landRect);
+                } 
+            }
         }
 
 	    /** Update screen */

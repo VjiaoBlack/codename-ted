@@ -29,8 +29,8 @@ void run_astar(PiGameMap &map) {
         q_elem selected_q = main_q.top();
         selected_pos = selected_q.pos;
         main_q.pop();
-        vector<vec2> next_positions = retrieve_next_positions(selected_pos, 
-                                        map.x_size, map.y_size);
+        vector<vec2> next_positions = retrieve_next_positions(map, 
+                                        selected_pos, map.x_size, map.y_size);
         for (vec2 pos : next_positions) {
             // f(n) = g(n) + h(n)
             float g = distance(pirate_pos, selected_pos);
@@ -64,8 +64,8 @@ void astar_trial() {
             q_elem selected_q = main_q.top();
             selected_pos = selected_q.pos;
             main_q.pop();
-            vector<vec2> next_positions = retrieve_next_positions(selected_pos, 
-                                            map.x_size, map.y_size);
+            vector<vec2> next_positions = retrieve_next_positions(map, 
+                                            selected_pos, map.x_size, map.y_size);
             for (vec2 pos : next_positions) {
                 // f(n) = g(n) + h(n)
                 float g = distance(pirate_pos, selected_pos);
@@ -116,7 +116,8 @@ vector<vec2> retrieve_ship_coords(PiGameMap gm) {
 }
 
 // Retreive all possible tiles where ship can go next
-vector<vec2> retrieve_next_positions(vec2 curr, int max_x, int max_y) {
+vector<vec2> retrieve_next_positions(PiGameMap m, 
+        vec2 curr, int max_x, int max_y) {
     vector<vec2> next; 
     int x; 
     int y; 
@@ -124,7 +125,8 @@ vector<vec2> retrieve_next_positions(vec2 curr, int max_x, int max_y) {
         for(y = -1; y < 2; y++) {
             int new_x = curr.x + x; 
             int new_y = curr.y + y; 
-            if (new_x > 0 && new_y > 0 && 
+            if (!m.mapTiles[new_x][new_y].land_water &&
+                new_x > 0 && new_y > 0 && 
                 new_x < max_x && new_y < max_y && 
                 (new_x != curr.x || new_y != curr.y)) {
                 next.push_back(vec2(new_x, new_y));        
