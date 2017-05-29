@@ -18,9 +18,6 @@ build/client.o: client.cpp client.hpp
 build/client_demo.o: client_demo.cpp
 	$(CC) $(CFLAGS) -c client_demo.cpp  $(INCLUDE) -o build/client_demo.o
 
-build/client_victor.o: client_victor.cpp
-	$(CC) $(CFLAGS) -c client_victor.cpp $(INCLUDE) -o build/client_victor.o
-
 build/game_structs.o: game_structs.cpp game_structs.hpp
 	$(CC) $(CFLAGS) -c game_structs.cpp  $(INCLUDE) -o build/game_structs.o
 
@@ -35,9 +32,6 @@ server: build/server.o build/game_structs.o build/json_serializer.o build/physic
 
 client_demo: build/client_demo.o build/client.o build/game_structs.o build/json_serializer.o
 	$(CC) $(CFLAGS) build/game_structs.o build/client.o build/json_serializer.o build/client_demo.o $(INCLUDE) -o client_demo
-
-client_victor: build/client_victor.o build/client.o build/game_structs.o build/json_serializer.o
-	$(CC) $(CFLAGS) build/client_victor.o build/client.o build/game_structs.o build/json_serializer.o $(INCLUDE) -o client_victor
 
 clean:
 	rm -rf *.o
