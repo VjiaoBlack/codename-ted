@@ -79,6 +79,9 @@ void GameLoopServer::handle_receive(const boost::system::error_code& error,
             currentGameState_->map = compute_gamestate(input_object, currentGameState_->map);
             //run_astar(currentGameState_->map);
 
+            //keystrokes added to queue, updated on timer!
+            int queue_size = add_keys_to_queue(ks.keystrokes, player_names_[ks.unique_id]);
+
             std::cout << incoming_message << std::endl;
         }
 
@@ -86,6 +89,58 @@ void GameLoopServer::handle_receive(const boost::system::error_code& error,
     }
 }
 
+// Timer Functions for GameLoop
+
+int GameLoopServer::add_keys_to_queue(vector<int> ks, string name) {
+        unordered_map<string, vector<string> > input_object;
+        input_object["player_name"].push_back(name);
+
+        for (int i = 0; i < ks.size(); ++i) {
+            std::string key_str = translate_keystroke(ks[i]);
+            input_object["keystrokes"].push_back(key_str);
+        }
+        incoming_objects.push(input_object);
+
+        return incoming_objects.size();
+    }
+
+queue<unordered_map<string, vector<string> > > GameLoopServer::remove_all_keys(){
+    queue<unordered_map<string, vector<string> > > all_objects;
+
+    while (!incoming_objects.empty())
+    {
+        all_objects.push(incoming_objects.front());
+        std::cerr << "name: " << all_objects.front()["player_name"][0] << "\n";
+        for (int i = 0; i < all_objects.front()["keystrokes"].size(); ++i) {
+            std::cerr << "key: " << all_objects.front()["keystrokes"][i] << "\n";
+        }
+        incoming_objects.pop();
+    }
+
+    return all_objects;
+}
+
+void GameLoopServer::advance_timer() {
+    queue<unordered_map<string, vector<string> > > objects_to_process = this->remove_all_keys();
+    ++count_;
+
+    //Process gamestate/ai
+    while (!objects_to_process.empty())
+    {
+        currentGameState_->map = compute_gamestate(objects_to_process.front(), currentGameState_->map);
+
+        //run 'run_astar' every 5 seconds (interval TBD)
+        if(count_ % 5 == 0) {
+            //run_astar(currentGameState_.map);
+        }
+        objects_to_process.pop();
+    }
+
+    timer_.expires_at(timer_.expires_at() + boost::posix_time::seconds(1));
+    timer_.async_wait(boost::bind(&GameLoopServer::advance_timer, this));
+}
+
+//Main
 int main(int argc, char *argv[1]) {
     if (argc != 2) {
         std::cout << "Usage ./server <port>" << std::endl;
