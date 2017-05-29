@@ -4,7 +4,7 @@ CC=g++
 CFLAGS=-std=c++11
 INCLUDE=-I/$(BOOST_ROOT)  -L/$(BOOST_ROOT)/stage/lib -lboost_system -I/usr/local/include -L/usr/local/lib -lSDL2 -lpthread
 
-all: server client_demo client_victor
+all: server client_demo
 
 build/physics_tryout.o: ../physics_ck/physics_tryout.cpp ../physics_ck/physics_tryout.hpp
 	$(CC) $(CFLAGS) -c ../physics_ck/physics_tryout.cpp $(INCLUDE) -o build/physics_tryout.o
