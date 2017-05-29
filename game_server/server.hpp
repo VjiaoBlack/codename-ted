@@ -32,8 +32,8 @@ class TCPConnection
 public:
     typedef boost::shared_ptr<TCPConnection> pointer;
 
-    static pointer create(boost::asio::io_service& io_service) {
-        return pointer(new TCPConnection(io_service));
+    static pointer create(boost::asio::io_service& io_service, int registration_number) {
+        return pointer(new TCPConnection(io_service, registration_number));
     }
 
     // Returns the socket if we need it
@@ -42,21 +42,22 @@ public:
     }
 
     void start() {
-        message_ = "Cowabunga!";
+        message_ = '0' + registration_number_;
         boost::asio::async_write(socket_, boost::asio::buffer(message_),
             boost::bind(&TCPConnection::handle_write, shared_from_this()));
     }
 
 private:
-    TCPConnection(boost::asio::io_service &io_service)
+    TCPConnection(boost::asio::io_service &io_service, int registration_number)
         : socket_(io_service) {
-
+            registration_number_ = registration_number;
         }
 
     void handle_write() {
 
     }
 
+    int registration_number_;
     tcp::socket socket_;
     std::string message_;
 };
@@ -64,13 +65,26 @@ private:
 class RegistrationServer {
 // The class that actually updates the gamestate and performs setup
 public:
-    RegistrationServer(boost::asio::io_service &io_service, int port)
+    RegistrationServer(boost::asio::io_service &io_service, int port, PiGameState *inputGameState)
         : acceptor_(io_service, tcp::endpoint(tcp::v4(), port)) {
+            currentGameState_ = inputGameState;
+            current_registered_ = 0;
+            game_has_not_started_ = true;
+            player_names = {"jeff", "barack", "bernard", "ruth", "hillary"};
             start_accept();
         }
+
+    bool game_has_not_started() {
+        return game_has_not_started_;
+    }
+
+    PiGameState* get_starting_gamestate() {
+        return currentGameState_;
+    }
+
 private:
     void start_accept() {
-        TCPConnection::pointer new_connection = TCPConnection::create(acceptor_.get_io_service());
+        TCPConnection::pointer new_connection = TCPConnection::create(acceptor_.get_io_service(), current_registered_);
 
         acceptor_.async_accept(new_connection->socket(),
             boost::bind(&RegistrationServer::handle_accept, this, new_connection,
@@ -81,8 +95,12 @@ private:
         const boost::system::error_code &error) {
             int i = 0;
             if (!error) {
+                std::cout << "We got here!" << std::endl;
                 // Add players to registration queue
                 registered_players_.push_back(current_registered_);
+                currentGameState_->add_player(current_registered_, 0, 0, true, player_names[current_registered_]);
+                // std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
+                // cout << serialized_gamestate << endl;
                 current_registered_++;
                 new_connection->start();
             }
@@ -90,9 +108,13 @@ private:
         start_accept();
     }
 
-    int current_registered_ = 0;
+    bool game_has_not_started_;
+    int current_registered_;
     vector<int> registered_players_;
+    vector<string> player_names;
+    boost::array<char, MAX_RECV_LENGTH> recv_buffer_;
     tcp::acceptor acceptor_;
+    PiGameState *currentGameState_;
 };
 
 
@@ -100,17 +122,15 @@ class GameLoopServer {
 public:
     float **heightMap;
 
-    GameLoopServer(boost::asio::io_service& io_service, int port)
-        : socket_(io_service, udp::endpoint(udp::v4(), port))
-        , currentGameState_() {
-
-            currentGameState_.add_player(0,0,0,true,"Clone");
+    GameLoopServer(boost::asio::io_service& io_service, int port, PiGameState *inputGameState)
+        : socket_(io_service, udp::endpoint(udp::v4(), port)) {
+            currentGameState_ = inputGameState;
+            player_names_ = {"jeff", "barack", "bernard", "ruth", "hillary"};
             start_receive();
     }
 
 private:
     string translate_keystroke(int ks) {
-
         unordered_map<int, std::string> keystroke_map({
             {UP, "UP"},
             {DOWN, "DOWN"},
@@ -134,8 +154,11 @@ private:
             std::string incoming_message(recv_buffer_.data(), bytes_transferred);
             std::string gamestate_signal("gamestate");
 
+            std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
+            cout << serialized_gamestate << endl;
+
             if (!incoming_message.compare(gamestate_signal)) {
-                std::string serialized_gamestate = serialize_gamestate(currentGameState_);
+                std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
                 cout << serialized_gamestate << endl;
                 boost::shared_ptr<std::string> message(new std::string(serialized_gamestate));
 
@@ -143,14 +166,6 @@ private:
                                       boost::bind(&GameLoopServer::handle_send, this, message,
                                                   boost::asio::placeholders::error,
                                                   boost::asio::placeholders::bytes_transferred));
-
-                // if i have this here, physics updates twice when keys are pressed
-                // unordered_map<string, vector<string> > input_object;
-                // input_object["player_name"].push_back("Clone");
-
-                // if (currentGameState_.players.size()) {
-                //     currentGameState_.map = compute_gamestate(input_object, currentGameState_.map);
-                // }
 
             } else {
                 // We've got some keystrokes!
@@ -163,10 +178,10 @@ private:
                     input_object["keystrokes"].push_back(key_str);
                 }
 
-                input_object["player_name"].push_back("Clone");
+                input_object["player_name"].push_back(player_names_[ks.unique_id]);
 
-                currentGameState_.map = compute_gamestate(input_object, currentGameState_.map);
-                //run_astar(currentGameState_.map);
+                currentGameState_->map = compute_gamestate(input_object, currentGameState_->map);
+                //run_astar(currentGameState_->map);
 
                 std::cout << incoming_message << std::endl;
             }
@@ -181,9 +196,9 @@ private:
     }
 
     unordered_map<int, string> keystroke_translator;
-
+    vector<string> player_names_;
     udp::socket socket_;
     udp::endpoint remote_endpoint_;
     boost::array<char, MAX_RECV_LENGTH> recv_buffer_;
-    PiGameState currentGameState_;
+    PiGameState *currentGameState_;
 };

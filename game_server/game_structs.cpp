@@ -83,7 +83,7 @@ void PiGameState::add_player(int uID, float x,
         float y, bool registered, string name) {
     PiPlayer player = PiPlayer(uID, x, y, registered, name);
     players.insert(make_pair(uID, player));
-    map.add_merchant(PiMerchant());
+    map.add_merchant(PiMerchant(name));
 
 }
 
