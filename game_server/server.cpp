@@ -96,6 +96,7 @@ int main(int argc, char *argv[1]) {
         int port = atoi(argv[1]);
         boost::asio::io_service io_service;
         PiGameState *coreGameState = new PiGameState();
+        coreGameState->add_pirate(0, 0);
         RegistrationServer registration_server(io_service, port, coreGameState);
         GameLoopServer loop_server(io_service, port, coreGameState);
         io_service.run();

@@ -90,6 +90,7 @@ void PiGameState::add_player(int uID, float x,
 void PiGameState::add_pirate(float x, float y) {
     PiPirate pir = PiPirate(vec2(x, y));
     Pirate = pir;
+    map.pirates.push_back(pir);
 }
 
 void PiGameMap::add_merchant(PiMerchant merchant) {
