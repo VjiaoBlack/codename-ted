@@ -13,7 +13,6 @@ int main(int argc, char* argv[]) {
         if (argc == 4) {
             if (!strcmp(argv[3], "register")) {
                 std::cout << "register called!" << std::endl;
-                TCPClient registration_client(io_service, argv[1], argv[2]);
                 int player_id = registration_client.register_player();
             }
 
@@ -22,10 +21,10 @@ int main(int argc, char* argv[]) {
                 vector<int> keystrokes;
                 keystrokes.push_back(KC_I);
                 loop_client.send_keystrokes(keystrokes);
+                loop_client.get_gamestate();
             }
         }
 
-        //client.get_gamestate();
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
     }
