@@ -6,16 +6,26 @@
 
 #include "client.hpp"
 
+// Must have called register_player before start_game
+void TCPClient::start_game(int player_id) {
+    const std::string message = "start, " + to_string(player_id);
+    socket_.send(boost::asio::buffer(message, message.size()));
+}
+
 
 int TCPClient::register_player() {
+    boost::asio::connect(socket_, endpoint_iterator_);
     const std::string message = "register";
     socket_.send(boost::asio::buffer(message, message.size()));
+
+    int registration_id;
 
     for (;;) {
         size_t len = socket_.read_some(boost::asio::buffer(recv_buf), error);
         if (len) {
-            std::string registration_id_as_str(recv_buf.data(), len);
-            std::cout << "Registration id" << std::endl;
+            registration_id = (recv_buf.data()[0] - '0');
+            std::cout << registration_id << std::endl;
+            return registration_id;
         }
 
         if (error == boost::asio::error::eof) {
@@ -25,7 +35,8 @@ int TCPClient::register_player() {
         }
     }
 
-    return 1;
+    // If we get to the end somehow then return -1 to show something is very wrong
+    return -1;
 }
 
 size_t UDPClient::send(const std::string &message) {
@@ -34,8 +45,8 @@ size_t UDPClient::send(const std::string &message) {
     return len;
 }
 
-void UDPClient::send_keystrokes(std::vector<int> keystrokes, int ship_id) {
-    keystrokes_obj keystrokes_to_send(ship_id, keystrokes);
+void UDPClient::send_keystrokes(std::vector<int> keystrokes) {
+    keystrokes_obj keystrokes_to_send(player_id_, keystrokes);
     std::string message = serialize_keystrokes(keystrokes_to_send);
     // const char* lolll = serialize_keystrokes(keystrokes_to_send).c_str();
     // socket_.send_to(boost::asio::buffer(lolll, strlen(lolll)), receiver_endpoint_);

@@ -28,9 +28,8 @@ public:
               , socket_(io_service, tcp::endpoint(tcp::v4(), 0)) {
               tcp::resolver resolver(io_service_);
               tcp::resolver::query query(tcp::v4(), host, port);
-              tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
-              receiver_endpoint_ = *endpoint_iterator;
-              boost::asio::connect(socket_, endpoint_iterator);
+              endpoint_iterator_ = resolver.resolve(query);
+              receiver_endpoint_ = *endpoint_iterator_;
               }
 
     ~TCPClient() {
@@ -39,13 +38,14 @@ public:
 
     size_t send(const std::string &message);
     int register_player();
-    bool start_game(int player_id);
+    void start_game(int player_id);
 
 private:
     boost::asio::io_service &io_service_;
     tcp::socket socket_;
     tcp::endpoint sender_endpoint_;
     tcp::endpoint receiver_endpoint_;
+    tcp::resolver::iterator endpoint_iterator_;
     boost::array<char, MAX_RECV_LENGTH> recv_buf;
     boost::system::error_code error;
 };
@@ -55,9 +55,11 @@ class UDPClient {
 public:
     UDPClient(boost::asio::io_service &io_service,
               const std::string &host,
-              const std::string &port)
+              const std::string &port,
+              int player_id)
         : io_service_(io_service)
         , socket_(io_service, udp::endpoint(udp::v4(), 0)) {
+        player_id_ = player_id;
         udp::resolver resolver(io_service_);
         udp::resolver::query query(udp::v4(), host, port);
         udp::resolver::iterator iter = resolver.resolve(query);
@@ -69,8 +71,9 @@ public:
     }
 
     size_t send(const std::string &message);
-    void send_keystrokes(std::vector<int> keystrokes, int ship_id);
+    void send_keystrokes(std::vector<int> keystrokes);
     PiGameState get_gamestate();
+    int player_id_;
 
 private:
     boost::asio::io_service &io_service_;

@@ -99,14 +99,14 @@ public:
         : pirate_name(a)
         , PiShip(b, c, d, e, f, g, h, i) {
     };
-    // BAD CONSTRUCTOR - STOP USING EVENTUALLY 
+    // BAD CONSTRUCTOR - STOP USING EVENTUALLY
     PiPirate(vec2 loc) : PiPirate("Vader",
             loc,
             loc,
             vec2(0,0),
             0, 0, 0, true,
             vec2(0,0)) {}
-    // MAKE SURE COORD IS IN LOC!! 
+    // MAKE SURE COORD IS IN LOC!!
     PiPirate(vec2 loc, vec2 coord) : PiPirate("Vader",
             loc,
             vec2(-1,-1),
@@ -126,13 +126,19 @@ public:
                float e, float f, int g, bool h, vec2 i)
         : merchant_name(a)
         , PiShip(b, c, d, e, f, g, h, i) {};
-    // BAD CONSTRUCTOR - STOP USING EVENTUALLY 
+
+    // BAD CONSTRUCTOR - STOP USING EVENTUALLY
     PiMerchant(vec2 loc)
         : PiMerchant("Clone", loc, vec2(0,0), vec2(0,0), 0, 0, 0, true, vec2(0,0)) {}
-    // MAKE SURE COORD IS IN LOC!! 
+
+    // MAKE SURE COORD IS IN LOC!!
     PiMerchant(vec2 loc, vec2 coord)
         : PiMerchant("Clone", loc, vec2(-1,1), vec2(0,0), 0, 0, 0, true, coord) {}
     PiMerchant() : PiMerchant(vec2(0,0)) {}
+
+    // Takes in a merchant name
+    PiMerchant(string name)
+    : PiMerchant(name, vec2(0,0), vec2(-1,1), vec2(0,0), 0, 0, 0, true, vec2(0,0)) {}
 };
 
 class PiLobby {
