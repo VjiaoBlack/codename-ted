@@ -10,7 +10,7 @@ float turning_speed = .05;
 
 float firstOrderCollisionBuffer = 0.1;
 float y_extension = 1;
-float x_extension = 1;
+float x_extension = 2;
 
 float acceleration_cap = .01;
 float velocity_cap = .01;
@@ -96,50 +96,139 @@ PiGameMap update_position(PiGameMap gm, int current_boat){
     return gm;
 }
 
-bool is_colliding(vec2 a, vec2 b) {
+bool is_colliding(PiGameMap gm, int current_boat, int boat_to_compare) {
 
-    if(verbose)
-        printf("Boat one x: %f,Boat one y: %f,Boat two x: %f,Boat two y: %f\n", a.x, a.y, b.x, b.y);
+    //Computing the four corners of the current_boat
 
-    if(((a.x + x_extension + firstOrderCollisionBuffer) > (b.x - x_extension)) && ((a.x - x_extension) < (b.x - x_extension))){
-        if(verbose)
-            printf("Right wall of a is inside of b\n");
+    vec2 boat_direction = turn_orient_to_vec(gm.merchants[current_boat].orientation);
+    boat_direction = boat_direction.Normalize();
+
+    vec2 perpindicular_direction = vec2(-boat_direction.y, boat_direction.x);
+    perpindicular_direction = perpindicular_direction.Normalize();
+
+    float xx = (x_extension * boat_direction.x * 5);
+    float xy = (x_extension * boat_direction.y * 5);
+    float yy = (y_extension * perpindicular_direction.y * 5);
+    float yx = (y_extension * perpindicular_direction.x * 5);
+
+    float ax1 = gm.merchants[current_boat].coord_pos.x + xx + yx;
+    float ay1 = gm.merchants[current_boat].coord_pos.y + xy + yy;
+
+    float ax2 = gm.merchants[current_boat].coord_pos.x + xx - yx;
+    float ay2 = gm.merchants[current_boat].coord_pos.y + xy - yy;
+
+    float ax3 = gm.merchants[current_boat].coord_pos.x - xx + yx;
+    float ay3 = gm.merchants[current_boat].coord_pos.y - xy + yy;
+
+    float ax4 = gm.merchants[current_boat].coord_pos.x - xx - yx;
+    float ay4 = gm.merchants[current_boat].coord_pos.y - xy - yy;
+
+    //Computing the four corners of the second boat
+
+    boat_direction = turn_orient_to_vec(gm.merchants[boat_to_compare].orientation);
+    boat_direction = boat_direction.Normalize();
+
+    perpindicular_direction = vec2(-boat_direction.y, boat_direction.x);
+    perpindicular_direction = perpindicular_direction.Normalize();
+
+    xx = (x_extension * boat_direction.x * 5);
+    xy = (x_extension * boat_direction.y * 5);
+    yy = (y_extension * perpindicular_direction.y * 5);
+    yx = (y_extension * perpindicular_direction.x * 5);
+
+    float bx1 = gm.merchants[boat_to_compare].coord_pos.x + xx + yx;
+    float by1 = gm.merchants[boat_to_compare].coord_pos.y + xy + yy;
+
+    float bx2 = gm.merchants[boat_to_compare].coord_pos.x + xx - yx;
+    float by2 = gm.merchants[boat_to_compare].coord_pos.y + xy - yy;
+
+    float bx3 = gm.merchants[boat_to_compare].coord_pos.x - xx + yx;
+    float by3 = gm.merchants[boat_to_compare].coord_pos.y - xy + yy;
+
+    float bx4 = gm.merchants[boat_to_compare].coord_pos.x - xx - yx;
+    float by4 = gm.merchants[boat_to_compare].coord_pos.y - xy - yy;
+
+    float d12, d13, d24, d34;
+
+    // I will now check to see if there exists a vertex of the current boat that is within all 4 sides of the other boat.
+    //Testing ax1 ay1 against the first wall x1y1 x2y2
+    d12 = (ax1-bx1)*(by2-by1)-(ay1-by1)*(bx2-bx1);
+    //1 3
+    d13 = (ax1-bx1)*(by3-by1)-(ay1-by1)*(bx3-bx1);
+    //2 4
+    d24 = (ax1-bx2)*(by4-by2)-(ay1-by2)*(bx4-bx2);
+    //3 4
+    d34 = (ax1-bx3)*(by4-by3)-(ay1-by3)*(bx4-bx3);
+
+    if( d12 > 0 && d13 < 0 && d24 > 0 && d34 < 0){
         return 1;
     }
-    if(((a.x - x_extension - firstOrderCollisionBuffer) < (b.x + x_extension)) && ((a.x + x_extension) > (b.x + x_extension))){
-        if(verbose)
-            printf("Left wall of a is inside b");
+
+    d12 = (ax2-bx1)*(by2-by1)-(ay2-by1)*(bx2-bx1);
+    d13 = (ax2-bx1)*(by3-by1)-(ay2-by1)*(bx3-bx1);
+    d24 = (ax2-bx2)*(by4-by2)-(ay2-by2)*(bx4-bx2);
+    d34 = (ax2-bx3)*(by4-by3)-(ay2-by3)*(bx4-bx3);
+    if( d12 > 0 && d13 < 0 && d24 > 0 && d34 < 0){
         return 1;
     }
-    if(((a.y + y_extension + firstOrderCollisionBuffer) > (b.y - y_extension)) && ((a.y - y_extension) < (b.y - y_extension))){
-        if(verbose)
-            printf("Top wall of a is inside b");
+
+    d12 = (ax3-bx1)*(by2-by1)-(ay3-by1)*(bx2-bx1);
+    d13 = (ax3-bx1)*(by3-by1)-(ay3-by1)*(bx3-bx1);
+    d24 = (ax3-bx2)*(by4-by2)-(ay3-by2)*(bx4-bx2);
+    d34 = (ax3-bx3)*(by4-by3)-(ay3-by3)*(bx4-bx3);
+    if( d12 > 0 && d13 < 0 && d24 > 0 && d34 < 0){
         return 1;
     }
-    if(((a.y - y_extension - firstOrderCollisionBuffer) < (b.y + y_extension)) && ((a.y + y_extension) > (b.y + y_extension))){
-        if(verbose)
-            printf("Bottom wall of a is inside b");
+
+    d12 = (ax4-bx1)*(by2-by1)-(ay4-by1)*(bx2-bx1);
+    d13 = (ax4-bx1)*(by3-by1)-(ay4-by1)*(bx3-bx1);
+    d24 = (ax4-bx2)*(by4-by2)-(ay4-by2)*(bx4-bx2);
+    d34 = (ax4-bx3)*(by4-by3)-(ay4-by3)*(bx4-bx3);
+    if( d12 > 0 && d13 < 0 && d24 > 0 && d34 < 0){
         return 1;
     }
-    if((a.y == b.y) && (a.x == b.x)){
-        if(verbose)
-            printf("Right on top of each other, probably due to initalizing in the same place\n");
-        return 1;
-    }
+
     return 0;
 }
 
-void draw_boat(SDL_Renderer* renderer, PiGameMap gm) {
+void draw_boat(SDL_Renderer* renderer, PiGameMap gm, int current_boat) {
+
+    vec2 boat_direction = turn_orient_to_vec(gm.merchants[current_boat].orientation);
+    boat_direction = boat_direction.Normalize();
+
+    vec2 perpindicular_direction = vec2(-boat_direction.y, boat_direction.x);
+    perpindicular_direction = perpindicular_direction.Normalize();
+
+    float xx = (x_extension * boat_direction.x * 5);
+    float xy = (x_extension * boat_direction.y * 5);
+    float yy = (y_extension * perpindicular_direction.y * 5);
+    float yx = (y_extension * perpindicular_direction.x * 5);
+
+    int x1 = gm.merchants[current_boat].coord_pos.x + xx + yx;
+    int y1 = gm.merchants[current_boat].coord_pos.y + xy + yy;
+
+    int x2 = gm.merchants[current_boat].coord_pos.x + xx - yx;
+    int y2 = gm.merchants[current_boat].coord_pos.y + xy - yy;
+
+    int x3 = gm.merchants[current_boat].coord_pos.x - xx + yx;
+    int y3 = gm.merchants[current_boat].coord_pos.y - xy + yy;
+
+    int x4 = gm.merchants[current_boat].coord_pos.x - xx - yx;
+    int y4 = gm.merchants[current_boat].coord_pos.y - xy - yy;
 
     SDL_SetRenderDrawColor(renderer, 0xCC, 0x00, 0x00, 0xFF);
 
-    int x1 = gm.merchants[0].coord_pos.x + x_extension * (float)cos(gm.merchants[0].orientation*pioveroneeighty)*5;
-    int y1 = gm.merchants[0].coord_pos.y + y_extension * (float)sin(gm.merchants[0].orientation*pioveroneeighty)*5;
+    SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
 
-    int x2 = gm.merchants[0].coord_pos.x - x_extension * (float)cos(gm.merchants[0].orientation*pioveroneeighty)*5;
-    int y2 = gm.merchants[0].coord_pos.y - y_extension * (float)sin(gm.merchants[0].orientation*pioveroneeighty)*5;
+    SDL_RenderDrawLine(renderer, x1, y1, x3, y3);
 
-    SDL_RenderDrawLine(renderer, x1 * 2, y1 * 2, x2 * 2, y2 * 2);
+    SDL_RenderDrawLine(renderer, x2, y2, x4, y4);
+
+    SDL_RenderDrawLine(renderer, x3, y3, x4, y4);
+
+    SDL_RenderDrawPoint(renderer,gm.merchants[current_boat].coord_pos.x,gm.merchants[current_boat].coord_pos.y);
+
+
 }
 
 PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object, PiGameMap gm){
@@ -195,7 +284,7 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
                 continue;
             }
             else{ //Checking collision with another ship
-                if(is_colliding(gm.merchants[current_boat].coord_pos, gm.merchants[boat_to_compare].coord_pos)){
+                if(is_colliding(gm, current_boat, boat_to_compare)){
                     // If this passes, do more granular collision.  This is barebones so I'll just treat this as a collision.
                     //I am just going to reverse the accelerations for both ships to see if that fixes it.  I can do something more special later.
                     if(verbose)
@@ -215,15 +304,15 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
     return gm;
 }
 
-void print_boat(PiGameMap gmap){
-    float posx = gmap.merchants[0].coord_pos.x;
-    float posy = gmap.merchants[0].coord_pos.y;
-    float velx = gmap.merchants[0].velocity.x;
-    float vely = gmap.merchants[0].velocity.y;
-    float accx = gmap.merchants[0].acceleration.x;
-    float accy = gmap.merchants[0].acceleration.y;
-    float orient = gmap.merchants[0].orientation;
-    float rot = gmap.merchants[0].rudderRot;
+void print_boat(PiGameMap gmap, int current_boat){
+    float posx = gmap.merchants[current_boat].coord_pos.x;
+    float posy = gmap.merchants[current_boat].coord_pos.y;
+    float velx = gmap.merchants[current_boat].velocity.x;
+    float vely = gmap.merchants[current_boat].velocity.y;
+    float accx = gmap.merchants[current_boat].acceleration.x;
+    float accy = gmap.merchants[current_boat].acceleration.y;
+    float orient = gmap.merchants[current_boat].orientation;
+    float rot = gmap.merchants[current_boat].rudderRot;
 
     if(verbose)
         printf("Name: %s\nPosition %f,%f\nVelocity %f,%f\nAcceleration %f,%f\nOrientation: %f\n, rudderRot: %f\n", gmap.merchants[0].merchant_name.c_str(), posx, posy, velx, vely, accx, accy, orient,rot);
@@ -276,7 +365,15 @@ int main(int argc, char* argv[]){
 
     PiGameMap map(25);
     map.add_merchant(PiMerchant());
+    map.add_merchant(PiMerchant());
     map.merchants[0].merchant_name = "our_guy";
+
+    map.merchants[1].coord_pos.x = 50;
+    map.merchants[1].coord_pos.y = 50;
+
+        //Moving the merchant to the appropriate tile
+    vec2 newLoc = vec2(map.merchants[1].coord_pos.x,map.merchants[1].coord_pos.y);
+    map.merchants[1].position = convert_coord_tile(map, newLoc);
 
     // for(merchant m: map.merchants) { //Cycle through every merchant
     //   printf("%s\n", m.merchant_name.c_str());
@@ -351,7 +448,7 @@ int main(int argc, char* argv[]){
         map = compute_gamestate(input_object, map);
         if(verbose)
             map.print_game_map();
-        print_boat(map);
+        print_boat(map, 0);
         if(verbose)
             printf("\n\n\n");
 
@@ -364,7 +461,9 @@ int main(int argc, char* argv[]){
         SDL_Rect wholeRect = {25 * 1, 25 * 1, (1024 - 50) * 1, (768 - 50) * 1};
         SDL_RenderDrawRect(renderer, &wholeRect);
 
-        draw_boat(renderer,map);
+        draw_boat(renderer,map, 0);
+
+        draw_boat(renderer,map, 1);
 
         // Update screen
         SDL_RenderPresent(renderer);
