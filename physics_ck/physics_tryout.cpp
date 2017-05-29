@@ -17,6 +17,8 @@ float velocity_cap = .01;
 
 int verbose = 0;
 
+float engineMultiplier = 1.0f;
+
 vec2 turn_orient_to_vec(int orientation){
     float x;
     float y;
@@ -27,54 +29,69 @@ vec2 turn_orient_to_vec(int orientation){
 
 PiGameMap update_position(PiGameMap gm, int current_boat){
 
-        //This next chunk of code can cause of a seg fault if I go off the map.  It'll try to read a tile that isn't there.  Therefore I added the if.
+    //This next chunk of code can cause of a seg fault if I go off the map.  It'll try to read a tile that isn't there.  Therefore I added the if.
 
-        // if(gm.merchants[current_boat].position.x < 25 &&
-        //     gm.merchants[current_boat].position.y < 25 &&
-        //     gm.merchants[current_boat].position.x > 0 &&
-        //     gm.merchants[current_boat].position.x > 0){
-        //     float currStr = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentStrength;
-        //     float windStr = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windStrength;
-        //     float windDirx = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windDirection.x;
-        //     float windDiry = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windDirection.y;
-        //     float currDiry = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentDirection.y;
-        //     float currDirx = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentDirection.x;
+    // if(gm.merchants[current_boat].position.x < 25 &&
+    //     gm.merchants[current_boat].position.y < 25 &&
+    //     gm.merchants[current_boat].position.x > 0 &&
+    //     gm.merchants[current_boat].position.x > 0){
+    //     float currStr = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentStrength;
+    //     float windStr = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windStrength;
+    //     float windDirx = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windDirection.x;
+    //     float windDiry = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].windDirection.y;
+    //     float currDiry = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentDirection.y;
+    //     float currDirx = gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].currentDirection.x;
 
-        //     gm.merchants[current_boat].acceleration.x += (.0001) * currStr * currDirx;
-        //     gm.merchants[current_boat].acceleration.y += (.0001) * currStr * currDiry;
+    //     gm.merchants[current_boat].acceleration.x += (.0001) * currStr * currDirx;
+    //     gm.merchants[current_boat].acceleration.y += (.0001) * currStr * currDiry;
 
-        //     gm.merchants[current_boat].acceleration.x += (.0001) * windStr * windDirx;
-        //     gm.merchants[current_boat].acceleration.y += (.0001) * windStr * windDiry;
-        //   }
+    //     gm.merchants[current_boat].acceleration.x += (.0001) * windStr * windDirx;
+    //     gm.merchants[current_boat].acceleration.y += (.0001) * windStr * windDiry;
+    //   }
 
-        //New velocity
+    //New velocity
 
-    vec2 newvel = turn_orient_to_vec(gm.merchants[current_boat].orientation);
+    vec2 boat_direction = turn_orient_to_vec(gm.merchants[current_boat].orientation);
 
-    printf("Our current direction: x: %f, y: %f\n", newvel.x, newvel.y);
+    //printf("Our current direction: x: %f, y: %f\n", boat_direction.x, boat_direction.y);
 
-    float newVelX = gm.merchants[current_boat].velocity.x + gm.merchants[current_boat].acceleration.x * newvel.x;
-    float newVelY = gm.merchants[current_boat].velocity.y + gm.merchants[current_boat].acceleration.x * newvel.y;
-
-    vec2 newVel = vec2(newVelX,newVelY);
-
-    if(newVel.Length() < velocity_cap){
-        gm.merchants[current_boat].velocity = newVel;
+    if(gm.merchants[current_boat].acceleration.x < 0){ // Alternative slowdown to prevent instant reverse
+        gm.merchants[current_boat].velocity.x *= .9 * engineMultiplier;
+        gm.merchants[current_boat].velocity.y *= .9 * engineMultiplier;
     }
     else{
-        newVel = newVel.Normalize();
-        newVel.x *= velocity_cap;
-        newVel.y *= velocity_cap;
-        gm.merchants[current_boat].velocity = newVel;
+        float newVelX = gm.merchants[current_boat].velocity.x + gm.merchants[current_boat].acceleration.x * boat_direction.x * engineMultiplier;
+        float newVelY = gm.merchants[current_boat].velocity.y + gm.merchants[current_boat].acceleration.x * boat_direction.y * engineMultiplier;
+
+        vec2 newVel = vec2(newVelX,newVelY);
+
+        if(newVel.Length() < velocity_cap){
+            gm.merchants[current_boat].velocity = newVel;
+        }
+        else{
+            newVel = newVel.Normalize();
+            newVel.x *= velocity_cap;
+            newVel.y *= velocity_cap;
+            gm.merchants[current_boat].velocity = newVel;
+        }
     }
 
         //Manually setting new positions
-    gm.merchants[current_boat].coord_pos.x += gm.merchants[current_boat].velocity.x;
-    gm.merchants[current_boat].coord_pos.y += gm.merchants[current_boat].velocity.y;
+    gm.merchants[current_boat].coord_pos.x += gm.merchants[current_boat].velocity.x * engineMultiplier;
+    gm.merchants[current_boat].coord_pos.y += gm.merchants[current_boat].velocity.y * engineMultiplier;
 
         //Moving the merchant to the appropriate tile
     vec2 newLoc = vec2(gm.merchants[current_boat].coord_pos.x,gm.merchants[current_boat].coord_pos.y);
     gm.merchants[current_boat].position = convert_coord_tile(gm, newLoc);
+
+    //printf("We are going this fast: %f\n",gm.merchants[current_boat].velocity.Length());
+
+    //Optional dampening of velocity and acceleration:
+
+    gm.merchants[current_boat].acceleration.x *= .99 * engineMultiplier;
+    gm.merchants[current_boat].velocity.x *= .99 * engineMultiplier;
+    gm.merchants[current_boat].velocity.y *= .99 * engineMultiplier;
+
 
     return gm;
 }
@@ -116,11 +133,11 @@ void draw_boat(SDL_Renderer* renderer, PiGameMap gm) {
 
     SDL_SetRenderDrawColor(renderer, 0xCC, 0x00, 0x00, 0xFF);
 
-    int x1 = gm.merchants[0].coord_pos.x + x_extension * (float)cos(gm.merchants[0].orientation*pioveroneeighty);
-    int y1 = gm.merchants[0].coord_pos.y + y_extension * (float)sin(gm.merchants[0].orientation*pioveroneeighty);
+    int x1 = gm.merchants[0].coord_pos.x + x_extension * (float)cos(gm.merchants[0].orientation*pioveroneeighty)*5;
+    int y1 = gm.merchants[0].coord_pos.y + y_extension * (float)sin(gm.merchants[0].orientation*pioveroneeighty)*5;
 
-    int x2 = gm.merchants[0].coord_pos.x - x_extension * (float)cos(gm.merchants[0].orientation*pioveroneeighty);
-    int y2 = gm.merchants[0].coord_pos.y - y_extension * (float)sin(gm.merchants[0].orientation*pioveroneeighty);
+    int x2 = gm.merchants[0].coord_pos.x - x_extension * (float)cos(gm.merchants[0].orientation*pioveroneeighty)*5;
+    int y2 = gm.merchants[0].coord_pos.y - y_extension * (float)sin(gm.merchants[0].orientation*pioveroneeighty)*5;
 
     SDL_RenderDrawLine(renderer, x1 * 2, y1 * 2, x2 * 2, y2 * 2);
 }
@@ -136,25 +153,25 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
             while(i < input_object["keystrokes"].size()){ //While we still have a valid input in the input vector
                 switch (input_object["keystrokes"][i][0]){ // Read the first letter of the string, which with UP DOWN LEFT RIGHT will be unique
                     case 'U':
-                    newAcc = gm.merchants[current_boat].acceleration.x + acceleration_increase;
+                    newAcc = gm.merchants[current_boat].acceleration.x + acceleration_increase * engineMultiplier;
                     if(newAcc < acceleration_cap){
                         gm.merchants[current_boat].acceleration.x = newAcc;
                     }
                     break;
                     case 'D':
-                    newAcc = gm.merchants[current_boat].acceleration.x - acceleration_increase;
+                    newAcc = gm.merchants[current_boat].acceleration.x - acceleration_increase * engineMultiplier;
                     if(newAcc > -(acceleration_cap)){
                         gm.merchants[current_boat].acceleration.x = newAcc;
                     }
                     break;
                     case 'L':
-                    printf("L Is this happening\n");
-                    gm.merchants[current_boat].orientation -= turning_speed;
+                    // printf("L Is this happening\n");
+                    gm.merchants[current_boat].orientation -= turning_speed * engineMultiplier;
                     gm.merchants[current_boat].orientation = fmod(gm.merchants[current_boat].orientation,360);
                     break;
                     case 'R':
-                    printf("R Is this happening\n");
-                    gm.merchants[current_boat].orientation += turning_speed;
+                    // printf("R Is this happening\n");
+                    gm.merchants[current_boat].orientation += turning_speed * engineMultiplier;
                     gm.merchants[current_boat].orientation = fmod(gm.merchants[current_boat].orientation,360);
                     break;
                 }
@@ -316,45 +333,17 @@ int main(int argc, char* argv[]){
         // TODO make sure the angles don't just keep increasing infinitely
         if (keysDown.count(SDLK_LEFT)) {
             content.push_back("LEFT");
-            input_object["keystrokes"] = content;
-            map = compute_gamestate(input_object, map);
-            if(verbose)
-                map.print_game_map();
-            print_boat(map);
-            if(verbose)
-                printf("\n\n\n");
         }
         if (keysDown.count(SDLK_RIGHT)) {
             content.push_back("RIGHT");
-            input_object["keystrokes"] = content;
-            map = compute_gamestate(input_object, map);
-            if(verbose)
-                map.print_game_map();
-            print_boat(map);
-            if(verbose)
-                printf("\n\n\n");
         }
 
         if (keysDown.count(SDLK_UP)) {
             content.push_back("UP");
-            input_object["keystrokes"] = content;
-            map = compute_gamestate(input_object, map);
-            if(verbose)
-                map.print_game_map();
-            print_boat(map);
-            if(verbose)
-                printf("\n\n\n");
         }
 
         if (keysDown.count(SDLK_DOWN)) {
             content.push_back("DOWN");
-            input_object["keystrokes"] = content;
-            map = compute_gamestate(input_object, map);
-            if(verbose)
-                map.print_game_map();
-            print_boat(map);
-            if(verbose)
-                printf("\n\n\n");
         }
 
         //I want it to run regardless
