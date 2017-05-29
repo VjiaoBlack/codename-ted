@@ -7,6 +7,27 @@
 #include "client.hpp"
 
 
+int TCPClient::register_player() {
+    const std::string message = "register";
+    socket_.send(boost::asio::buffer(message, message.size()));
+
+    for (;;) {
+        size_t len = socket_.read_some(boost::asio::buffer(recv_buf), error);
+        if (len) {
+            std::string registration_id_as_str(recv_buf.data(), len);
+            std::cout << "Registration id" << std::endl;
+        }
+
+        if (error == boost::asio::error::eof) {
+            break; // Connection closed cleanly by peer.
+        } else if (error){
+            throw boost::system::system_error(error); // Some other error.
+        }
+    }
+
+    return 1;
+}
+
 size_t UDPClient::send(const std::string &message) {
     socket_.send_to(boost::asio::buffer(message, message.size()), receiver_endpoint_);
     size_t len = socket_.receive_from(boost::asio::buffer(recv_buf), sender_endpoint_);

@@ -1,6 +1,7 @@
 #include <ctime>
 #include <iostream>
 #include <string>
+#include <vector>
 #include <boost/array.hpp>
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
@@ -78,13 +79,19 @@ private:
 
     void handle_accept(TCPConnection::pointer new_connection,
         const boost::system::error_code &error) {
+            int i = 0;
             if (!error) {
+                // Add players to registration queue
+                registered_players_.push_back(current_registered_);
+                current_registered_++;
                 new_connection->start();
             }
 
         start_accept();
     }
 
+    int current_registered_ = 0;
+    vector<int> registered_players_;
     tcp::acceptor acceptor_;
 };
 
