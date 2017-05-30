@@ -19,12 +19,11 @@ void RegistrationServer::handle_accept(TCPConnection::pointer new_connection,
     const boost::system::error_code &error) {
         int i = 0;
         if (!error) {
-            std::cout << "We got here!" << std::endl;
             // Add players to registration queue
             registered_players_.push_back(current_registered_);
             currentGameState_->add_player(current_registered_, 0, 0, true, player_names[current_registered_]);
-            // std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
-            // cout << serialized_gamestate << endl;
+            std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
+            cout << serialized_gamestate << endl;
             current_registered_++;
             new_connection->start();
         }
@@ -67,22 +66,10 @@ void GameLoopServer::handle_receive(const boost::system::error_code& error,
             // We've got some keystrokes!
             std::cout << incoming_message << std::endl;
             keystrokes_obj ks = deserialize_keystrokes(incoming_message);
-            unordered_map<string, vector<string> > input_object;
-
-            for (int i = 0; i < ks.keystrokes.size(); ++i) {
-                std::string key_str = translate_keystroke(ks.keystrokes[i]);
-                input_object["keystrokes"].push_back(key_str);
-            }
-
-            input_object["player_name"].push_back(player_names_[ks.unique_id]);
-
-            currentGameState_->map = compute_gamestate(input_object, currentGameState_->map);
             //run_astar(currentGameState_->map);
 
             //keystrokes added to queue, updated on timer!
             int queue_size = add_keys_to_queue(ks.keystrokes, player_names_[ks.unique_id]);
-
-            std::cout << incoming_message << std::endl;
         }
 
         start_receive();
