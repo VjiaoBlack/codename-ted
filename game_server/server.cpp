@@ -19,12 +19,21 @@ void RegistrationServer::handle_accept(TCPConnection::pointer new_connection,
     const boost::system::error_code &error) {
         int i = 0;
         if (!error) {
-            std::cout << "We got here!" << std::endl;
             // Add players to registration queue
             registered_players_.push_back(current_registered_);
-            currentGameState_->add_player(current_registered_, 0, 0, true, player_names[current_registered_]);
-            // std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
-            // cout << serialized_gamestate << endl;
+
+            // If it is first registration, edit ship that was created by createRandomMap
+            if (current_registered_ == 0) {
+                currentGameState_->map.merchants[0].merchant_name = player_names[current_registered_];
+                PiMerchant start_merchant = currentGameState_->map.merchants[0];
+                currentGameState_->add_player(current_registered_, start_merchant.position.x,
+                    start_merchant.position.y, true, player_names[current_registered_]);
+            } else {
+                currentGameState_->add_player(current_registered_, 0, 0, true, player_names[current_registered_]);
+            }
+
+            std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
+            cout << serialized_gamestate << endl;
             current_registered_++;
             new_connection->start();
         }
@@ -67,25 +76,80 @@ void GameLoopServer::handle_receive(const boost::system::error_code& error,
             // We've got some keystrokes!
             std::cout << incoming_message << std::endl;
             keystrokes_obj ks = deserialize_keystrokes(incoming_message);
-            unordered_map<string, vector<string> > input_object;
-
-            for (int i = 0; i < ks.keystrokes.size(); ++i) {
-                std::string key_str = translate_keystroke(ks.keystrokes[i]);
-                input_object["keystrokes"].push_back(key_str);
-            }
-
-            input_object["player_name"].push_back(player_names_[ks.unique_id]);
-
-            currentGameState_->map = compute_gamestate(input_object, currentGameState_->map);
-            //run_astar(currentGameState_->map);
-
-            std::cout << incoming_message << std::endl;
+            //keystrokes added to queue, updated on timer!
+            int queue_size = add_keys_to_queue(ks.keystrokes, player_names_[ks.unique_id]);
         }
 
         start_receive();
     }
 }
 
+// Timer Functions for GameLoop
+
+int GameLoopServer::add_keys_to_queue(vector<int> ks, string name) {
+        unordered_map<string, vector<string> > input_object;
+        input_object["player_name"].push_back(name);
+
+        for (int i = 0; i < ks.size(); ++i) {
+            std::string key_str = translate_keystroke(ks[i]);
+            input_object["keystrokes"].push_back(key_str);
+        }
+        incoming_objects.push(input_object);
+
+        return incoming_objects.size();
+    }
+
+queue<unordered_map<string, vector<string> > > GameLoopServer::remove_all_keys(){
+    queue<unordered_map<string, vector<string> > > all_objects;
+
+    while (!incoming_objects.empty())
+    {
+        all_objects.push(incoming_objects.front());
+        std::cerr << "name: " << all_objects.front()["player_name"][0] << "\n";
+        for (int i = 0; i < all_objects.front()["keystrokes"].size(); ++i) {
+            std::cerr << "key: " << all_objects.front()["keystrokes"][i] << "\n";
+        }
+        incoming_objects.pop();
+    }
+
+    return all_objects;
+}
+
+void GameLoopServer::advance_timer() {
+    queue<unordered_map<string, vector<string> > > objects_to_process = this->remove_all_keys();
+    ++count_;
+
+    //run 'run_astar' every 5 ticks (interval TBD)
+    if(count_ % 5 == 0) {
+        std::cout << "running astar" << std::endl;
+        run_astar(currentGameState_->map);
+        std::cout << "ran astar" << std::endl;
+    }
+
+    /* vec2 initial_pirate_pos = currentGameState_->map.pirates[0].position;
+    currentGameState_->map.pirates[0].position.x += (currentGameState_->map.pirates[0].velocity.x);
+    currentGameState_->map.pirates[0].position.y += (currentGameState_->map.pirates[0].velocity.y);
+
+
+    std::cout << std::endl;
+    initial_pirate_pos.print_vec2();
+
+    shift_pirate(currentGameState_->map, initial_pirate_pos, currentGameState_->map.pirates[0].position);
+
+    */
+
+    //Process gamestate/ai
+    while (!objects_to_process.empty())
+    {
+        currentGameState_->map = compute_gamestate(objects_to_process.front(), currentGameState_->map);
+        objects_to_process.pop();
+    }
+
+    timer_.expires_at(timer_.expires_at() + boost::posix_time::seconds(1));
+    timer_.async_wait(boost::bind(&GameLoopServer::advance_timer, this));
+}
+
+//Main
 int main(int argc, char *argv[1]) {
     if (argc != 2) {
         std::cout << "Usage ./server <port>" << std::endl;
@@ -96,7 +160,9 @@ int main(int argc, char *argv[1]) {
         int port = atoi(argv[1]);
         boost::asio::io_service io_service;
         PiGameState *coreGameState = new PiGameState();
-        coreGameState->add_pirate(0, 0);
+        // Creates a pirate and a merchant
+        coreGameState->map = PiGameMap::createRandomMap();
+        // coreGameState->add_pirate(10, 10);
         RegistrationServer registration_server(io_service, port, coreGameState);
         GameLoopServer loop_server(io_service, port, coreGameState);
         io_service.run();

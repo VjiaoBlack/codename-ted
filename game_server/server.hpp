@@ -6,6 +6,7 @@
 #include <boost/bind.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/asio.hpp>
 
 #include "../ai/astar.hpp"
@@ -99,14 +100,23 @@ public:
     float **heightMap;
 
     GameLoopServer(boost::asio::io_service& io_service, int port, PiGameState *inputGameState)
-        : socket_(io_service, udp::endpoint(udp::v4(), port)) {
+        : socket_(io_service, udp::endpoint(udp::v4(), port))
+        , timer_(io_service, boost::posix_time::seconds(1))
+        , count_(0) {
             currentGameState_ = inputGameState;
             player_names_ = {"jeff", "barack", "bernard", "ruth", "hillary"};
+            timer_.async_wait(boost::bind(&GameLoopServer::advance_timer, this));
             start_receive();
     }
 
 private:
     string translate_keystroke(int ks);
+
+    void advance_timer();
+
+    queue<unordered_map<string, vector<string> > > remove_all_keys();
+
+    int add_keys_to_queue(vector<int> ks, string name);
 
     void start_receive() {
         socket_.async_receive_from(boost::asio::buffer(recv_buffer_), remote_endpoint_,
@@ -123,6 +133,12 @@ private:
                      std::size_t /*bytes_transferred*/) {
     }
 
+    // Timer members
+    boost::asio::deadline_timer timer_;
+    queue<unordered_map<string, vector<string> > > incoming_objects;
+    int count_;
+
+    // game state members
     unordered_map<int, string> keystroke_translator;
     vector<string> player_names_;
     udp::socket socket_;

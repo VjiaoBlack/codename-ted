@@ -24,7 +24,6 @@ int main(int argc, char* argv[]) {
                 loop_client.get_gamestate();
             }
         }
-
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
     }
