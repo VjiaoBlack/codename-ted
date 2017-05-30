@@ -165,7 +165,7 @@ public:
         , currentStrength(b)
         , windDirection(a)
         , windStrength(b)
-        , is_ship(e) 
+        , is_ship(e)
         , land_water(f) {};
 
     PiMapTile() : PiMapTile(vec2(0,0), 0, vec2(0,0), 0, 0, 0) {};
@@ -211,10 +211,11 @@ public:
     PiGameMap() : PiGameMap(25) {};
 
     static PiGameMap createRandomMap();
+    static PiGameMap createEmptyMap(int x_len, int y_len, int map_size);
 
     // METHODS
     void print_game_map();
-    void add_merchant(PiMerchant merchant); 
+    void add_merchant(PiMerchant merchant);
 };
 
 class PiGameState {
