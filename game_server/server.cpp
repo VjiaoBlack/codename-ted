@@ -23,14 +23,14 @@ void RegistrationServer::handle_accept(TCPConnection::pointer new_connection,
             registered_players_.push_back(current_registered_);
 
             // If it is first registration, edit ship that was created by createRandomMap
-            if (current_registered_ == 0) {
+            /* if (current_registered_ == 0) {
                 currentGameState_->map.merchants[0].merchant_name = player_names[current_registered_];
                 PiMerchant start_merchant = currentGameState_->map.merchants[0];
                 currentGameState_->add_player(current_registered_, start_merchant.position.x,
                     start_merchant.position.y, true, player_names[current_registered_]);
             } else {
                 currentGameState_->add_player(current_registered_, 0, 0, true, player_names[current_registered_]);
-            }
+            }*/
 
             std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
             cout << serialized_gamestate << endl;
@@ -126,17 +126,17 @@ void GameLoopServer::advance_timer() {
         std::cout << "ran astar" << std::endl;
     }
 
-    /* vec2 initial_pirate_pos = currentGameState_->map.pirates[0].position;
-    currentGameState_->map.pirates[0].position.x += (currentGameState_->map.pirates[0].velocity.x);
-    currentGameState_->map.pirates[0].position.y += (currentGameState_->map.pirates[0].velocity.y);
+    vec2 initial_pirate_pos = currentGameState_->map.pirates[0].coord_pos;
+    vec2 destination(initial_pirate_pos.x + currentGameState_->map.pirates[0].velocity.x,
+                    initial_pirate_pos.y + currentGameState_->map.pirates[0].velocity.y);
+//    currentGameState_->map.pirates[0].coord_pos.x += (currentGameState_->map.pirates[0].velocity.x);
+//    currentGameState_->map.pirates[0].coord_pos.y += (currentGameState_->map.pirates[0].velocity.y);
 
 
-    std::cout << std::endl;
-    initial_pirate_pos.print_vec2();
+    //std::cout << std::endl;
+    //initial_pirate_pos.print_vec2();
 
-    shift_pirate(currentGameState_->map, initial_pirate_pos, currentGameState_->map.pirates[0].position);
-
-    */
+    shift_pirate(currentGameState_->map, initial_pirate_pos, destination);
 
     //Process gamestate/ai
     while (!objects_to_process.empty())
