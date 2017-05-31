@@ -185,7 +185,7 @@ PiGameMap PiGameMap::createRandomMap() {
 }
 
 // Creates the starting game map for the game.
-PiGameMap PiGameMap::createStartMap(int x_len, 
+PiGameMap PiGameMap::createStartMap(int x_len,
         int y_len, int map_size) {
     int rand_i = rand() % 25;
     int rand_j = rand() % 25;
@@ -216,8 +216,8 @@ PiGameMap PiGameMap::createStartMap(int x_len,
         }
         tiles.push_back(curr_row);
     }
-    PiGameMap random_map(tiles, x_len, y_len, pirates, merchants, size);
-    return random_map;
+    PiGameMap start_map(tiles, x_len, y_len, pirates, merchants, size);
+    return start_map;
 }
 
 

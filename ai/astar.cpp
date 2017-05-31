@@ -19,9 +19,6 @@ void run_astar(PiGameMap &map) {
     priority_queue<q_elem, vector<q_elem>, PriorityComp> main_q;
     bool goal_reached = false;
     vector<vec2> positions = retrieve_ship_positions(map);
-    for (vec2 pos : positions) {
-        pos.print_vec2();
-    }
     vector<vec2> coords = retrieve_ship_coords(map);
     vec2 pirate_pos = positions[0]; // Hacky way to get PiPirate position
     vec2 pirate_coord = coords[0]; // Hacky way to get PiPirate coord
@@ -60,7 +57,7 @@ void astar_trial() {
         bool goal_reached = false;
         vector<vec2> positions = retrieve_ship_positions(map);
         vec2 pirate_pos = positions[0]; // Hacky way to get PiPirate position
-        pirate_pos.print_vec2();
+        //pirate_pos.print_vec2();
         vec2 target_pos = get_target(positions);
         vec2 selected_pos = pirate_pos;
         main_q.push(q_elem(selected_pos, vec2(-1, -1), 0));
@@ -175,12 +172,12 @@ void update_pirate_physics(PiGameMap m, PiPirate &p, vec2 goal_node) {
     float v_y = -1 * delta_y * (v_magnitude / delta_magnitude);
     // TODO: Update orientation
     // Print Status
-    cout << "*** New Cycle *** \n";
+    /* cout << "*** New Cycle *** \n";
     p.position.print_vec2();
     goal_node.print_vec2();
     goal_coord.print_vec2();
     p.coord_pos.print_vec2();
     p.velocity.print_vec2();
     // Update Velocity
-    p.velocity = vec2(v_x, v_y);
+    p.velocity = vec2(v_x, v_y); */
 }
