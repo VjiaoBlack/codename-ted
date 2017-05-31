@@ -32,7 +32,8 @@ BasicApp::BasicApp()
     , mBikeObject(0) 
     , mGameLoopClient(NULL)
     , mGameRegistrationClient(NULL)
-    , mOgreMerchants() {
+    , mOgreMerchants()
+    , mCurFrameCounter(0) {
 }
 
 BasicApp::~BasicApp() {
@@ -76,8 +77,7 @@ void BasicApp::defineTerrain(long x, long y) {
  
     if (resource_exists)
         mTerrainGroup->defineTerrain(x, y);
-    else
-    {
+    else {
         Ogre::Image img;
         getTerrainImage(x % 2 != 0, y % 2 != 0, img);
         mTerrainGroup->defineTerrain(x, y, &img);
@@ -245,7 +245,21 @@ bool BasicApp::setup() {
 
     mOgreMerchants[mPlayerID] = mCurObject;
 
+    // create new merchant gold
+    ent = mSceneMgr->createEntity("cube.mesh");
+    Ogre::SharedPtr<Ogre::Material> m_pMat = ent->getSubEntity(0)->getMaterial();
+    m_pMat->getTechnique(0)->getPass(0)->setAmbient(Ogre::ColourValue(0.8, 0.4, 0.0, 1.0));
+    m_pMat->getTechnique(0)->getPass(0)->setDiffuse(Ogre::ColourValue(0.8, 0.4, 0.0, 1.0));
+    m_pMat->getTechnique(0)->getPass(0)->setEmissive(Ogre::ColourValue(0.8, 0.4, 0.0, 0.2));
+    ent->setMaterialName(m_pMat->getName());
+    mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    mCurObject->setPosition(Ogre::Vector3(mMerchants[mPlayerID].coord_pos.x, 900.0, mMerchants[mPlayerID].coord_pos.y));
+    mCurObject->setScale(0.2, 0.2, 0.2);
+    mCurObject->attachObject(ent);
 
+    mOgreMerchantsGold[mPlayerID] = mCurObject;
+
+    // create new pirate
     ent = mSceneMgr->createEntity("Cube.mesh");
     ent->setMaterialName("Pirate/Material");
 
