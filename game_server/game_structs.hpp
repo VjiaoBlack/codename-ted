@@ -52,7 +52,7 @@ public:
 
 class PiPlayer {
 public:
-    int uID;
+    int uID; // index of the player in the list of merchants
     float x; // don't use
     float y; // don't use
     // bool registered;

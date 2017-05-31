@@ -51,9 +51,6 @@
 #include <time.h>
 #include <map>
 
-
-
-
 #define _def_SkyBoxNum 3
 
 #define K_SERVER_STRING "localhost"
@@ -101,6 +98,9 @@ private:
  
     virtual void windowResized(Ogre::RenderWindow* rw);
     virtual void windowClosed(Ogre::RenderWindow* rw);
+
+    bool updateCurrentGameState();
+
  
     bool setup();
     bool configure();
@@ -145,12 +145,23 @@ private:
     float mHeight;
     TdBike mBike;
 
+    // server client code stuff
     UDPClient* mGameLoopClient;
+    TCPClient* mGameRegistrationClient;
+    int mPlayerID;
+
+    std::map<int, PiMerchant> mMerchants;
+    PiMerchant mPlayerMerchant;
 
     // TODO make these pointers... holy FUCK
-    std::map<int, Ogre::SceneNode*> mOtherPlayers;
+    std::map<int, Ogre::SceneNode*> mOgreMerchants;
+    std::map<int, Ogre::SceneNode*> mOgreMerchantsGold;
 
-   PiGameState mGameState;
+    PiPirate mPirate;
+    Ogre::SceneNode* mOgrePirate;
+
+    // broken
+    // PiGameState mGameState;
 };
 
 
