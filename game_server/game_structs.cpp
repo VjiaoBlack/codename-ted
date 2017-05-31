@@ -238,6 +238,7 @@ void shift_pirate(PiGameMap& map, vec2 coord1, vec2 coord2) {
 }
 
 // Shifts merchant from one coordinate location to another
+// DON'T USE, FOR AI TESTING 
 void shift_merchant(PiGameMap& map, vec2 coord1, vec2 coord2) {
     if (coord2.x < 20 || coord2.x > map.size.x - 20 ||
         coord2.y < 20 || coord2.y > map.size.y - 20)
@@ -280,3 +281,10 @@ void move_merchant(PiGameMap& map, vec2 pos1, vec2 pos2) {
     map.mapTiles[pos1.x][pos1.y].is_ship = 0;
     map.mapTiles[pos2.x][pos2.y].is_ship = 1;
 }
+
+
+PiGameMap read_png_heightmap(string file_location) {
+
+}
+
+

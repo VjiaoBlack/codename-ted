@@ -259,5 +259,6 @@ void shift_pirate(PiGameMap& p, vec2 coord1, vec2 coord2);
 void shift_merchant(PiGameMap& m, vec2 coord1, vec2 coord2);
 vec2 convert_coord_tile(PiGameMap& m, vec2 coord);
 vec2 convert_tile_coord(PiGameMap& m, vec2 pos);
+PiGameMap read_png_heightmap(string file_location);
 
 #endif
