@@ -23,14 +23,8 @@ void RegistrationServer::handle_accept(TCPConnection::pointer new_connection,
             registered_players_.push_back(current_registered_);
 
             // If it is first registration, edit ship that was created by createRandomMap
-            if (current_registered_ == 0) {
-                currentGameState_->map.merchants[0].merchant_name = player_names[current_registered_];
-                PiMerchant start_merchant = currentGameState_->map.merchants[0];
-                currentGameState_->add_player(current_registered_, start_merchant.position.x,
-                    start_merchant.position.y, true, player_names[current_registered_]);
-            } else {
-                currentGameState_->add_player(current_registered_, 0, 0, true, player_names[current_registered_]);
-            }
+
+            currentGameState_->add_player(current_registered_, 0, 0, true, player_names[current_registered_]);
 
             std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
             //cout << serialized_gamestate << endl;
@@ -48,7 +42,8 @@ string GameLoopServer::translate_keystroke(int ks) {
         {UP, "UP"},
         {DOWN, "DOWN"},
         {LEFT, "LEFT"},
-        {RIGHT, "RIGHT"}
+        {RIGHT, "RIGHT"},
+        {DROP_GOLD, "DROP_GOLD"}
     });
     return keystroke_map[ks];
 }
@@ -161,7 +156,7 @@ int main(int argc, char *argv[1]) {
         boost::asio::io_service io_service;
         PiGameState *coreGameState = new PiGameState();
         // Creates a pirate and a merchant
-        coreGameState->map = PiGameMap::createRandomMap();
+        coreGameState->map = PiGameMap::createStartMap(25, 25, 500);
         // coreGameState->add_pirate(10, 10);
         RegistrationServer registration_server(io_service, port, coreGameState);
         GameLoopServer loop_server(io_service, port, coreGameState);

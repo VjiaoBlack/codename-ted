@@ -29,7 +29,7 @@ public:
     // Attributes
     float x, y;
     // Constructor
-    vec2(float x_pos, float y_pos) : 
+    vec2(float x_pos, float y_pos) :
         x(x_pos), y(y_pos) {};
     // Methods
     void print_vec2();
@@ -46,7 +46,7 @@ public:
 
     float x, y, z;
     //Constructor
-    vec3(float x_pos, float y_pos, float z_pos) : 
+    vec3(float x_pos, float y_pos, float z_pos) :
         x(x_pos), y(y_pos), z(z_pos) {};
     // Methods
     void print_vec3();
@@ -96,10 +96,10 @@ public:
     string pirate_name;
     // Constructor
     PiPirate(string pname, vec2 pos, vec2 vel, vec2 acc,
-             float orien, float rud, int gold, 
+             float orien, float rud, int gold,
              bool ai, vec2 cpos)
         : pirate_name(pname)
-        , PiShip(pos, vel, acc, orien, rud, gold, 
+        , PiShip(pos, vel, acc, orien, rud, gold,
                 ai, pos) {
     };
     // BAD CONSTRUCTOR - STOP USING EVENTUALLY
@@ -112,7 +112,7 @@ public:
     // MAKE SURE COORD IS IN LOC!!
     PiPirate(vec2 loc, vec2 coord) : PiPirate("Vader",
             loc,
-            vec2(-1,-1),
+            vec2(-0.1,-0.1),
             vec2(0,0),
             0, 0, 0, true,
             coord) {}
@@ -126,7 +126,7 @@ public:
     string merchant_name;
     // Constructor
     PiMerchant(string mname, vec2 pos, vec2 vel, vec2 acc,
-               float orien, float rud, int gold, 
+               float orien, float rud, int gold,
                bool ai, vec2 cpos)
         : merchant_name(mname)
         , PiShip(pos, vel, acc, orien, rud, gold, ai, cpos) {};
@@ -164,7 +164,7 @@ public:
     int land_water; // 1 if land, 0 if water
 
     // CONSTRUCTOR
-    PiMapTile(vec2 cdir, float cstr, vec2 wdir, float wstr, 
+    PiMapTile(vec2 cdir, float cstr, vec2 wdir, float wstr,
             int ship, int land)
         : currentDirection(cdir)
         , currentStrength(cstr)

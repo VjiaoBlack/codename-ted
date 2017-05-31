@@ -20,6 +20,7 @@ using boost::asio::ip::tcp;
 #define DOWN KC_K
 #define LEFT KC_J
 #define RIGHT KC_L
+#define DROP_GOLD KC_G
 
 #define MAX_RECV_LENGTH 1000000
 

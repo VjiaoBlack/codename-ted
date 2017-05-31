@@ -18,10 +18,12 @@ int main(int argc, char* argv[]) {
 
             if (!strcmp(argv[3], "loop")) {
                 std::cout << "loop called!" << std::endl;
-                vector<int> keystrokes;
-                keystrokes.push_back(KC_I);
-                loop_client.send_keystrokes(keystrokes);
-                loop_client.get_gamestate();
+                while (true) {
+                    vector<int> keystrokes;
+                    keystrokes.push_back(KC_I);
+                    loop_client.send_keystrokes(keystrokes);
+                    loop_client.get_gamestate();
+                }
             }
         }
     } catch (std::exception &e) {
