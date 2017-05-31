@@ -49,7 +49,13 @@ bool BasicApp::updateCurrentGameState() {
 
 
 
-        // drop some gold 
+        // drop some gold if gold should be dropped
+        // if (state.map.merchants[player->first].goldAmount < mMerchants[player->first.goldAmount]) {
+            // drop gold
+            
+        // }
+
+        // mMerchants[player->first.goldAmount = state.map.merchants[player->first].goldAmount;
     }
 
     mPirate.coord_pos.x 
