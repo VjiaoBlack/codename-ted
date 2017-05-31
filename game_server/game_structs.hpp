@@ -29,7 +29,8 @@ public:
     // Attributes
     float x, y;
     // Constructor
-    vec2(float a, float b) : x(a), y(b) {};
+    vec2(float x_pos, float y_pos) : 
+        x(x_pos), y(y_pos) {};
     // Methods
     void print_vec2();
 
@@ -45,7 +46,8 @@ public:
 
     float x, y, z;
     //Constructor
-    vec3(float a, float b, float c) : x(a), y(b), z(c) {};
+    vec3(float x_pos, float y_pos, float z_pos) : 
+        x(x_pos), y(y_pos), z(z_pos) {};
     // Methods
     void print_vec3();
 };
@@ -58,10 +60,10 @@ public:
     // bool registered;
     bool is_pirate;
     string name;
-    PiPlayer(int a, float b, float c,
-            bool d, string e) :
-            uID(a), x(b), y(c),
-            is_pirate(d), name(e) {};
+    PiPlayer(int id, float x_pos, float y_pos,
+            bool pir, string nm) :
+            uID(id), x(x_pos), y(y_pos),
+            is_pirate(pir), name(nm) {};
     PiPlayer()
         : PiPlayer(0, 0.0, 0.0, false, "Jigar"){};
 };
@@ -78,12 +80,11 @@ public:
     int goldAmount;
     bool AI;
     // Constructor (Note that coord_pos is last)
-    PiShip(vec2 a, vec2 b, vec2 c, float d,
-            float e, int f, bool g, vec2 h) :
-            position(a), velocity(b), acceleration(c),
-            orientation(d), rudderRot(e), goldAmount(f),
-            AI(g), coord_pos(h) {};
-    // Methods
+    PiShip(vec2 pos, vec2 vel, vec2 acc, float orien,
+            float rud, int gold, bool ai, vec2 cpos) :
+            position(pos), velocity(vel), acceleration(acc),
+            orientation(orien), rudderRot(rud), goldAmount(gold),
+            AI(ai), coord_pos(cpos) {};
 
 };
 
@@ -94,10 +95,12 @@ public:
     // Attributes
     string pirate_name;
     // Constructor
-    PiPirate(string a, vec2 b, vec2 c, vec2 d,
-             float e, float f, int g, bool h, vec2 i)
-        : pirate_name(a)
-        , PiShip(b, c, d, e, f, g, h, i) {
+    PiPirate(string pname, vec2 pos, vec2 vel, vec2 acc,
+             float orien, float rud, int gold, 
+             bool ai, vec2 cpos)
+        : pirate_name(pname)
+        , PiShip(pos, vel, acc, orien, rud, gold, 
+                ai, pos) {
     };
     // BAD CONSTRUCTOR - STOP USING EVENTUALLY
     PiPirate(vec2 loc) : PiPirate("Vader",
@@ -122,10 +125,11 @@ public:
     // Attributes
     string merchant_name;
     // Constructor
-    PiMerchant(string a, vec2 b, vec2 c, vec2 d,
-               float e, float f, int g, bool h, vec2 i)
-        : merchant_name(a)
-        , PiShip(b, c, d, e, f, g, h, i) {};
+    PiMerchant(string mname, vec2 pos, vec2 vel, vec2 acc,
+               float orien, float rud, int gold, 
+               bool ai, vec2 cpos)
+        : merchant_name(mname)
+        , PiShip(pos, vel, acc, orien, rud, gold, ai, cpos) {};
 
     // BAD CONSTRUCTOR - STOP USING EVENTUALLY
     PiMerchant(vec2 loc)
@@ -160,13 +164,14 @@ public:
     int land_water; // 1 if land, 0 if water
 
     // CONSTRUCTOR
-    PiMapTile(vec2 a, float b, vec2 c, float d, int e, int f)
-        : currentDirection(a)
-        , currentStrength(b)
-        , windDirection(a)
-        , windStrength(b)
-        , is_ship(e)
-        , land_water(f) {};
+    PiMapTile(vec2 cdir, float cstr, vec2 wdir, float wstr, 
+            int ship, int land)
+        : currentDirection(cdir)
+        , currentStrength(cstr)
+        , windDirection(wdir)
+        , windStrength(wstr)
+        , is_ship(ship)
+        , land_water(land) {};
 
     PiMapTile() : PiMapTile(vec2(0,0), 0, vec2(0,0), 0, 0, 0) {};
 
@@ -186,14 +191,14 @@ public:
     vec3 size; // this is for coord
 
     // CONSTRUCTOR
-    PiGameMap(vector< vector<PiMapTile> > a, int b, int c,
-              vector<PiPirate> d, vector <PiMerchant> e, vec3 f)
-        : mapTiles(a)
-        , x_size(b)
-        , y_size(c)
-        , pirates(d)
-        , merchants(e)
-        , size(f) {};
+    PiGameMap(vector< vector<PiMapTile> > tiles, int x, int y,
+              vector<PiPirate> pirs, vector <PiMerchant> merchs, vec3 sz)
+        : mapTiles(tiles)
+        , x_size(x)
+        , y_size(y)
+        , pirates(pirs)
+        , merchants(merchs)
+        , size(sz) {};
 
     PiGameMap(int sz)
         : x_size(sz)
