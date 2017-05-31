@@ -1,0 +1,78 @@
+if(is_colliding(gm, current_boat, boat_to_compare)){
+                    // If this passes, do more granular collision.  This is barebones so I'll just treat this as a collision.
+                    //I am just going to reverse the accelerations for both ships to see if that fixes it.  I can do something more special later.
+                    if(verbose)
+                        printf("Collided\n");
+                    vec2 n = vec2(gm.merchants[current_boat].coord_pos.x + gm.merchants[boat_to_compare].coord_pos.x, 
+                                            gm.merchants[current_boat].coord_pos.y + gm.merchants[boat_to_compare].coord_pos.y);
+                    n = n.Normalize();
+ 
+                    float a1 = dot_product(gm.merchants[current_boat].velocity, n.Normalize());
+                    float a2 = dot_product(gm.merchants[boat_to_compare].velocity, n.Normalize());
+
+                    float optimizedP = (2.0 * (a1-a2)) / 2;
+
+                    vec2 newcurr = vec2(gm.merchants[current_boat].velocity.x - optimizedP * n.x,
+                                        gm.merchants[current_boat].velocity.y - optimizedP * n.y);
+                    vec2 newcomp = vec2(gm.merchants[boat_to_compare].velocity.x + optimizedP * n.x,
+                                        gm.merchants[boat_to_compare].velocity.y + optimizedP * n.y);
+
+
+                    // //Compute resulting direction for current_boat
+                    // float current_boat_resulting_directionX = gm.merchants[current_boat].velocity.x - 2 * 
+                    //                                         dot_product(gm.merchants[current_boat].velocity, combined_dir_ortho.Normalize()) * 
+                    //                                         combined_dir_ortho.Normalize().x;
+                    // float current_boat_resulting_directionY = gm.merchants[current_boat].velocity.y - 2 * 
+                    //                                         dot_product(gm.merchants[current_boat].velocity, combined_dir_ortho.Normalize()) * 
+                    //                                         combined_dir_ortho.Normalize().y;
+                    // vec2 resulting_current_boat_vel_dir = vec2(current_boat_resulting_directionX, current_boat_resulting_directionY);
+                    // //Same for other boat
+                    // float boat_to_compare_resulting_directionX = gm.merchants[boat_to_compare].velocity.x - 2 * 
+                    //                                         dot_product(gm.merchants[boat_to_compare].velocity, combined_dir_ortho.Normalize()) * 
+                    //                                         combined_dir_ortho.Normalize().x;
+                    // float boat_to_compare_resulting_directionY = gm.merchants[boat_to_compare].velocity.y - 2 * 
+                    //                                         dot_product(gm.merchants[boat_to_compare].velocity, combined_dir_ortho.Normalize()) * 
+                    //                                         combined_dir_ortho.Normalize().y;
+                    // vec2 resulting_boat_to_compare_vel_dir = vec2(boat_to_compare_resulting_directionX, boat_to_compare_resulting_directionY);
+                    // //Normalizing both and then giving them each half the velocity of the total
+                    // resulting_boat_to_compare_vel_dir = resulting_boat_to_compare_vel_dir.Normalize();
+                    // resulting_boat_to_compare_vel_dir.x *= combined_magnitude / 2;
+                    // resulting_boat_to_compare_vel_dir.y *= combined_magnitude / 2;
+                    // resulting_current_boat_vel_dir = resulting_current_boat_vel_dir.Normalize();
+                    // resulting_current_boat_vel_dir.x *= combined_magnitude / 2;
+                    // resulting_current_boat_vel_dir.y *= -1 * combined_magnitude / 2;
+
+                    // if(tunt){
+                    //     printf("Velocity of current boat x: %f, y: %f\nVelocity of boat to compare x: %f, y: %f\nCollided velocity x: %f, y: %f\nResult of current boat x: %f, y: %f\nResult of boat to compare x: %f, y: %f\n", gm.merchants[current_boat].velocity.x, gm.merchants[current_boat].velocity.y,
+                    //                                                         gm.merchants[boat_to_compare].velocity.x, gm.merchants[boat_to_compare].velocity.y,
+                    //                                                         combined_dir.x, combined_dir.y, 
+                    //                                                         resulting_current_boat_vel_dir.x, resulting_current_boat_vel_dir.y,
+                    //                                                         resulting_boat_to_compare_vel_dir.x, resulting_boat_to_compare_vel_dir.y);
+                    //     tunt = 0;
+                    // }
+
+                    gm.merchants[current_boat].velocity = newcurr;
+                    gm.merchants[boat_to_compare].velocity = newcomp;
+
+                    gm.merchants[current_boat].orientation = atan2(gm.merchants[current_boat].velocity.y, gm.merchants[current_boat].velocity.x) * 1/pioveroneeighty;
+                    gm.merchants[boat_to_compare].orientation = atan2(gm.merchants[boat_to_compare].velocity.y, gm.merchants[boat_to_compare].velocity.x) * 1/pioveroneeighty;
+
+                    //Keep adding the velocity to the position until they don't collide
+                    // while((is_colliding(gm, current_boat, boat_to_compare)) || (is_colliding(gm, boat_to_compare, current_boat))){
+                    //     //Manually setting new positions
+
+                    //     gm.merchants[current_boat].coord_pos.x += gm.merchants[current_boat].velocity.x * engineMultiplier;
+                    //     gm.merchants[current_boat].coord_pos.y += gm.merchants[current_boat].velocity.y * engineMultiplier;
+
+                    //     gm.merchants[boat_to_compare].coord_pos.x += gm.merchants[current_boat].velocity.x * engineMultiplier;
+                    //     gm.merchants[boat_to_compare].coord_pos.y += gm.merchants[current_boat].velocity.y * engineMultiplier;
+
+                    //     //Moving the merchant to the appropriate tile
+                    //     vec2 newLoc_curr = vec2(gm.merchants[current_boat].coord_pos.x,gm.merchants[current_boat].coord_pos.y);
+                    //     gm.merchants[current_boat].position = convert_coord_tile(gm, newLoc_curr);
+
+                    //     vec2 newLoc_comp = vec2(gm.merchants[boat_to_compare].coord_pos.x,gm.merchants[boat_to_compare].coord_pos.y);
+                    //     gm.merchants[boat_to_compare].position = convert_coord_tile(gm, newLoc_comp);
+                    // }
+
+                }
