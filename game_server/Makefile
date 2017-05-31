@@ -4,7 +4,7 @@ CC=g++
 CFLAGS=-std=c++11
 INCLUDE=-I/$(BOOST_ROOT)  -L/$(BOOST_ROOT)/stage/lib -lboost_system -I/usr/local/include -L/usr/local/lib -lSDL2 -lpthread
 
-all: server client_demo
+all: server client_demo client_keystroke_demo
 
 build/physics_tryout.o: ../physics_ck/physics_tryout.cpp ../physics_ck/physics_tryout.hpp
 	$(CC) $(CFLAGS) -c ../physics_ck/physics_tryout.cpp $(INCLUDE) -o build/physics_tryout.o
@@ -17,6 +17,9 @@ build/client.o: client.cpp client.hpp
 
 build/client_demo.o: client_demo.cpp
 	$(CC) $(CFLAGS) -c client_demo.cpp  $(INCLUDE) -o build/client_demo.o
+
+build/client_keystroke_demo.o: client_keystroke_demo.cpp
+	$(CC) $(CFLAGS) -c client_keystroke_demo.cpp  $(INCLUDE) -o build/client_keystroke_demo.o
 
 build/game_structs.o: game_structs.cpp game_structs.hpp
 	$(CC) $(CFLAGS) -c game_structs.cpp  $(INCLUDE) -o build/game_structs.o
@@ -32,6 +35,9 @@ server: build/server.o build/game_structs.o build/json_serializer.o build/physic
 
 client_demo: build/client_demo.o build/client.o build/game_structs.o build/json_serializer.o
 	$(CC) $(CFLAGS) build/game_structs.o build/client.o build/json_serializer.o build/client_demo.o $(INCLUDE) -o client_demo
+
+client_keystroke_demo: build/client_keystroke_demo.o build/client.o build/game_structs.o build/json_serializer.o
+	$(CC) $(CFLAGS) build/game_structs.o build/client.o build/json_serializer.o build/client_keystroke_demo.o $(INCLUDE) -o client_keystroke_demo
 
 clean:
 	rm -rf *.o
