@@ -56,6 +56,5 @@ void UDPClient::send_keystrokes(std::vector<int> keystrokes) {
 PiGameState UDPClient::get_gamestate() {
     size_t gamestate_len = UDPClient::send("gamestate");
     std::string serialized_gamestate(recv_buf.data(), gamestate_len);
-    std::cout << "Client received: " << serialized_gamestate << std::endl;
     return deserialize_gamestate(serialized_gamestate, false);
 }

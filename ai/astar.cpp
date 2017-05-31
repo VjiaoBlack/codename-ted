@@ -20,7 +20,6 @@ void run_astar(PiGameMap &map) {
     bool goal_reached = false;
     vector<vec2> positions = retrieve_ship_positions(map);
     for (vec2 pos : positions) {
-        std::cout << "pos: " << std::endl;
         pos.print_vec2();
     }
     vector<vec2> coords = retrieve_ship_coords(map);
@@ -80,7 +79,6 @@ void astar_trial() {
                 main_q.push(q_elem(pos, start, priority));
             }
             goal_reached = compare_vec(selected_pos, target_pos);
-            std::cout << "goal_reached: " << goal_reached << std::endl;
             if (goal_reached) {
                 move_pirate(map, pirate_pos, selected_q.start);
 
@@ -180,7 +178,6 @@ void update_pirate_physics(PiGameMap m, PiPirate &p, vec2 goal_node) {
     cout << "*** New Cycle *** \n";
     p.position.print_vec2();
     goal_node.print_vec2();
-    std::cout << "goal coord:" << std::endl;
     goal_coord.print_vec2();
     p.coord_pos.print_vec2();
     p.velocity.print_vec2();
