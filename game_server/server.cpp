@@ -33,7 +33,7 @@ void RegistrationServer::handle_accept(TCPConnection::pointer new_connection,
             }*/
 
             std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
-            cout << serialized_gamestate << endl;
+            //cout << serialized_gamestate << endl;
             current_registered_++;
             new_connection->start();
         }
@@ -60,11 +60,11 @@ void GameLoopServer::handle_receive(const boost::system::error_code& error,
         std::string gamestate_signal("gamestate");
 
         std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
-        cout << serialized_gamestate << endl;
+        //cout << serialized_gamestate << endl;
 
         if (!incoming_message.compare(gamestate_signal)) {
             std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
-            cout << serialized_gamestate << endl;
+            //cout << serialized_gamestate << endl;
             boost::shared_ptr<std::string> message(new std::string(serialized_gamestate));
 
             socket_.async_send_to(boost::asio::buffer(*message), remote_endpoint_,
@@ -105,9 +105,9 @@ queue<unordered_map<string, vector<string> > > GameLoopServer::remove_all_keys()
     while (!incoming_objects.empty())
     {
         all_objects.push(incoming_objects.front());
-        std::cerr << "name: " << all_objects.front()["player_name"][0] << "\n";
+        std::cout << "name: " << all_objects.front()["player_name"][0] << "\n";
         for (int i = 0; i < all_objects.front()["keystrokes"].size(); ++i) {
-            std::cerr << "key: " << all_objects.front()["keystrokes"][i] << "\n";
+            std::cout << "key: " << all_objects.front()["keystrokes"][i] << "\n";
         }
         incoming_objects.pop();
     }
