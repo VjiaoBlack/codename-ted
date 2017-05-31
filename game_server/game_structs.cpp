@@ -184,40 +184,42 @@ PiGameMap PiGameMap::createRandomMap() {
     return random_map;
 }
 
-PiGameMap PiGameMap::createEmptyMap(int x_len, int y_len, int map_size) {
+// Creates the starting game map for the game.
+PiGameMap PiGameMap::createStartMap(int x_len, 
+        int y_len, int map_size) {
     int rand_i = rand() % 25;
     int rand_j = rand() % 25;
     vector< vector<PiMapTile> > tiles;
     vector<PiPirate> pirates;
     vector<PiMerchant> merchants;
     vec3 size(map_size, map_size, map_size);
-    for (int i = 0; i < x_len; i++) {
+    for(int i = 0; i < x_len; i++) {
         vector<PiMapTile> curr_row;
         for (int j = 0; j < y_len; j++) {
             if (i == rand_i && j == rand_j) {
-                PiMapTile curr_tile = PiMapTile::createRandomTile(1);
+                PiMapTile curr_tile = PiMapTile();
                 curr_row.push_back(curr_tile);
-                // Translating tile coords to euclidean coords
                 int c_x = i * map_size/x_len;
                 int c_y = j * map_size/y_len;
-                //PiPirate curr_pirate = PiPirate(vec(i, j), vec(c_x, c_y));
-                //pirates.push_back(curr_pirate);
+                PiPirate curr_pirate = PiPirate(vec2(i, j), vec2(c_x, c_y));
+                pirates.push_back(curr_pirate);
             } else {
-                PiMapTile curr_tile = PiMapTile::createRandomTile(0);
+                PiMapTile curr_tile = PiMapTile();
                 curr_row.push_back(curr_tile);
                 if (curr_tile.is_ship) {
                     int c_x = i * map_size/x_len;
                     int c_y = j * map_size/y_len;
-                    //PiMerchant curr_merch = PiMerchant(vec2(i, j), vec2(c_x, c_y));
-                    //merchants.push_back(curr_merch);
+                    PiMerchant curr_merch = PiMerchant(vec2(i, j), vec2(c_x, c_y));
+                    merchants.push_back(curr_merch);
                 }
             }
         }
         tiles.push_back(curr_row);
     }
-    PiGameMap blank_map(tiles, x_len, y_len, pirates, merchants, size);
-    return blank_map;
+    PiGameMap random_map(tiles, x_len, y_len, pirates, merchants, size);
+    return random_map;
 }
+
 
 // Shifts pirate from one coordinate location to another
 void shift_pirate(PiGameMap& map, vec2 coord1, vec2 coord2) {

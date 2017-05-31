@@ -211,7 +211,7 @@ public:
     PiGameMap() : PiGameMap(25) {};
 
     static PiGameMap createRandomMap();
-    static PiGameMap createEmptyMap(int x_len, int y_len, int map_size);
+    static PiGameMap createStartMap(int x_len, int y_len, int map_size);
 
     // METHODS
     void print_game_map();
