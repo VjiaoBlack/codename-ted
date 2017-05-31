@@ -102,7 +102,7 @@ public:
 
     GameLoopServer(boost::asio::io_service& io_service, int port, PiGameState *inputGameState)
         : socket_(io_service, udp::endpoint(udp::v4(), port))
-        , timer_(io_service, boost::posix_time::microseconds(10))
+        , timer_(io_service, boost::posix_time::microseconds(100000))
         , count_(0) {
             currentGameState_ = inputGameState;
             player_names_ = {"jeff", "barack", "bernard", "ruth", "hillary"};
@@ -137,7 +137,7 @@ private:
     // Timer members
     boost::asio::deadline_timer timer_;
     queue<unordered_map<string, vector<string> > > incoming_objects;
-    int count_;
+    long long int count_;
 
     // game state members
     unordered_map<int, string> keystroke_translator;

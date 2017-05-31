@@ -115,7 +115,7 @@ void GameLoopServer::advance_timer() {
     ++count_;
 
     //run 'run_astar' every 5 ticks (interval TBD)
-    if(count_ % 5 == 0) {
+    if(count_ % 100 == 0) {
         std::cout << "running astar" << std::endl;
         run_astar(currentGameState_->map);
         std::cout << "ran astar" << std::endl;
@@ -140,7 +140,7 @@ void GameLoopServer::advance_timer() {
         objects_to_process.pop();
     }
 
-    timer_.expires_at(timer_.expires_at() + boost::posix_time::microseconds(10));
+    timer_.expires_at(timer_.expires_at() + boost::posix_time::microseconds(100000));
     timer_.async_wait(boost::bind(&GameLoopServer::advance_timer, this));
 }
 
