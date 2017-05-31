@@ -23,14 +23,14 @@ void RegistrationServer::handle_accept(TCPConnection::pointer new_connection,
             registered_players_.push_back(current_registered_);
 
             // If it is first registration, edit ship that was created by createRandomMap
-            /* if (current_registered_ == 0) {
+            if (current_registered_ == 0) {
                 currentGameState_->map.merchants[0].merchant_name = player_names[current_registered_];
                 PiMerchant start_merchant = currentGameState_->map.merchants[0];
                 currentGameState_->add_player(current_registered_, start_merchant.position.x,
                     start_merchant.position.y, true, player_names[current_registered_]);
             } else {
                 currentGameState_->add_player(current_registered_, 0, 0, true, player_names[current_registered_]);
-            }*/
+            }
 
             std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
             //cout << serialized_gamestate << endl;
@@ -137,15 +137,15 @@ void GameLoopServer::advance_timer() {
     //initial_pirate_pos.print_vec2();
 
     shift_pirate(currentGameState_->map, initial_pirate_pos, destination);
-
     //Process gamestate/ai
     while (!objects_to_process.empty())
     {
         currentGameState_->map = compute_gamestate(objects_to_process.front(), currentGameState_->map);
+        std::cout << serialize_gamestate(*currentGameState_) << std::endl;
         objects_to_process.pop();
     }
 
-    timer_.expires_at(timer_.expires_at() + boost::posix_time::seconds(1));
+    timer_.expires_at(timer_.expires_at() + boost::posix_time::microseconds(10));
     timer_.async_wait(boost::bind(&GameLoopServer::advance_timer, this));
 }
 
