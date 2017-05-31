@@ -117,6 +117,19 @@ PiGameMap update_position(PiGameMap gm, int current_boat){
     // gm.merchants[current_boat].velocity.y *= .99 * engineMultiplier;
 
 
+    //This code is for smoothing turns due to collisions.  The boat's true angle is orientation, and rudderRot is the goal.
+    if(gm.merchants[current_boat].orientation != gm.merchants[current_boat].rudderRot){
+        if(fabs(gm.merchants[current_boat].orientation - gm.merchants[current_boat].rudderRot) < 1){
+            gm.merchants[current_boat].orientation = gm.merchants[current_boat].rudderRot;
+        }
+        if(gm.merchants[current_boat].orientation < gm.merchants[current_boat].rudderRot){
+            gm.merchants[current_boat].orientation += 1;
+        }
+        if(gm.merchants[current_boat].orientation > gm.merchants[current_boat].rudderRot){
+            gm.merchants[current_boat].orientation -= 1;
+        }
+    }
+
     return gm;
 }
 
@@ -287,11 +300,13 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
                     // printf("L Is this happening\n");
                     gm.merchants[current_boat].orientation -= turning_speed * engineMultiplier;
                     gm.merchants[current_boat].orientation = fmod(gm.merchants[current_boat].orientation,360);
+                    gm.merchants[current_boat].rudderRot = gm.merchants[current_boat].orientation;
                     break;
                     case 'R':
                     // printf("R Is this happening\n");
                     gm.merchants[current_boat].orientation += turning_speed * engineMultiplier;
                     gm.merchants[current_boat].orientation = fmod(gm.merchants[current_boat].orientation,360);
+                    gm.merchants[current_boat].rudderRot = gm.merchants[current_boat].orientation;
                     break;
                 }
                 i++;
@@ -351,8 +366,8 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
                     gm.merchants[current_boat].velocity = resulting_current_boat_vel_dir;
                     gm.merchants[boat_to_compare].velocity = resulting_boat_to_compare_vel_dir;
 
-                    gm.merchants[current_boat].orientation = atan2(gm.merchants[current_boat].velocity.y, gm.merchants[current_boat].velocity.x) * 1/pioveroneeighty;
-                    gm.merchants[boat_to_compare].orientation = atan2(gm.merchants[boat_to_compare].velocity.y, gm.merchants[boat_to_compare].velocity.x) * 1/pioveroneeighty;
+                    gm.merchants[current_boat].rudderRot = atan2(gm.merchants[current_boat].velocity.y, gm.merchants[current_boat].velocity.x) * 1/pioveroneeighty;
+                    gm.merchants[boat_to_compare].rudderRot = atan2(gm.merchants[boat_to_compare].velocity.y, gm.merchants[boat_to_compare].velocity.x) * 1/pioveroneeighty;
 
                     //Keep adding the velocity to the position until they don't collide
                     while((is_colliding(gm, current_boat, boat_to_compare,0)) || (is_colliding(gm, boat_to_compare, current_boat,0))){
