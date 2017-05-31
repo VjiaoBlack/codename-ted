@@ -39,7 +39,7 @@ float dot_product(vec2 a, vec2 b){
 }
 
 float gold_vel_cap(PiGameMap gm, int current_boat){
-    return velocity_cap + velocity_cap * (gm.merchants[current_boat].goldAmount / gold_cap);
+    return velocity_cap + velocity_cap * ((gold_cap - gm.merchants[current_boat].goldAmount) / gold_cap);
 }
 
 int array_empty_checker(int array[]){
@@ -308,6 +308,9 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
                     gm.merchants[current_boat].orientation = fmod(gm.merchants[current_boat].orientation,360);
                     gm.merchants[current_boat].rudderRot = gm.merchants[current_boat].orientation;
                     break;
+                    case 'G':
+                    gm.merchants[current_boat].goldAmount -= 10;
+                    break;
                 }
                 i++;
             }
@@ -474,8 +477,8 @@ int main(int argc, char* argv[]){
 
     //map.merchants[1].velocity.x = .01;
 
-    map.merchants[1].goldAmount = 0;
-    map.merchants[0].goldAmount = 1000;
+    map.merchants[1].goldAmount = 1000;
+    map.merchants[0].goldAmount = 0;
 
         //Moving the merchant to the appropriate tile
     vec2 newLoc = vec2(map.merchants[1].coord_pos.x,map.merchants[1].coord_pos.y);
