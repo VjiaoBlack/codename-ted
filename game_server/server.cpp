@@ -43,8 +43,9 @@ string GameLoopServer::translate_keystroke(int ks) {
         {DOWN, "DOWN"},
         {LEFT, "LEFT"},
         {RIGHT, "RIGHT"},
-        {DROP_GOLD, "DROP_GOLD"}
+        {DROP_GOLD, "GOLD"}
     });
+
     return keystroke_map[ks];
 }
 
