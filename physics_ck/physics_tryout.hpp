@@ -1,3 +1,6 @@
+#ifndef _PHYSICS_TRYOUT_HPP_
+#define _PHYSICS_TRYOUT_HPP_
+
 #include <vector>
 #include "../game_server/game_structs.hpp"
 #include <iostream>
@@ -20,7 +23,7 @@ using namespace std;
 using namespace std::chrono;
 
 // Comment or uncomment to allow test physics
-//#define K_TEST_PHYSICS
+// #define K_TEST_PHYSICS
 
 
 PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object, PiGameMap gm);
@@ -176,3 +179,5 @@ enum KeyCode
     KC_MAIL        = 0xEC,    // Mail
     KC_MEDIASELECT = 0xED     // Media Select
 };
+
+#endif

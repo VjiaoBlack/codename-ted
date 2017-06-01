@@ -99,7 +99,6 @@ public:
         vy -= 0.02f;
         vy *= 0.99;
 
-
         x += vx;
         y += vy;
         z += vz;
