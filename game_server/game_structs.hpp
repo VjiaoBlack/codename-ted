@@ -160,7 +160,7 @@ public:
     float windStrength;
     // Convert these to enums later
     int is_ship; // 2 if PiPirate, 1 if PiMerchant, 0 if nothing
-    int start_finish; // 1 if start, 0 if finish
+    int start_finish; // 0 regular, 1 if start, 2 if finish
     int land_water; // 1 if land, 0 if water
 
     // CONSTRUCTOR

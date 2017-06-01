@@ -167,6 +167,7 @@ PiGameMap update_position(PiGameMap gm, int current_boat){
 
 
     while(gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].land_water == 1){
+
         gm.merchants[current_boat].coord_pos.x -= gm.merchants[current_boat].velocity.x * engineMultiplier;
         gm.merchants[current_boat].coord_pos.y -= gm.merchants[current_boat].velocity.y * engineMultiplier;
         //printf("I'm on land\n\n");
@@ -185,8 +186,8 @@ PiGameMap update_position(PiGameMap gm, int current_boat){
 PiGameMap update_position_pirate(PiGameMap gm, int pirate){
     //Manually setting new positions
 
-    printf("\n\n\n\n\nPirate Velocity x: %f, y: %f\n", gm.pirates[pirate].velocity.x, gm.pirates[pirate].velocity.y);
-    printf("Pirate pos x: %f, y: %f\n\n\n\n\n\n\n", gm.pirates[pirate].coord_pos.x, gm.pirates[pirate].coord_pos.y);
+    // printf("\n\n\n\n\nPirate Velocity x: %f, y: %f\n", gm.pirates[pirate].velocity.x, gm.pirates[pirate].velocity.y);
+    // printf("Pirate pos x: %f, y: %f\n\n\n\n\n\n\n", gm.pirates[pirate].coord_pos.x, gm.pirates[pirate].coord_pos.y);
     
 
     gm.pirates[0].coord_pos.x += gm.pirates[0].velocity.Normalize().x * gold_vel_cap_pirate(gm,0) * engineMultiplier;
@@ -633,7 +634,7 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
     float newAcc = 0;
 
     for(current_boat = 0; current_boat<gm.merchants.size(); current_boat++) { //Cycle through every merchant
-        if(gm.merchants[current_boat].merchant_name == input_object["player_name"][0]){ //See if we have a match to the merchant name and the owner of the input
+        if((gm.merchants[current_boat].merchant_name == input_object["player_name"][0]) && gm.merchants[current_boat].AI){ //See if we have a match to the merchant name and the owner of the input
             int i=0;
             while(i < input_object["keystrokes"].size()){ //While we still have a valid input in the input vector
                 switch (input_object["keystrokes"][i][0]){ // Read the first letter of the string, which with UP DOWN LEFT RIGHT will be unique
@@ -675,163 +676,170 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
     gm = update_position_pirate(gm,0);
 
     for(current_boat = 0; current_boat<gm.merchants.size(); current_boat++) {
+        if(gm.merchants[current_boat].AI == true){
 
-        gm = update_position(gm, current_boat);
+            gm = update_position(gm, current_boat);
 
-        //Collision Detection.  This is barebones but I built it from the ground up! Blood and sweat!
-        //First with the pirate
-        if(is_colliding_pirate_boat(gm, current_boat, 0) || is_colliding_boat_pirate(gm, current_boat, 0)){
-            //if(1)
-                //printf("**************************************Collided with pirate\n");
-            vec2 combined_dir = vec2(gm.merchants[current_boat].velocity.x + gm.pirates[0].velocity.x, 
-                                    gm.merchants[current_boat].velocity.y + gm.pirates[0].velocity.y);
-            float combined_magnitude = gm.merchants[current_boat].velocity.Length() + gm.pirates[0].velocity.Length();
-            vec2 combined_dir_ortho = vec2(-combined_dir.y, combined_dir.x);
-
-            //Compute resulting direction for current_boat
-            float current_boat_resulting_directionX = gm.merchants[current_boat].velocity.x - 2 * 
-                                                    dot_product(gm.merchants[current_boat].velocity, combined_dir_ortho.Normalize()) * 
-                                                    combined_dir_ortho.Normalize().x;
-            float current_boat_resulting_directionY = gm.merchants[current_boat].velocity.y - 2 * 
-                                                    dot_product(gm.merchants[current_boat].velocity, combined_dir_ortho.Normalize()) * 
-                                                    combined_dir_ortho.Normalize().y;
-            vec2 resulting_current_boat_vel_dir = vec2(current_boat_resulting_directionX, current_boat_resulting_directionY);
-            //Same for other boat
-            float boat_to_compare_resulting_directionX = gm.pirates[0].velocity.x - 2 * 
-                                                    dot_product(gm.pirates[0].velocity, combined_dir_ortho.Normalize()) * 
-                                                    combined_dir_ortho.Normalize().x;
-
-            // printf("new thing: %f\n", gm.pirates[0].velocity.x);
-            // printf("subtract: %f\n", dot_product(gm.pirates[0].velocity, combined_dir_ortho.Normalize()) * combined_dir_ortho.Normalize().x);
-
-            float boat_to_compare_resulting_directionY = gm.pirates[0].velocity.y - 2 * 
-                                                    dot_product(gm.pirates[0].velocity, combined_dir_ortho.Normalize()) * 
-                                                    combined_dir_ortho.Normalize().y;
-            vec2 resulting_boat_to_compare_vel_dir = vec2(boat_to_compare_resulting_directionX, boat_to_compare_resulting_directionY);
-
-            // printf("collided instance ship Velocity x: %f, y: %f\n", resulting_current_boat_vel_dir.x, resulting_current_boat_vel_dir.y);
-            // printf("collided instance Pirate Velocity x: %f, y: %f\n", resulting_boat_to_compare_vel_dir.x, resulting_boat_to_compare_vel_dir.y);
-
-            //Normalizing both and then giving them each half the velocity of the total
-            resulting_boat_to_compare_vel_dir = resulting_boat_to_compare_vel_dir.Normalize();
-            resulting_boat_to_compare_vel_dir.x *= combined_magnitude / 2;
-            resulting_boat_to_compare_vel_dir.y *= combined_magnitude / 2;
-            resulting_current_boat_vel_dir = resulting_current_boat_vel_dir.Normalize();
-            resulting_current_boat_vel_dir.x *= combined_magnitude / 2;
-            resulting_current_boat_vel_dir.y *= combined_magnitude / 2;
-
-            gm.merchants[current_boat].velocity = resulting_current_boat_vel_dir;
-
-            if(resulting_boat_to_compare_vel_dir.Length()<.00001){
-                // printf("This is a thing \n");
-                resulting_boat_to_compare_vel_dir = vec2(resulting_current_boat_vel_dir.x * 1.1, resulting_current_boat_vel_dir.y * 1.1);
+            if(gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].start_finish == 2){
+                printf("woohoo\n");
+                gm.merchants[current_boat].AI = false;
             }
 
-            gm.pirates[0].velocity = resulting_boat_to_compare_vel_dir;
+            //Collision Detection.  This is barebones but I built it from the ground up! Blood and sweat!
+            //First with the pirate
+            if(is_colliding_pirate_boat(gm, current_boat, 0) || is_colliding_boat_pirate(gm, current_boat, 0)){
+                //if(1)
+                    //printf("**************************************Collided with pirate\n");
+                vec2 combined_dir = vec2(gm.merchants[current_boat].velocity.x + gm.pirates[0].velocity.x, 
+                                        gm.merchants[current_boat].velocity.y + gm.pirates[0].velocity.y);
+                float combined_magnitude = gm.merchants[current_boat].velocity.Length() + gm.pirates[0].velocity.Length();
+                vec2 combined_dir_ortho = vec2(-combined_dir.y, combined_dir.x);
 
-            gm.merchants[current_boat].rudderRot = atan2(gm.merchants[current_boat].velocity.y, gm.merchants[current_boat].velocity.x) * 1/pioveroneeighty;
-            gm.pirates[0].rudderRot = atan2(gm.pirates[0].velocity.y, gm.pirates[0].velocity.x) * 1/pioveroneeighty;
+                //Compute resulting direction for current_boat
+                float current_boat_resulting_directionX = gm.merchants[current_boat].velocity.x - 2 * 
+                                                        dot_product(gm.merchants[current_boat].velocity, combined_dir_ortho.Normalize()) * 
+                                                        combined_dir_ortho.Normalize().x;
+                float current_boat_resulting_directionY = gm.merchants[current_boat].velocity.y - 2 * 
+                                                        dot_product(gm.merchants[current_boat].velocity, combined_dir_ortho.Normalize()) * 
+                                                        combined_dir_ortho.Normalize().y;
+                vec2 resulting_current_boat_vel_dir = vec2(current_boat_resulting_directionX, current_boat_resulting_directionY);
+                //Same for other boat
+                float boat_to_compare_resulting_directionX = gm.pirates[0].velocity.x - 2 * 
+                                                        dot_product(gm.pirates[0].velocity, combined_dir_ortho.Normalize()) * 
+                                                        combined_dir_ortho.Normalize().x;
 
-            //Keep adding the velocity to the position until they don't collide
-            while(is_colliding_pirate_boat(gm, current_boat, 0) || is_colliding_boat_pirate(gm, current_boat, 0)){
-                //Manually setting new positions
+                // printf("new thing: %f\n", gm.pirates[0].velocity.x);
+                // printf("subtract: %f\n", dot_product(gm.pirates[0].velocity, combined_dir_ortho.Normalize()) * combined_dir_ortho.Normalize().x);
 
-                vec2 vector_for_curr_away_from_comp = vec2(gm.merchants[current_boat].coord_pos.x - gm.pirates[0].coord_pos.x,
-                                                            gm.merchants[current_boat].coord_pos.y - gm.pirates[0].coord_pos.y);
-                vec2 vector_for_comp_away_from_curr = vec2(gm.pirates[0].coord_pos.x - gm.merchants[current_boat].coord_pos.x,
-                                                            gm.pirates[0].coord_pos.y - gm.merchants[current_boat].coord_pos.y);
+                float boat_to_compare_resulting_directionY = gm.pirates[0].velocity.y - 2 * 
+                                                        dot_product(gm.pirates[0].velocity, combined_dir_ortho.Normalize()) * 
+                                                        combined_dir_ortho.Normalize().y;
+                vec2 resulting_boat_to_compare_vel_dir = vec2(boat_to_compare_resulting_directionX, boat_to_compare_resulting_directionY);
 
-                gm.merchants[current_boat].coord_pos.x += vector_for_curr_away_from_comp.Normalize().x * engineMultiplier;
-                gm.merchants[current_boat].coord_pos.y += vector_for_curr_away_from_comp.Normalize().y * engineMultiplier;
+                // printf("collided instance ship Velocity x: %f, y: %f\n", resulting_current_boat_vel_dir.x, resulting_current_boat_vel_dir.y);
+                // printf("collided instance Pirate Velocity x: %f, y: %f\n", resulting_boat_to_compare_vel_dir.x, resulting_boat_to_compare_vel_dir.y);
 
-                gm.pirates[0].coord_pos.x += vector_for_comp_away_from_curr.Normalize().x * engineMultiplier;
-                gm.pirates[0].coord_pos.y += vector_for_comp_away_from_curr.Normalize().y * engineMultiplier;
+                //Normalizing both and then giving them each half the velocity of the total
+                resulting_boat_to_compare_vel_dir = resulting_boat_to_compare_vel_dir.Normalize();
+                resulting_boat_to_compare_vel_dir.x *= combined_magnitude / 2;
+                resulting_boat_to_compare_vel_dir.y *= combined_magnitude / 2;
+                resulting_current_boat_vel_dir = resulting_current_boat_vel_dir.Normalize();
+                resulting_current_boat_vel_dir.x *= combined_magnitude / 2;
+                resulting_current_boat_vel_dir.y *= combined_magnitude / 2;
 
-                //Moving the merchant to the appropriate tile
-                vec2 newLoc_curr = vec2(gm.merchants[current_boat].coord_pos.x,gm.merchants[current_boat].coord_pos.y);
-                gm.merchants[current_boat].position = convert_coord_tile(gm, newLoc_curr);
+                gm.merchants[current_boat].velocity = resulting_current_boat_vel_dir;
 
-                vec2 newLoc_comp = vec2(gm.pirates[0].coord_pos.x,gm.pirates[0].coord_pos.y);
-                gm.pirates[0].position = convert_coord_tile(gm, newLoc_comp);
-            }
-        }
-
-        //Now with all the other boats
-        int boat_to_compare;
-        for(boat_to_compare = 0; boat_to_compare<gm.merchants.size(); boat_to_compare++) {
-            //printf("************************************Check for boat %d against boat %d\n", current_boat, boat_to_compare);
-            if(current_boat==boat_to_compare){ // If we are checking collision with ourself
-                //printf("This is a check with myself\n");
-                continue;
-            }
-            else{ //Checking collision with another ship
-                if(is_colliding(gm, current_boat, boat_to_compare, 0)){
-                    // If this passes, do more granular collision.  This is barebones so I'll just treat this as a collision.
-                    //I am just going to reverse the accelerations for both ships to see if that fixes it.  I can do something more special later.
-                    if(verbose)
-                        printf("Collided\n");
-                    vec2 combined_dir = vec2(gm.merchants[current_boat].velocity.x + gm.merchants[boat_to_compare].velocity.x, 
-                                            gm.merchants[current_boat].velocity.y + gm.merchants[boat_to_compare].velocity.y);
-                    float combined_magnitude = gm.merchants[current_boat].velocity.Length() + gm.merchants[boat_to_compare].velocity.Length();
-                    vec2 combined_dir_ortho = vec2(-combined_dir.y, combined_dir.x);
- 
-                    //Compute resulting direction for current_boat
-                    float current_boat_resulting_directionX = gm.merchants[current_boat].velocity.x - 2 * 
-                                                            dot_product(gm.merchants[current_boat].velocity, combined_dir_ortho.Normalize()) * 
-                                                            combined_dir_ortho.Normalize().x;
-                    float current_boat_resulting_directionY = gm.merchants[current_boat].velocity.y - 2 * 
-                                                            dot_product(gm.merchants[current_boat].velocity, combined_dir_ortho.Normalize()) * 
-                                                            combined_dir_ortho.Normalize().y;
-                    vec2 resulting_current_boat_vel_dir = vec2(current_boat_resulting_directionX, current_boat_resulting_directionY);
-                    //Same for other boat
-                    float boat_to_compare_resulting_directionX = gm.merchants[boat_to_compare].velocity.x - 2 * 
-                                                            dot_product(gm.merchants[boat_to_compare].velocity, combined_dir_ortho.Normalize()) * 
-                                                            combined_dir_ortho.Normalize().x;
-                    float boat_to_compare_resulting_directionY = gm.merchants[boat_to_compare].velocity.y - 2 * 
-                                                            dot_product(gm.merchants[boat_to_compare].velocity, combined_dir_ortho.Normalize()) * 
-                                                            combined_dir_ortho.Normalize().y;
-
-                    vec2 resulting_boat_to_compare_vel_dir = vec2(boat_to_compare_resulting_directionX, boat_to_compare_resulting_directionY);
-
-                    //Normalizing both and then giving them each half the velocity of the total
-                    resulting_boat_to_compare_vel_dir = resulting_boat_to_compare_vel_dir.Normalize();
-                    resulting_boat_to_compare_vel_dir.x *= combined_magnitude / 2;
-                    resulting_boat_to_compare_vel_dir.y *= combined_magnitude / 2;
-                    resulting_current_boat_vel_dir = resulting_current_boat_vel_dir.Normalize();
-                    resulting_current_boat_vel_dir.x *= combined_magnitude / 2;
-                    resulting_current_boat_vel_dir.y *= combined_magnitude / 2;
-
-                    gm.merchants[current_boat].velocity = resulting_current_boat_vel_dir;
-                    gm.merchants[boat_to_compare].velocity = resulting_boat_to_compare_vel_dir;
-
-                    gm.merchants[current_boat].rudderRot = atan2(gm.merchants[current_boat].velocity.y, gm.merchants[current_boat].velocity.x) * 1/pioveroneeighty;
-                    gm.merchants[boat_to_compare].rudderRot = atan2(gm.merchants[boat_to_compare].velocity.y, gm.merchants[boat_to_compare].velocity.x) * 1/pioveroneeighty;
-
-                    //Keep adding the velocity to the position until they don't collide
-                    while((is_colliding(gm, current_boat, boat_to_compare,0)) || (is_colliding(gm, boat_to_compare, current_boat,0))){
-                        //Manually setting new positions
-
-                        vec2 vector_for_curr_away_from_comp = vec2(gm.merchants[current_boat].coord_pos.x - gm.merchants[boat_to_compare].coord_pos.x,
-                                                                    gm.merchants[current_boat].coord_pos.y - gm.merchants[boat_to_compare].coord_pos.y);
-                        vec2 vector_for_comp_away_from_curr = vec2(gm.merchants[boat_to_compare].coord_pos.x - gm.merchants[current_boat].coord_pos.x,
-                                                                    gm.merchants[boat_to_compare].coord_pos.y - gm.merchants[current_boat].coord_pos.y);
-
-                        gm.merchants[current_boat].coord_pos.x += vector_for_curr_away_from_comp.Normalize().x * engineMultiplier;
-                        gm.merchants[current_boat].coord_pos.y += vector_for_curr_away_from_comp.Normalize().y * engineMultiplier;
-
-                        gm.merchants[boat_to_compare].coord_pos.x += vector_for_comp_away_from_curr.Normalize().x * engineMultiplier;
-                        gm.merchants[boat_to_compare].coord_pos.y += vector_for_comp_away_from_curr.Normalize().y * engineMultiplier;
-
-                        //Moving the merchant to the appropriate tile
-                        vec2 newLoc_curr = vec2(gm.merchants[current_boat].coord_pos.x,gm.merchants[current_boat].coord_pos.y);
-                        gm.merchants[current_boat].position = convert_coord_tile(gm, newLoc_curr);
-
-                        vec2 newLoc_comp = vec2(gm.merchants[boat_to_compare].coord_pos.x,gm.merchants[boat_to_compare].coord_pos.y);
-                        gm.merchants[boat_to_compare].position = convert_coord_tile(gm, newLoc_comp);
-                    }
+                if(resulting_boat_to_compare_vel_dir.Length()<.00001){
+                    // printf("This is a thing \n");
+                    resulting_boat_to_compare_vel_dir = vec2(resulting_current_boat_vel_dir.x * 1.1, resulting_current_boat_vel_dir.y * 1.1);
                 }
-                else{ // Not close to each other so pass.
+
+                gm.pirates[0].velocity = resulting_boat_to_compare_vel_dir;
+
+                gm.merchants[current_boat].rudderRot = atan2(gm.merchants[current_boat].velocity.y, gm.merchants[current_boat].velocity.x) * 1/pioveroneeighty;
+                gm.pirates[0].rudderRot = atan2(gm.pirates[0].velocity.y, gm.pirates[0].velocity.x) * 1/pioveroneeighty;
+
+                //Keep adding the velocity to the position until they don't collide
+                while(is_colliding_pirate_boat(gm, current_boat, 0) || is_colliding_boat_pirate(gm, current_boat, 0)){
+                    //Manually setting new positions
+
+                    vec2 vector_for_curr_away_from_comp = vec2(gm.merchants[current_boat].coord_pos.x - gm.pirates[0].coord_pos.x,
+                                                                gm.merchants[current_boat].coord_pos.y - gm.pirates[0].coord_pos.y);
+                    vec2 vector_for_comp_away_from_curr = vec2(gm.pirates[0].coord_pos.x - gm.merchants[current_boat].coord_pos.x,
+                                                                gm.pirates[0].coord_pos.y - gm.merchants[current_boat].coord_pos.y);
+
+                    gm.merchants[current_boat].coord_pos.x += vector_for_curr_away_from_comp.Normalize().x * engineMultiplier;
+                    gm.merchants[current_boat].coord_pos.y += vector_for_curr_away_from_comp.Normalize().y * engineMultiplier;
+
+                    gm.pirates[0].coord_pos.x += vector_for_comp_away_from_curr.Normalize().x * engineMultiplier;
+                    gm.pirates[0].coord_pos.y += vector_for_comp_away_from_curr.Normalize().y * engineMultiplier;
+
+                    //Moving the merchant to the appropriate tile
+                    vec2 newLoc_curr = vec2(gm.merchants[current_boat].coord_pos.x,gm.merchants[current_boat].coord_pos.y);
+                    gm.merchants[current_boat].position = convert_coord_tile(gm, newLoc_curr);
+
+                    vec2 newLoc_comp = vec2(gm.pirates[0].coord_pos.x,gm.pirates[0].coord_pos.y);
+                    gm.pirates[0].position = convert_coord_tile(gm, newLoc_comp);
+                }
+            }
+
+            //Now with all the other boats
+            int boat_to_compare;
+            for(boat_to_compare = 0; boat_to_compare<gm.merchants.size(); boat_to_compare++) {
+                //printf("************************************Check for boat %d against boat %d\n", current_boat, boat_to_compare);
+                if(current_boat==boat_to_compare){ // If we are checking collision with ourself
+                    //printf("This is a check with myself\n");
                     continue;
+                }
+                else{ //Checking collision with another ship
+                    if(is_colliding(gm, current_boat, boat_to_compare, 0)){
+                        // If this passes, do more granular collision.  This is barebones so I'll just treat this as a collision.
+                        //I am just going to reverse the accelerations for both ships to see if that fixes it.  I can do something more special later.
+                        if(verbose)
+                            printf("Collided\n");
+                        vec2 combined_dir = vec2(gm.merchants[current_boat].velocity.x + gm.merchants[boat_to_compare].velocity.x, 
+                                                gm.merchants[current_boat].velocity.y + gm.merchants[boat_to_compare].velocity.y);
+                        float combined_magnitude = gm.merchants[current_boat].velocity.Length() + gm.merchants[boat_to_compare].velocity.Length();
+                        vec2 combined_dir_ortho = vec2(-combined_dir.y, combined_dir.x);
+     
+                        //Compute resulting direction for current_boat
+                        float current_boat_resulting_directionX = gm.merchants[current_boat].velocity.x - 2 * 
+                                                                dot_product(gm.merchants[current_boat].velocity, combined_dir_ortho.Normalize()) * 
+                                                                combined_dir_ortho.Normalize().x;
+                        float current_boat_resulting_directionY = gm.merchants[current_boat].velocity.y - 2 * 
+                                                                dot_product(gm.merchants[current_boat].velocity, combined_dir_ortho.Normalize()) * 
+                                                                combined_dir_ortho.Normalize().y;
+                        vec2 resulting_current_boat_vel_dir = vec2(current_boat_resulting_directionX, current_boat_resulting_directionY);
+                        //Same for other boat
+                        float boat_to_compare_resulting_directionX = gm.merchants[boat_to_compare].velocity.x - 2 * 
+                                                                dot_product(gm.merchants[boat_to_compare].velocity, combined_dir_ortho.Normalize()) * 
+                                                                combined_dir_ortho.Normalize().x;
+                        float boat_to_compare_resulting_directionY = gm.merchants[boat_to_compare].velocity.y - 2 * 
+                                                                dot_product(gm.merchants[boat_to_compare].velocity, combined_dir_ortho.Normalize()) * 
+                                                                combined_dir_ortho.Normalize().y;
+
+                        vec2 resulting_boat_to_compare_vel_dir = vec2(boat_to_compare_resulting_directionX, boat_to_compare_resulting_directionY);
+
+                        //Normalizing both and then giving them each half the velocity of the total
+                        resulting_boat_to_compare_vel_dir = resulting_boat_to_compare_vel_dir.Normalize();
+                        resulting_boat_to_compare_vel_dir.x *= combined_magnitude / 2;
+                        resulting_boat_to_compare_vel_dir.y *= combined_magnitude / 2;
+                        resulting_current_boat_vel_dir = resulting_current_boat_vel_dir.Normalize();
+                        resulting_current_boat_vel_dir.x *= combined_magnitude / 2;
+                        resulting_current_boat_vel_dir.y *= combined_magnitude / 2;
+
+                        gm.merchants[current_boat].velocity = resulting_current_boat_vel_dir;
+                        gm.merchants[boat_to_compare].velocity = resulting_boat_to_compare_vel_dir;
+
+                        gm.merchants[current_boat].rudderRot = atan2(gm.merchants[current_boat].velocity.y, gm.merchants[current_boat].velocity.x) * 1/pioveroneeighty;
+                        gm.merchants[boat_to_compare].rudderRot = atan2(gm.merchants[boat_to_compare].velocity.y, gm.merchants[boat_to_compare].velocity.x) * 1/pioveroneeighty;
+
+                        //Keep adding the velocity to the position until they don't collide
+                        while((is_colliding(gm, current_boat, boat_to_compare,0)) || (is_colliding(gm, boat_to_compare, current_boat,0))){
+                            //Manually setting new positions
+
+                            vec2 vector_for_curr_away_from_comp = vec2(gm.merchants[current_boat].coord_pos.x - gm.merchants[boat_to_compare].coord_pos.x,
+                                                                        gm.merchants[current_boat].coord_pos.y - gm.merchants[boat_to_compare].coord_pos.y);
+                            vec2 vector_for_comp_away_from_curr = vec2(gm.merchants[boat_to_compare].coord_pos.x - gm.merchants[current_boat].coord_pos.x,
+                                                                        gm.merchants[boat_to_compare].coord_pos.y - gm.merchants[current_boat].coord_pos.y);
+
+                            gm.merchants[current_boat].coord_pos.x += vector_for_curr_away_from_comp.Normalize().x * engineMultiplier;
+                            gm.merchants[current_boat].coord_pos.y += vector_for_curr_away_from_comp.Normalize().y * engineMultiplier;
+
+                            gm.merchants[boat_to_compare].coord_pos.x += vector_for_comp_away_from_curr.Normalize().x * engineMultiplier;
+                            gm.merchants[boat_to_compare].coord_pos.y += vector_for_comp_away_from_curr.Normalize().y * engineMultiplier;
+
+                            //Moving the merchant to the appropriate tile
+                            vec2 newLoc_curr = vec2(gm.merchants[current_boat].coord_pos.x,gm.merchants[current_boat].coord_pos.y);
+                            gm.merchants[current_boat].position = convert_coord_tile(gm, newLoc_curr);
+
+                            vec2 newLoc_comp = vec2(gm.merchants[boat_to_compare].coord_pos.x,gm.merchants[boat_to_compare].coord_pos.y);
+                            gm.merchants[boat_to_compare].position = convert_coord_tile(gm, newLoc_comp);
+                        }
+                    }
+                    else{ // Not close to each other so pass.
+                        continue;
+                    }
                 }
             }
         }
@@ -899,14 +907,15 @@ int main(int argc, char* argv[]){
 
     bool quit = false;
 
-    PiGameMap map = read_png_heightmap("../ai/height.csv", 32, 32, 1024);
+    PiGameMap map = read_png_heightmap("../ai/height.csv", 48, 48, 32000);
 
     // PiGameMap map(25);
     map.add_merchant(PiMerchant());
     // map.add_merchant(PiMerchant());
     map.merchants[0].merchant_name = "our_guy";
 
-    map.mapTiles[7][7].land_water = 1;
+    map.mapTiles[1][1].land_water = 1;
+    //map.mapTiles[1][1].start_finish = 2;
 
     // int mapTileIter = 0;
     //     int anotherMapTileIter = 0;
@@ -1037,7 +1046,7 @@ int main(int argc, char* argv[]){
             for(anotherMapTileIter = 0; anotherMapTileIter<map.mapTiles[mapTileIter].size(); anotherMapTileIter++){
                 if(map.mapTiles[mapTileIter][anotherMapTileIter].land_water == 1){
                     SDL_Rect newRect = {(int)ceil(convert_tile_coord(map, vec2(mapTileIter,anotherMapTileIter)).x), 
-                                        (int)ceil(convert_tile_coord(map, vec2(mapTileIter,anotherMapTileIter)).y), 1024/32, 1024/32};
+                                        (int)ceil(convert_tile_coord(map, vec2(mapTileIter,anotherMapTileIter)).y), 32000/48, 32000/48};
                     SDL_RenderDrawRect(renderer, &newRect);
                 }
             }
