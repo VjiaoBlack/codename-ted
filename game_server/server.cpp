@@ -19,6 +19,7 @@ void RegistrationServer::handle_accept(TCPConnection::pointer new_connection,
     const boost::system::error_code &error) {
         int i = 0;
         if (!error) {
+
             // Add players to registration queue
             registered_players_.push_back(current_registered_);
 
@@ -69,7 +70,7 @@ void GameLoopServer::handle_receive(const boost::system::error_code& error,
 
         } else {
             // We've got some keystrokes!
-            std::cout << incoming_message << std::endl;
+            //std::cout << incoming_message << std::endl;
             keystrokes_obj ks = deserialize_keystrokes(incoming_message);
             //keystrokes added to queue, updated on timer!
             int queue_size = add_keys_to_queue(ks.keystrokes, player_names_[ks.unique_id]);
@@ -111,16 +112,14 @@ queue<unordered_map<string, vector<string> > > GameLoopServer::remove_all_keys()
 }
 
 void GameLoopServer::advance_timer() {
-    //if (!has_started_) {}
-
     queue<unordered_map<string, vector<string> > > objects_to_process = this->remove_all_keys();
     ++count_;
 
     //run 'run_astar' every 5 ticks (interval TBD)
     if(count_ % 100 == 0) {
-        std::cout << "running astar" << std::endl;
-        run_astar(currentGameState_->map);
-        std::cout << "ran astar" << std::endl;
+        //std::cout << "running astar" << std::endl;
+        //run_astar(currentGameState_->map);
+        //std::cout << "ran astar" << std::endl;
     }
 
     vec2 initial_pirate_pos = currentGameState_->map.pirates[0].coord_pos;
@@ -137,8 +136,8 @@ void GameLoopServer::advance_timer() {
     //Process gamestate/ai
     while (!objects_to_process.empty())
     {
-        currentGameState_->map = compute_gamestate(objects_to_process.front(), currentGameState_->map);
-        std::cout << serialize_gamestate(*currentGameState_) << std::endl;
+        //currentGameState_->map = compute_gamestate(objects_to_process.front(), currentGameState_->map);
+        //std::cout << serialize_gamestate(*currentGameState_) << std::endl;
         objects_to_process.pop();
     }
 
