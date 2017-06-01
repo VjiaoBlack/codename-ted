@@ -105,6 +105,7 @@ public:
         , timer_(io_service, boost::posix_time::microseconds(10000))
         , count_(0) {
             currentGameState_ = inputGameState;
+            game_has_ended_ = false;
             player_names_ = {"jeff", "barack", "bernard", "ruth", "hillary"};
             timer_.async_wait(boost::bind(&GameLoopServer::advance_timer, this));
             start_receive();
@@ -118,6 +119,10 @@ private:
     queue<unordered_map<string, vector<string> > > remove_all_keys();
 
     int add_keys_to_queue(vector<int> ks, string name);
+
+    void end_game();
+
+    void check_game_ended();
 
     void start_receive() {
         socket_.async_receive_from(boost::asio::buffer(recv_buffer_), remote_endpoint_,
@@ -146,4 +151,5 @@ private:
     udp::endpoint remote_endpoint_;
     boost::array<char, MAX_RECV_LENGTH> recv_buffer_;
     PiGameState *currentGameState_;
+    bool game_has_ended_;
 };
