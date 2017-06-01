@@ -6,14 +6,14 @@ using namespace std;
 float acceleration_normal_slowdown_factor = 0.05;
 float acceleration_increase = 0.001;
 float pioveroneeighty = 0.01745329251;
-float turning_speed = .05;
+float turning_speed = .1;
 
 float firstOrderCollisionBuffer = 0.1;
 float y_extension = 1;
 float x_extension = 2;
 
 float acceleration_cap = .01;
-float velocity_cap = .03;
+float velocity_cap = .3;
 
 int gold_cap = 1000;
 
@@ -788,7 +788,7 @@ int main(int argc, char* argv[]){
     // Create window
     window = SDL_CreateWindow("test_driving",
        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-       1024 * 1, 768 * 1, SDL_WINDOW_SHOWN);
+       768 * 1, 768 * 1, SDL_WINDOW_SHOWN);
     if (window == NULL) {
         printf("Window could not be created - SDL Error: %s\n", SDL_GetError());
         exit(1);
@@ -816,32 +816,31 @@ int main(int argc, char* argv[]){
 
     bool quit = false;
 
-    PiGameMap map = PiGameMap::createStartMap(25, 25, 500);
+    PiGameMap map = PiGameMap::createStartMap(32, 32, 1024);
 
     // PiGameMap map(25);
     map.add_merchant(PiMerchant());
-    map.add_merchant(PiMerchant());
+    // map.add_merchant(PiMerchant());
     map.merchants[0].merchant_name = "our_guy";
 
-    map.merchants[1].coord_pos.x = 50;
-    map.merchants[1].coord_pos.y = 50;
+
+
+    map.merchants[0].coord_pos.x = 50;
+    map.merchants[0].coord_pos.y = 50;
 
     map.pirates[0].coord_pos.x = 150;
     map.pirates[0].coord_pos.y = 150;
 
     //map.merchants[1].velocity.x = .01;
 
-    map.merchants[1].goldAmount = 1000;
+    // map.merchants[1].goldAmount = 1000;
     map.merchants[0].goldAmount = 0;
 
     map.pirates[0].goldAmount = 1000;
 
-    map.pirates[0].velocity.x = 0.0;
-    map.pirates[0].velocity.y = 0.0;
-
         //Moving the merchant to the appropriate tile
-    vec2 newLoc = vec2(map.merchants[1].coord_pos.x,map.merchants[1].coord_pos.y);
-    map.merchants[1].position = convert_coord_tile(map, newLoc);
+    vec2 newLoc = vec2(map.merchants[0].coord_pos.x,map.merchants[0].coord_pos.y);
+    map.merchants[0].position = convert_coord_tile(map, newLoc);
 
     // for(merchant m: map.merchants) { //Cycle through every merchant
     //   printf("%s\n", m.merchant_name.c_str());
@@ -857,7 +856,11 @@ int main(int argc, char* argv[]){
 
     //printf("here we have it%lld\n", lastFrame.count());
 
+    int itera = 0;
+
     while(!quit) {
+
+        itera++;
 
         unordered_map<string, vector<string> > input_object;
         // Inserting data in std::map
@@ -920,18 +923,23 @@ int main(int argc, char* argv[]){
         if(verbose)
             printf("\n\n\n");
 
+        printf("Before\n");
+        if(itera % 100 == 0)
+            run_astar(map);
+        printf("After\n");
+
         // Clear screen
         SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(renderer);
 
         SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
 
-        SDL_Rect wholeRect = {25 * 1, 25 * 1, (1024 - 50) * 1, (768 - 50) * 1};
+        SDL_Rect wholeRect = {25 * 1, 25 * 1, (768 - 50) * 1, (768 - 50) * 1};
         SDL_RenderDrawRect(renderer, &wholeRect);
 
         draw_boat(renderer,map, 0);
 
-        draw_boat(renderer,map, 1);
+        // draw_boat(renderer,map, 1);
 
         draw_pirate(renderer,map, 0);
 
