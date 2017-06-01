@@ -77,6 +77,11 @@ public:
     PiGoldBlock(Ogre::SceneManager* sceneMgr, double _x, double _y, double _z)
         : vx(1.0), vy(1.0), vz(1.0), x(_x), y(_y), z(_z) {
 
+        float theta = (float) (rand() % 360) * (3.1415926535) / (180.0);
+
+        vx = 0.1 * sin(theta);
+        vz = 0.1 * cos(theta);
+
         Ogre::Entity* ent = sceneMgr->createEntity("sphere.mesh");
         Ogre::SharedPtr<Ogre::Material> m_pMat = ent->getSubEntity(0)->getMaterial();
         m_pMat->getTechnique(0)->getPass(0)->setAmbient(Ogre::ColourValue(0.8, 0.4, 0.0, 1.0));
@@ -91,22 +96,18 @@ public:
     }
 
     bool update(Ogre::SceneManager* sceneMgr) {
-        printf("doot 1\n");
-        vy -= 0.2f;
-        vx *= 0.98;
-        vz *= 0.98;
+        vy -= 0.02f;
+        vy *= 0.99;
+
+
         x += vx;
         y += vy;
         z += vz;
-        printf("doot 2\n");
         mSceneNode->setPosition(Ogre::Vector3(x, y, z));
 
         if (y < 600.0) {
-            printf("TEST 0\n");
             mSceneNode->removeAndDestroyAllChildren();
-            printf("TEST 1\n");
             sceneMgr->destroySceneNode(mSceneNode);
-            printf("TEST 2\n");
 
             return false;
         } else {
