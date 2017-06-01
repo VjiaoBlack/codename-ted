@@ -140,9 +140,9 @@ public:
         : PiMerchant("Clone", loc, vec2(-1,1), vec2(0,0), 0, 0, 0, true, coord) {}
     PiMerchant() : PiMerchant(vec2(0,0)) {}
 
-    // Takes in a merchant name
-    PiMerchant(string name)
-    : PiMerchant(name, vec2(0,0), vec2(-1,1), vec2(0,0), 0, 0, 0, true, vec2(0,0)) {}
+    // Takes in a merchant name and gold amount
+    PiMerchant(string name, int gold=500)
+    : PiMerchant(name, vec2(0,0), vec2(-1,1), vec2(0,0), 0, 0, gold, true, vec2(0,0)) {}
 };
 
 class PiLobby {
@@ -174,7 +174,7 @@ public:
         , land_water(land) {};
 
     PiMapTile() : PiMapTile(vec2(0,0), 0, vec2(0,0), 0, 0, 0) {};
-    PiMapTile(int land_water) : PiMapTile(vec2(0,0), 0, vec2(0,0), 
+    PiMapTile(int land_water) : PiMapTile(vec2(0,0), 0, vec2(0,0),
             0, 0, land_water) {};
 
     static PiMapTile createRandomTile(int PiPirate);
@@ -262,7 +262,7 @@ void shift_pirate(PiGameMap& p, vec2 coord1, vec2 coord2);
 void shift_merchant(PiGameMap& m, vec2 coord1, vec2 coord2);
 vec2 convert_coord_tile(PiGameMap& m, vec2 coord);
 vec2 convert_tile_coord(PiGameMap& m, vec2 pos);
-PiGameMap read_png_heightmap(string file_location, 
+PiGameMap read_png_heightmap(string file_location,
         int x_len, int y_len, int map_size);
 
 #endif
