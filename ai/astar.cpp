@@ -17,6 +17,7 @@ using namespace std;
 // based on AI
 void run_astar(PiGameMap &map) {
     priority_queue<q_elem, vector<q_elem>, PriorityComp> main_q;
+    int iterations = 0;
     bool goal_reached = false;
     vector<vec2> positions = retrieve_ship_positions(map);
     vector<vec2> coords = retrieve_ship_coords(map);
@@ -26,6 +27,10 @@ void run_astar(PiGameMap &map) {
     vec2 selected_pos = pirate_pos;
     main_q.push(q_elem(selected_pos, vec2(-1, -1), 0));
     while (!goal_reached) {
+        iterations++;
+        if (iterations > 15000) {
+            return;
+        }
         q_elem selected_q = main_q.top();
         selected_pos = selected_q.pos;
         main_q.pop();
