@@ -108,6 +108,8 @@ PiGameMap update_position(PiGameMap gm, int current_boat){
     gm.merchants[current_boat].coord_pos.x += gm.merchants[current_boat].velocity.x * engineMultiplier;
     gm.merchants[current_boat].coord_pos.y += gm.merchants[current_boat].velocity.y * engineMultiplier;
 
+    //printf("x: %f, y: %f\n", gm.merchants[current_boat].coord_pos.x, gm.merchants[current_boat].coord_pos.y);
+
         //Moving the merchant to the appropriate tile
     vec2 newLoc = vec2(gm.merchants[current_boat].coord_pos.x,gm.merchants[current_boat].coord_pos.y);
     gm.merchants[current_boat].position = convert_coord_tile(gm, newLoc);
@@ -132,6 +134,19 @@ PiGameMap update_position(PiGameMap gm, int current_boat){
             gm.merchants[current_boat].orientation -= 1;
         }
     }
+
+    //Here is the jankiest land collision code of all time!
+
+    while(gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].land_water == 1){
+        printf("*************************Hitting land\n");
+
+        gm.merchants[current_boat].coord_pos.x -= gm.merchants[current_boat].velocity.x * engineMultiplier;
+        gm.merchants[current_boat].coord_pos.y -= gm.merchants[current_boat].velocity.y * engineMultiplier;
+
+        vec2 landLocked = vec2(gm.merchants[current_boat].coord_pos.x,gm.merchants[current_boat].coord_pos.y);
+        gm.merchants[current_boat].position = convert_coord_tile(gm, landLocked);
+    }
+
     return gm;
 }
 
@@ -161,6 +176,15 @@ PiGameMap update_position_pirate(PiGameMap gm, int pirate){
             gm.pirates[0].orientation -= 1;
         }
     }
+
+    while(gm.mapTiles[gm.pirates[0].position.x][gm.pirates[0].position.y].land_water == 1){
+        gm.pirates[0].coord_pos.x -= gm.pirates[0].velocity.x * engineMultiplier;
+        gm.pirates[0].coord_pos.y -= gm.pirates[0].velocity.y * engineMultiplier;
+
+        vec2 landLocked = vec2(gm.pirates[0].coord_pos.x,gm.pirates[0].coord_pos.y);
+        gm.pirates[0].position = convert_coord_tile(gm, landLocked);
+    }
+
     return gm;
 }
 
@@ -816,14 +840,12 @@ int main(int argc, char* argv[]){
 
     bool quit = false;
 
-    PiGameMap map = PiGameMap::createStartMap(32, 32, 1024);
+    PiGameMap map = read_png_heightmap("../ai/height.csv", 32, 32, 64000);
 
     // PiGameMap map(25);
     map.add_merchant(PiMerchant());
     // map.add_merchant(PiMerchant());
     map.merchants[0].merchant_name = "our_guy";
-
-
 
     map.merchants[0].coord_pos.x = 50;
     map.merchants[0].coord_pos.y = 50;
@@ -923,10 +945,8 @@ int main(int argc, char* argv[]){
         if(verbose)
             printf("\n\n\n");
 
-        printf("Before\n");
         if(itera % 100 == 0)
             run_astar(map);
-        printf("After\n");
 
         // Clear screen
         SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
