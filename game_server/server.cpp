@@ -110,7 +110,7 @@ queue<unordered_map<string, vector<string> > > GameLoopServer::remove_all_keys()
 
 void GameLoopServer::check_game_ended() {
     for (int i = 0; i < currentGameState_->map.merchants.size(); ++i) {
-        if (!currentGameState_->map.merchants[i].AI)
+        if (currentGameState_->map.merchants[i].AI)
             return;
     }
     game_has_ended_ = true;
