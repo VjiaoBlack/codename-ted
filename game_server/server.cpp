@@ -128,6 +128,7 @@ void GameLoopServer::end_game() {
     }
 
     currentGameState_->Pirate.pirate_name = player_names_[winner_id];
+    currentGameState_->Pirate.AI = false;
 }
 
 void GameLoopServer::advance_timer() {
