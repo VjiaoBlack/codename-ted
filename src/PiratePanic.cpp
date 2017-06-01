@@ -50,19 +50,20 @@ bool BasicApp::updateCurrentGameState() {
 
 
         // drop some gold if gold should be dropped
-        // if (state.map.merchants[player->first].goldAmount < mMerchants[player->first.goldAmount]) {
+        if (state.map.merchants[player->first].goldAmount < mMerchants[player->first].goldAmount) {
             // drop gold
             
-        // }
+            // create a gold block
+            mGoldBlocks.push_back(PiGoldBlock(mSceneMgr, mMerchants[player->first].coord_pos.x, 880, mMerchants[player->first].coord_pos.y));
+            
+        }
 
-        // mMerchants[player->first.goldAmount = state.map.merchants[player->first].goldAmount;
+        mMerchants[player->first].goldAmount = state.map.merchants[player->first].goldAmount;
     }
 
-    mPirate.coord_pos.x 
-            = state.map.pirates[0].coord_pos.x;
+    mPirate.coord_pos.x = state.map.pirates[0].coord_pos.x;
 
-    mPirate.coord_pos.y 
-            = state.map.pirates[0].coord_pos.y;
+    mPirate.coord_pos.y = state.map.pirates[0].coord_pos.y;
 
     printf("Pirate pos: %d, %d\n",state.map.pirates[0].coord_pos.x,state.map.pirates[0].coord_pos.y);
 }
@@ -100,6 +101,10 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
         mTerrainGroup->getTerrain(0,0)->updateDerivedData();
         printf("UPDATE %d\n", mCurFrameCounter);
         mCurFrameCounter = 0;
+    }
+
+    if (mKeyboard->isKeyDown(OIS::KC_G) && mCurFrameCounter % 10 == 0) {
+        mMerchants[mPlayerID].goldAmount = 10000;
     }
 
     mBike.processInput(mKeyboard);
@@ -205,6 +210,27 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
             (double) 0.05f * cos((nsf + -1 * 100.0f) * 2.0f) * cos(0.0f / 2.0f), 
             (double) sin(0.0f / (2.0f)), 
             (double) 0.05f * cos((nsf + -1 * 100.0f) * 2.0f) * cos(3.14f / 2.0f + 0.0f / 2.0f)));
+
+    printf("Start update: %d\n", mGoldBlocks.size());
+    for (auto it = mGoldBlocks.begin(); it != mGoldBlocks.end(); it++) {
+        printf("TEST A\n");
+        if (!it->update(mSceneMgr)) {
+            printf("asdf 1: %d\n", mGoldBlocks.size());
+
+            std::iter_swap(it, mGoldBlocks.end() - 1);
+            mGoldBlocks.erase(mGoldBlocks.end() - 1);
+            printf("asdf 2\n");
+
+            it = mGoldBlocks.begin();
+            printf("asdf 3: %d\n", mGoldBlocks.size());
+
+            if (mGoldBlocks.size() == 0) {
+                break;
+            }
+
+        }
+        printf("TEST B\n");
+    }
 
     // TODO quikfix for water color circle bug weird
     // Ogre::Vector3 camDir = mCamera->getDirection();
