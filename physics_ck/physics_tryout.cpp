@@ -9,8 +9,8 @@ float pioveroneeighty = 0.01745329251;
 float turning_speed = .1 * 4.0;
 
 float firstOrderCollisionBuffer = 0.1;
-float y_extension = 1;
-float x_extension = 2;
+float y_extension = 1 * 2.0;
+float x_extension = 2 * 2.0;
 
 float acceleration_cap = .01 * 5.0;
 float velocity_cap = .06 * 5.0;
