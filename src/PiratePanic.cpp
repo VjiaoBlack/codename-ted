@@ -209,6 +209,10 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
                 0.0, 
                 cos((nsf + id_ent.first * 100.0f) * 0.5f), 
                 0.0));
+
+        mOgreMerchantsGold[id_ent.first]->setScale(0.2 + 1.0 * 0.001 * (float) mMerchants[id_ent.first].goldAmount, 
+                                                   0.2 + 2.0 * 0.001 * (float)mMerchants[id_ent.first].goldAmount,
+                                                   0.2 + 1.0 * 0.001 * (float) mMerchants[id_ent.first].goldAmount);
     }
 
     mOgrePirate->setPosition(Ogre::Vector3(mPirate.coord_pos.x,  
