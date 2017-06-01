@@ -283,8 +283,12 @@ void move_merchant(PiGameMap& map, vec2 pos1, vec2 pos2) {
     map.mapTiles[pos2.x][pos2.y].is_ship = 1;
 }
 
-
-PiGameMap read_png_heightmap(string file_location) {
+// GENERATES GAME MAP BY READING OGRE GENERATED 
+// HEIGHT MAP. PICK POWERS OF 2 for X_LEN and Y_LEN 
+// AND MAKE SURE MAP_SIZE IS A MULTIPLE OF X/Y LEN.
+PiGameMap read_png_heightmap(string file_location, 
+        int x_len, int y_len, int map_size) {
+    // Read in PNG File
     string curr_row; 
     ifstream infile; 
     infile.open(file_location);
@@ -308,7 +312,40 @@ PiGameMap read_png_heightmap(string file_location) {
         }
         infile.close();
     }
-    return NULL;
+
+    // Generate Map with randomly placed pirate
+    int rand_i = rand() % 25;
+    int rand_j = rand() % 25;
+    vector< vector<PiMapTile> > tiles;
+    vector<PiPirate> pirates;
+    vector<PiMerchant> merchants;
+    vec3 size(map_size, map_size, map_size);
+    for(int i = 0; i < x_len; i++) {
+        vector<PiMapTile> curr_row;
+        for (int j = 0; j < y_len; j++) {
+            int hm_x = 2048 / x_len;  
+            int hm_y = 2048 / y_len;
+            int land_water = height_map[hm_x][hm_y];
+            PiMapTile curr_tile = PiMapTile(land_water);
+            curr_row.push_back(curr_tile);
+            if (i == rand_i && j == rand_j) {
+                int c_x = i * map_size/x_len;
+                int c_y = j * map_size/y_len;
+                PiPirate curr_pirate = PiPirate(vec2(i, j), vec2(c_x, c_y));
+                pirates.push_back(curr_pirate);
+            } else {
+                if (curr_tile.is_ship) {
+                    int c_x = i * map_size/x_len;
+                    int c_y = j * map_size/y_len;
+                    PiMerchant curr_merch = PiMerchant(vec2(i, j), vec2(c_x, c_y));
+                    merchants.push_back(curr_merch);
+                }
+            }
+        }
+        tiles.push_back(curr_row);
+    }
+    PiGameMap start_map(tiles, x_len, y_len, pirates, merchants, size);
+    return start_map;
 }
 
 
