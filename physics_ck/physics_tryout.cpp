@@ -108,11 +108,11 @@ PiGameMap update_position(PiGameMap gm, int current_boat){
     gm.merchants[current_boat].coord_pos.x += gm.merchants[current_boat].velocity.x * engineMultiplier;
     gm.merchants[current_boat].coord_pos.y += gm.merchants[current_boat].velocity.y * engineMultiplier;
 
-    if(gm.merchants[current_boat].coord_pos.x < 0){
-        gm.merchants[current_boat].coord_pos.x = 0;
+    if(gm.merchants[current_boat].coord_pos.x < 50){
+        gm.merchants[current_boat].coord_pos.x = 55;
     }
-    if(gm.merchants[current_boat].coord_pos.y < 0){
-        gm.merchants[current_boat].coord_pos.y = 0;
+    if(gm.merchants[current_boat].coord_pos.y < 50){
+        gm.merchants[current_boat].coord_pos.y = 55;
     }
 
     //printf("x: %f, y: %f\n", gm.merchants[current_boat].coord_pos.x, gm.merchants[current_boat].coord_pos.y);
@@ -144,13 +144,21 @@ PiGameMap update_position(PiGameMap gm, int current_boat){
 
     //Here is the jankiest land collision code of all time!
 
-    while(gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].land_water == 1){
-        gm.merchants[current_boat].coord_pos.x -= gm.merchants[current_boat].velocity.x * engineMultiplier;
-        gm.merchants[current_boat].coord_pos.y -= gm.merchants[current_boat].velocity.y * engineMultiplier;
-
-        vec2 landLocked = vec2(gm.merchants[current_boat].coord_pos.x,gm.merchants[current_boat].coord_pos.y);
-        gm.merchants[current_boat].position = convert_coord_tile(gm, landLocked);
+    if(gm.merchants[current_boat].position.x < 0 || gm.merchants[current_boat].position.y < 0){
+        printf("*****************************************************************find me Now\n");
     }
+        while(gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].land_water == 1){
+            gm.merchants[current_boat].coord_pos.x -= gm.merchants[current_boat].velocity.x * engineMultiplier;
+            gm.merchants[current_boat].coord_pos.y -= gm.merchants[current_boat].velocity.y * engineMultiplier;
+
+            vec2 landLocked = vec2(gm.merchants[current_boat].coord_pos.x,gm.merchants[current_boat].coord_pos.y);
+            gm.merchants[current_boat].position = convert_coord_tile(gm, landLocked);
+
+            if(gm.merchants[current_boat].position.x < 0 || gm.merchants[current_boat].position.y < 0){
+                printf("*****************************************************************find me guy\n");
+                break;
+            }
+        }
 
     return gm;
 }
@@ -163,11 +171,11 @@ PiGameMap update_position_pirate(PiGameMap gm, int pirate){
     gm.pirates[0].coord_pos.x += gm.pirates[0].velocity.Normalize().x * gold_vel_cap_pirate(gm,0) * engineMultiplier;
     gm.pirates[0].coord_pos.y += gm.pirates[0].velocity.Normalize().y * gold_vel_cap_pirate(gm,0) * engineMultiplier;
 
-    if(gm.pirates[0].coord_pos.x < 0){
-        gm.pirates[0].coord_pos.x = 0;
+    if(gm.pirates[0].coord_pos.x < 50){
+        gm.pirates[0].coord_pos.x = 55;
     }
-    if(gm.pirates[0].coord_pos.y < 0){
-        gm.pirates[0].coord_pos.y = 0;
+    if(gm.pirates[0].coord_pos.y < 50){
+        gm.pirates[0].coord_pos.y = 55;
     }
 
     //Moving the pirate to the appropriate tile
@@ -189,13 +197,21 @@ PiGameMap update_position_pirate(PiGameMap gm, int pirate){
         }
     }
 
-    while(gm.mapTiles[gm.pirates[0].position.x][gm.pirates[0].position.y].land_water == 1){
-        gm.pirates[0].coord_pos.x -= gm.pirates[0].velocity.x * engineMultiplier;
-        gm.pirates[0].coord_pos.y -= gm.pirates[0].velocity.y * engineMultiplier;
-
-        vec2 landLocked = vec2(gm.pirates[0].coord_pos.x,gm.pirates[0].coord_pos.y);
-        gm.pirates[0].position = convert_coord_tile(gm, landLocked);
+    if(gm.pirates[pirate].position.x < 0 || gm.pirates[pirate].position.y < 0){
+        printf("*****************************************************************find me piratenowwww\n");
     }
+        while(gm.mapTiles[gm.pirates[0].position.x][gm.pirates[0].position.y].land_water == 1){
+            gm.pirates[0].coord_pos.x -= gm.pirates[0].velocity.x * engineMultiplier;
+            gm.pirates[0].coord_pos.y -= gm.pirates[0].velocity.y * engineMultiplier;
+
+            vec2 landLocked = vec2(gm.pirates[0].coord_pos.x,gm.pirates[0].coord_pos.y);
+            gm.pirates[0].position = convert_coord_tile(gm, landLocked);
+
+            if(gm.pirates[pirate].position.x < 0 || gm.pirates[pirate].position.y < 0){
+                printf("*****************************************************************find me pirate\n");
+                break;
+            }
+        }
 
     return gm;
 }
@@ -859,13 +875,23 @@ int main(int argc, char* argv[]){
     // map.add_merchant(PiMerchant());
     map.merchants[0].merchant_name = "our_guy";
 
-    map.mapTiles[5][5].land_water = 1;
+    map.mapTiles[7][7].land_water = 1;
 
-    map.merchants[0].coord_pos.x = 50;
-    map.merchants[0].coord_pos.y = 50;
+    // int mapTileIter = 0;
+    //     int anotherMapTileIter = 0;
+    //     for(mapTileIter = 0; mapTileIter<map.mapTiles.size(); mapTileIter++){
+    //         for(anotherMapTileIter = 0; anotherMapTileIter<map.mapTiles[mapTileIter].size(); anotherMapTileIter++){
+    //             if(mapTileIter == 0 || anotherMapTileIter == 0){
+    //                 map.mapTiles[mapTileIter][anotherMapTileIter].land_water = 0;
+    //             }
+    //         }
+    //     }
 
-    map.pirates[0].coord_pos.x = 150;
-    map.pirates[0].coord_pos.y = 150;
+    map.merchants[0].coord_pos.x = 150;
+    map.merchants[0].coord_pos.y = 150;
+
+    map.pirates[0].coord_pos.x = 200;
+    map.pirates[0].coord_pos.y = 200;
 
     //map.merchants[1].velocity.x = .01;
 
