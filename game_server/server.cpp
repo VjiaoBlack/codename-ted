@@ -115,7 +115,7 @@ void GameLoopServer::advance_timer() {
     //run 'run_astar' every 5 ticks (interval TBD)
     if (count_ % 100 == 0) {
         std::cout << "running astar" << std::endl;
-        run_astar(currentGameState_->map);
+        // run_astar(currentGameState_->map);
         std::cout << "ran astar" << std::endl;
     }
 
@@ -152,7 +152,9 @@ int main(int argc, char *argv[1]) {
         int port = atoi(argv[1]);
         boost::asio::io_service io_service;
         PiGameState *coreGameState = new PiGameState();
-        coreGameState->map = PiGameMap::createStartMap(256, 256, 65536);
+        // coreGameState->map = PiGameMap::createStartMap(64, 64, 65536);
+        coreGameState->map = read_png_heightmap("../ai/height.csv", 64, 64, 36000);
+
         // Creates a pirate and a merchant
         RegistrationServer registration_server(io_service, port, coreGameState);
         GameLoopServer loop_server(io_service, port, coreGameState);
