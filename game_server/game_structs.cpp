@@ -14,6 +14,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <math.h>
+#include <fstream>
 
 using namespace std;
 
@@ -284,7 +285,30 @@ void move_merchant(PiGameMap& map, vec2 pos1, vec2 pos2) {
 
 
 PiGameMap read_png_heightmap(string file_location) {
-
+    string curr_row; 
+    ifstream infile; 
+    infile.open(file_location);
+    static int height_map[2048][2048];
+    int map_x = 0;
+    if (infile.is_open()) {
+        while(getline(infile, curr_row)) {
+            int map_y = 0;
+            for (int i = 0; i < curr_row.size(); i++) {
+                if (curr_row[i] != '\t') {
+                    string tempstr = ""; 
+                    while(curr_row[i] != '\t') {
+                        tempstr += curr_row[i];
+                        i++;
+                    }
+                    height_map[map_x][map_y] = stoi(tempstr);
+                    map_y++;
+                }
+            }
+            map_x++;
+        }
+        infile.close();
+    }
+    return NULL;
 }
 
 

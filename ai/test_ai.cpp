@@ -26,6 +26,8 @@ int main() {
     SDL_Window* window;
     SDL_Renderer* renderer;
 
+    cout << "******** GAME MAP **********";
+    read_png_heightmap("height.csv");
 
     if (SDL_Init( SDL_INIT_VIDEO ) < 0) {
         printf("SDL could not initialize - SDL Error: %s\n", SDL_GetError());
