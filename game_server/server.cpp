@@ -156,7 +156,7 @@ int main(int argc, char *argv[1]) {
         boost::asio::io_service io_service;
         PiGameState *coreGameState = new PiGameState();
         // Creates a pirate and a merchant
-        coreGameState->map = PiGameMap::createStartMap(25, 25, 500);
+        coreGameState->map = PiGameMap::createStartMap(256, 256, 65536);
         // coreGameState->add_pirate(10, 10);
         RegistrationServer registration_server(io_service, port, coreGameState);
         GameLoopServer loop_server(io_service, port, coreGameState);
