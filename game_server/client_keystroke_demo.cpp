@@ -48,9 +48,6 @@ int main(int argc, char* argv[]) {
 
         SDL_Event e;
 
-        unordered_set<int> keysDown;
-        unordered_set<char> buttonsDown;
-
         bool quit = false;
 
         boost::asio::io_service io_service;
@@ -64,6 +61,8 @@ int main(int argc, char* argv[]) {
 
             while(!quit) {
                 vector<int> keystrokes;
+                unordered_set<int> keysDown;
+                unordered_set<char> buttonsDown;
 
                 while (SDL_PollEvent(&e) != 0) {
                     // user requests QUIT
@@ -83,26 +82,34 @@ int main(int argc, char* argv[]) {
                 // update() block for keypresses
                 if (keysDown.count(SDLK_q)) {
                     quit = true;
+                    std::cout << "QUIT \n";
                 }
 
                 // TODO make sure the angles don't just keep increasing infinitely
                 if (keysDown.count(SDLK_LEFT)) {
                     keystrokes.push_back(KC_J);
+                    std::cout << "LEFT \n";
                 }
                 if (keysDown.count(SDLK_RIGHT)) {
                     keystrokes.push_back(KC_L);
+                    std::cout << "RIGHT \n";
                 }
 
                 if (keysDown.count(SDLK_UP)) {
                     keystrokes.push_back(KC_I);
+                    std::cout << "UP \n";
                 }
 
                 if (keysDown.count(SDLK_DOWN)) {
                     keystrokes.push_back(KC_K);
+                    std::cout << "DOWN \n";
                 }
 
-                loop_client.send_keystrokes(keystrokes);
-                //loop_client.get_gamestate();
+                if(keystrokes.size() > 0) {
+                    loop_client.send_keystrokes(keystrokes);
+
+                    keystrokes.clear();
+                }
             }
         }
     } catch (std::exception &e) {

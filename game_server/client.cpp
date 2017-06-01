@@ -8,7 +8,7 @@
 
 // Must have called register_player before start_game
 void TCPClient::start_game(int player_id) {
-    const std::string message = "start, " + to_string(player_id);
+    const std::string message = "start," + to_string(player_id);
     socket_.send(boost::asio::buffer(message, message.size()));
 }
 
