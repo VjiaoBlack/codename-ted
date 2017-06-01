@@ -109,11 +109,13 @@ queue<unordered_map<string, vector<string> > > GameLoopServer::remove_all_keys()
 }
 
 void GameLoopServer::check_game_ended() {
-    for (int i = 0; i < currentGameState_->map.merchants.size(); ++i) {
-        if (currentGameState_->map.merchants[i].AI)
-            return;
+    if (currentGameState_->map.merchants.size()) {
+        for (int i = 0; i < currentGameState_->map.merchants.size(); ++i) {
+            if (currentGameState_->map.merchants[i].AI)
+                return;
+        }
+        game_has_ended_ = true;
     }
-    game_has_ended_ = true;
 }
 
 void GameLoopServer::end_game() {
@@ -138,6 +140,8 @@ void GameLoopServer::advance_timer() {
     ++count_;
 
     GameLoopServer::check_game_ended();
+
+    //std::cout << game_has_ended_ << std::endl;
 
     if (!game_has_ended_) {
         //run 'run_astar' every 5 ticks (interval TBD)
