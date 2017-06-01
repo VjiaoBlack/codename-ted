@@ -120,9 +120,9 @@ private:
 
     int add_keys_to_queue(vector<int> ks, string name);
 
-    void end_game();
+    //void end_game();
 
-    void check_game_ended();
+    //void check_game_ended();
 
     void start_receive() {
         socket_.async_receive_from(boost::asio::buffer(recv_buffer_), remote_endpoint_,

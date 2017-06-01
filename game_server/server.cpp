@@ -108,15 +108,15 @@ queue<unordered_map<string, vector<string> > > GameLoopServer::remove_all_keys()
     return all_objects;
 }
 
-void GameLoopServer::check_game_ended() {
+/* void GameLoopServer::check_game_ended() {
     for (int i = 0; i < currentGameState_->map.merchants.size(); ++i) {
         if (!currentGameState_->map.merchants[i].AI)
             return;
     }
     game_has_ended_ = true;
-}
+} */
 
-void GameLoopServer::end_game() {
+/* void GameLoopServer::end_game() {
     int high_gold = -1;
     int winner_id = -1;
 
@@ -124,50 +124,46 @@ void GameLoopServer::end_game() {
         if (high_gold < currentGameState_->map.merchants[j].goldAmount) {
             high_gold = currentGameState_->map.merchants[j].goldAmount;
             winner_id = j;
-        }
+        
     }
 
     currentGameState_->Pirate.pirate_name = player_names_[winner_id];
     currentGameState_->Pirate.AI = false;
-}
+} */
 
 void GameLoopServer::advance_timer() {
     queue<unordered_map<string, vector<string> > > objects_to_process = this->remove_all_keys();
     ++count_;
 
-    if (!game_has_ended_) {
-        GameLoopServer::check_game_ended();
+    //GameLoopServer::check_game_ended();
 
-        //run 'run_astar' every 5 ticks (interval TBD)
-        if (count_ % 100 == 0) {
-            std::cout << "running astar" << std::endl;
-            run_astar(currentGameState_->map);
-            std::cout << "ran astar" << std::endl;
-        }
-
-        //Process gamestate/ai
-        while (!objects_to_process.empty())
-        {
-            currentGameState_->map = compute_gamestate(objects_to_process.front(), currentGameState_->map);
-            std::cout << serialize_gamestate(*currentGameState_) << std::endl;
-            objects_to_process.pop();
-        }
-
-        if (objects_to_process.empty()) {
-            unordered_map<string, vector<string> > input_object;
-            vector<string> name;
-            name.push_back("Reppy");
-            vector<string> content;
-            input_object["player_name"] = name;
-            input_object["keystrokes"] = content;
-            currentGameState_->map = compute_gamestate(input_object, currentGameState_->map);
-        }
-
-        timer_.expires_at(timer_.expires_at() + boost::posix_time::microseconds(10000));
-        timer_.async_wait(boost::bind(&GameLoopServer::advance_timer, this));
-    } else {
-        end_game();
+    //run 'run_astar' every 5 ticks (interval TBD)
+    if (count_ % 100 == 0) {
+        std::cout << "running astar" << std::endl;
+        run_astar(currentGameState_->map);
+        std::cout << "ran astar" << std::endl;
     }
+
+    //Process gamestate/ai
+    while (!objects_to_process.empty())
+    {
+        currentGameState_->map = compute_gamestate(objects_to_process.front(), currentGameState_->map);
+        std::cout << serialize_gamestate(*currentGameState_) << std::endl;
+        objects_to_process.pop();
+    }
+
+    if (objects_to_process.empty()) {
+        unordered_map<string, vector<string> > input_object;
+        vector<string> name;
+        name.push_back("Reppy");
+        vector<string> content;
+        input_object["player_name"] = name;
+        input_object["keystrokes"] = content;
+        currentGameState_->map = compute_gamestate(input_object, currentGameState_->map);
+    }
+
+    timer_.expires_at(timer_.expires_at() + boost::posix_time::microseconds(10000));
+    timer_.async_wait(boost::bind(&GameLoopServer::advance_timer, this));
 }
 
 //Main
