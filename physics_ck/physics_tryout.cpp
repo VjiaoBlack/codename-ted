@@ -19,6 +19,8 @@ int gold_cap = 1000;
 
 int verbose = 0;
 
+float gold_payout = 1024;
+
 int tickCount = 0;
 
 int tunt = 1;
@@ -683,6 +685,8 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
             gm = update_position(gm, current_boat);
 
             if(gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].start_finish == 2){
+                gm.merchants[current_boat].goldAmount += (int)(gold_payout / 2);
+                gold_payout *= .5;
                 gm.merchants[current_boat].AI = false;
             }
 
