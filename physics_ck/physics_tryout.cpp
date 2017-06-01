@@ -43,11 +43,11 @@ float dot_product(vec2 a, vec2 b){
 }
 
 float gold_vel_cap(PiGameMap gm, int current_boat){
-    return velocity_cap + velocity_cap * ((gold_cap - gm.merchants[current_boat].goldAmount) / gold_cap);
+    return velocity_cap + velocity_cap * (((float)gold_cap - (float)gm.merchants[current_boat].goldAmount) / (float)gold_cap);
 }
 
 float gold_vel_cap_pirate(PiGameMap gm, int pirate){
-    return velocity_cap + velocity_cap * ((gold_cap - gm.pirates[pirate].goldAmount) / gold_cap);
+    return velocity_cap + velocity_cap * (((float)gold_cap - (float)gm.pirates[pirate].goldAmount) / (float)gold_cap);
 }
 
 int array_empty_checker(int array[]){
@@ -934,7 +934,7 @@ int main(int argc, char* argv[]){
     map.merchants[0].merchant_name = "our_guy";
 
     //map.mapTiles[15][2].land_water = 1;
-    map.mapTiles[15][2].start_finish = 2;
+    //map.mapTiles[15][2].start_finish = 2;
 
     // int mapTileIter = 0;
     //     int anotherMapTileIter = 0;
@@ -946,11 +946,11 @@ int main(int argc, char* argv[]){
     //         }
     //     }
 
-    map.merchants[0].coord_pos.x = 150;
-    map.merchants[0].coord_pos.y = 150;
+    map.merchants[0].coord_pos.x = 500;
+    map.merchants[0].coord_pos.y = 500;
 
-    map.merchants[1].coord_pos.x = 500;
-    map.merchants[1].coord_pos.y = 500;
+    // map.merchants[1].coord_pos.x = 500;
+    // map.merchants[1].coord_pos.y = 500;
 
     map.pirates[0].coord_pos.x = 200;
     map.pirates[0].coord_pos.y = 200;
@@ -960,7 +960,7 @@ int main(int argc, char* argv[]){
     // map.merchants[1].goldAmount = 1000;
     map.merchants[0].goldAmount = 1000;
 
-    map.merchants[1].goldAmount = 500;
+    //map.merchants[1].goldAmount = 500;
 
     map.pirates[0].goldAmount = 0;
 
@@ -968,8 +968,8 @@ int main(int argc, char* argv[]){
     vec2 newLoc = vec2(map.merchants[0].coord_pos.x,map.merchants[0].coord_pos.y);
     map.merchants[0].position = convert_coord_tile(map, newLoc);
 
-    vec2 newLoce = vec2(map.merchants[1].coord_pos.x,map.merchants[1].coord_pos.y);
-    map.merchants[1].position = convert_coord_tile(map, newLoce);
+    // vec2 newLoce = vec2(map.merchants[1].coord_pos.x,map.merchants[1].coord_pos.y);
+    // map.merchants[1].position = convert_coord_tile(map, newLoce);
 
     // for(merchant m: map.merchants) { //Cycle through every merchant
     //   printf("%s\n", m.merchant_name.c_str());
@@ -1039,6 +1039,10 @@ int main(int argc, char* argv[]){
             content.push_back("UP");
         }
 
+        if (keysDown.count(SDLK_g)) {
+            content.push_back("GOLD");
+        }
+
         if (keysDown.count(SDLK_DOWN)) {
             content.push_back("DOWN");
         }
@@ -1053,7 +1057,7 @@ int main(int argc, char* argv[]){
             printf("\n\n\n");
 
         if(itera % 99 == 0){
-            run_astar(map);
+            //run_astar(map);
         }
 
         // Clear screen
@@ -1079,7 +1083,7 @@ int main(int argc, char* argv[]){
             }
         }
 
-        draw_boat(renderer,map, 1);
+        //draw_boat(renderer,map, 1);
 
         draw_pirate(renderer,map, 0);
 
