@@ -1,3 +1,6 @@
+#ifndef _PHYSICS_TRYOUT_HPP_
+#define _PHYSICS_TRYOUT_HPP_
+
 #include <vector>
 #include "../game_server/game_structs.hpp"
 #include <iostream>
@@ -13,6 +16,8 @@
 #include <stdio.h>
 #include <sys/time.h>
 #include <chrono>
+
+#include "../ai/astar.hpp"
 
 using namespace std;
 using namespace std::chrono;
@@ -174,3 +179,5 @@ enum KeyCode
     KC_MAIL        = 0xEC,    // Mail
     KC_MEDIASELECT = 0xED     // Media Select
 };
+
+#endif

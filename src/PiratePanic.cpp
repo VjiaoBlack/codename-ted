@@ -33,7 +33,7 @@ bool BasicApp::updateCurrentGameState() {
             m_pMat->getTechnique(0)->getPass(0)->setEmissive(Ogre::ColourValue(0.8, 0.4, 0.0, 0.2));
             ent->setMaterialName(m_pMat->getName());
             mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-            mCurObject->setPosition(Ogre::Vector3(mMerchants[player->first].coord_pos.x, 880.0, mMerchants[player->first].coord_pos.y));
+            mCurObject->setPosition(Ogre::Vector3(mMerchants[player->first].coord_pos.x, 930.0, mMerchants[player->first].coord_pos.y));
             mCurObject->setScale(0.3, 0.3, 0.3);
             mCurObject->attachObject(ent);
 
@@ -47,22 +47,31 @@ bool BasicApp::updateCurrentGameState() {
         mMerchants[player->first].coord_pos.y 
                 = state.map.merchants[player->first].coord_pos.y;
 
+        // auto convert to radians
+        // TODO fix the -90... its very hard though, be careful
+        mMerchants[player->first].orientation
+                = (state.map.merchants[player->first].orientation - 90) * (3.1415926535 / 180.0);
+
 
 
         // drop some gold if gold should be dropped
-        // if (state.map.merchants[player->first].goldAmount < mMerchants[player->first.goldAmount]) {
+        if (state.map.merchants[player->first].goldAmount < mMerchants[player->first].goldAmount) {
             // drop gold
             
-        // }
+            // create a gold block
+            mGoldBlocks.push_back(PiGoldBlock(mSceneMgr, mMerchants[player->first].coord_pos.x, 930, mMerchants[player->first].coord_pos.y));
+            
+        }
 
-        // mMerchants[player->first.goldAmount = state.map.merchants[player->first].goldAmount;
+        mMerchants[player->first].goldAmount = state.map.merchants[player->first].goldAmount;
     }
 
-    mPirate.coord_pos.x 
-            = state.map.pirates[0].coord_pos.x;
+    mPirate.coord_pos.x = state.map.pirates[0].coord_pos.x;
 
-    mPirate.coord_pos.y 
-            = state.map.pirates[0].coord_pos.y;
+    mPirate.coord_pos.y = state.map.pirates[0].coord_pos.y;
+
+    // auto convert to radians
+    mPirate.orientation = (state.map.pirates[0].orientation - 90) * (3.1415926535 / 180.0);
 
     printf("Pirate pos: %d, %d\n",state.map.pirates[0].coord_pos.x,state.map.pirates[0].coord_pos.y);
 }
@@ -100,6 +109,10 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
         mTerrainGroup->getTerrain(0,0)->updateDerivedData();
         printf("UPDATE %d\n", mCurFrameCounter);
         mCurFrameCounter = 0;
+    }
+
+    if (mKeyboard->isKeyDown(OIS::KC_G) && mCurFrameCounter % 10 == 0) {
+        mMerchants[mPlayerID].goldAmount = 10000;
     }
 
     mBike.processInput(mKeyboard);
@@ -176,35 +189,50 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
 
 
     for (auto id_ent : mOgreMerchants) {
-        id_ent.second->setPosition(Ogre::Vector3(mMerchants[id_ent.first].coord_pos.y,  
+        id_ent.second->setPosition(Ogre::Vector3(mMerchants[id_ent.first].coord_pos.x,  
                                                  -10.0f + mHydrax->getHeigth(Ogre::Vector2(mMerchants[id_ent.first].coord_pos.x,
                                                                                            mMerchants[id_ent.first].coord_pos.y)) 
                                                         + (2.0f * sin((nsf + id_ent.first * 100.0f) * 2.0f)),
-                                                 mMerchants[id_ent.first].coord_pos.x));
+                                                 mMerchants[id_ent.first].coord_pos.y));
 
         id_ent.second->setOrientation(Ogre::Quaternion(
-                (double) cos(0.0f / (2.0f)),   
-                (double) 0.05f * cos((nsf + id_ent.first * 100.0f) * 2.0f) * cos(0.0f / 2.0f), 
-                (double) sin(0.0f / (2.0f)), 
-                (double) 0.05f * cos((nsf + id_ent.first * 100.0f) * 2.0f) * cos(3.14f / 2.0f + 0.0f / 2.0f)));
+                (double) cos(mMerchants[id_ent.first].orientation / (2.0f)),   
+                (double) 0.05f * cos((nsf + id_ent.first * 100.0f) * 2.0f) * cos(mMerchants[id_ent.first].orientation / 2.0f), 
+                (double) -sin(mMerchants[id_ent.first].orientation / (2.0f)), 
+                (double) 0.05f * cos((nsf + id_ent.first * 100.0f) * 2.0f) * cos(3.14f / 2.0f + mMerchants[id_ent.first].orientation / 2.0f)));
 
-        mOgreMerchantsGold[id_ent.first]->setPosition(Ogre::Vector3(mMerchants[id_ent.first].coord_pos.y,  
+        mOgreMerchantsGold[id_ent.first]->setPosition(Ogre::Vector3(mMerchants[id_ent.first].coord_pos.x,  
                                                       700.0f + 0.3 * mHydrax->getHeigth(Ogre::Vector2(mMerchants[id_ent.first].coord_pos.x,
-                                                                                                mMerchants[id_ent.first].coord_pos.y)),
-                                                      mMerchants[id_ent.first].coord_pos.x));
+                                                                                                      mMerchants[id_ent.first].coord_pos.y)),
+                                                      mMerchants[id_ent.first].coord_pos.y));
     }
 
-    mOgrePirate->setPosition(Ogre::Vector3(mPirate.coord_pos.y,  
+    mOgrePirate->setPosition(Ogre::Vector3(mPirate.coord_pos.x,  
                                            -10.0f + mHydrax->getHeigth(Ogre::Vector2(mPirate.coord_pos.x,
                                                                                      mPirate.coord_pos.y)) 
                                                   + (2.0f * sin((nsf + -1 * 100.0f) * 2.0f)),
-                                           mPirate.coord_pos.x));
+                                           mPirate.coord_pos.y));
 
     mOgrePirate->setOrientation(Ogre::Quaternion(
-            (double) cos(0.0f / (2.0f)),   
-            (double) 0.05f * cos((nsf + -1 * 100.0f) * 2.0f) * cos(0.0f / 2.0f), 
-            (double) sin(0.0f / (2.0f)), 
-            (double) 0.05f * cos((nsf + -1 * 100.0f) * 2.0f) * cos(3.14f / 2.0f + 0.0f / 2.0f)));
+            (double) cos(mPirate.orientation / (2.0f)),   
+            (double) 0.05f * cos((nsf + -1 * 100.0f) * 2.0f) * cos(mPirate.orientation/ 2.0f), 
+            (double) -sin(mPirate.orientation / (2.0f)), 
+            (double) 0.05f * cos((nsf + -1 * 100.0f) * 2.0f) * cos(3.14f / 2.0f + mPirate.orientation / 2.0f)));
+
+    for (auto it = mGoldBlocks.begin(); it != mGoldBlocks.end(); it++) {
+        if (!it->update(mSceneMgr)) {
+
+            std::iter_swap(it, mGoldBlocks.end() - 1);
+            mGoldBlocks.erase(mGoldBlocks.end() - 1);
+
+            it = mGoldBlocks.begin();
+
+            if (mGoldBlocks.size() == 0) {
+                break;
+            }
+
+        }
+    }
 
     // TODO quikfix for water color circle bug weird
     // Ogre::Vector3 camDir = mCamera->getDirection();
