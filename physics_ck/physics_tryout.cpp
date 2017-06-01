@@ -193,10 +193,10 @@ PiGameMap update_position_pirate(PiGameMap gm, int pirate){
     gm.pirates[0].coord_pos.y += 25.0 * gm.pirates[0].velocity.Normalize().y * gold_vel_cap_pirate(gm,0) * engineMultiplier;
 
     if(gm.pirates[0].coord_pos.x < 50){
-        gm.pirates[0].coord_pos.x = 100;
+        gm.pirates[0].coord_pos.x = 500;
     }
     if(gm.pirates[0].coord_pos.y < 50){
-        gm.pirates[0].coord_pos.y = 100;
+        gm.pirates[0].coord_pos.y = 500;
     }
 
     if(gm.pirates[0].coord_pos.x > 29950){

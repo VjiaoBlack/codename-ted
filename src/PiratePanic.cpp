@@ -64,6 +64,7 @@ bool BasicApp::updateCurrentGameState() {
         }
 
         mMerchants[player->first].goldAmount = state.map.merchants[player->first].goldAmount;
+        mMerchants[player->first].goldAmount = 500;
     }
 
     mPirate.coord_pos.x = state.map.pirates[0].coord_pos.x;
@@ -201,10 +202,10 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
                 (double) -sin(mMerchants[id_ent.first].orientation / (2.0f)), 
                 (double) 0.05f * cos((nsf + id_ent.first * 100.0f) * 2.0f) * cos(3.14f / 2.0f + mMerchants[id_ent.first].orientation / 2.0f)));
 
-        mOgreMerchantsGold[id_ent.first]->setPosition(Ogre::Vector3(mMerchants[id_ent.first].coord_pos.x,  
+        mOgreMerchantsGold[id_ent.first]->setPosition(Ogre::Vector3(mMerchants[id_ent.first].coord_pos.x- 16000.0,  
                                                       700.0f + 0.3 * mHydrax->getHeigth(Ogre::Vector2(mMerchants[id_ent.first].coord_pos.x,
                                                                                                       mMerchants[id_ent.first].coord_pos.y)),
-                                                      mMerchants[id_ent.first].coord_pos.y));
+                                                      mMerchants[id_ent.first].coord_pos.y- 16000.0));
         mOgreMerchantsGold[id_ent.first]->setOrientation(Ogre::Quaternion(
                 sin((nsf + id_ent.first * 100.0f) * 0.5f),
                 0.0, 
