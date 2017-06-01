@@ -52,11 +52,12 @@ int main(int argc, char* argv[]) {
 
         boost::asio::io_service io_service;
         TCPClient registration_client(io_service, argv[1], argv[2]);
-        UDPClient loop_client(io_service, argv[1], argv[2], 0);
+        int player_id = registration_client.register_player();
+        std::cout << "register called!" << std::endl;
+        UDPClient loop_client(io_service, argv[1], argv[2], player_id);
 
         if (argc == 3) {
-            std::cout << "register called!" << std::endl;
-            int player_id = registration_client.register_player();
+
             std::cout << "loop called!" << std::endl;
 
             while(!quit) {
