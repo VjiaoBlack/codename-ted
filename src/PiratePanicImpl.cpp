@@ -233,7 +233,7 @@ bool BasicApp::setup() {
     mGameLoopClient = new UDPClient(io_service, K_SERVER_STRING, K_PORT_STRING, mPlayerID);
         
     // add player 
-    mMerchants[mPlayerID] = PiMerchant("jeff");
+    mMerchants[mPlayerID] = PiMerchant();
 
     // create new merchant
     Ogre::Entity* ent = mSceneMgr->createEntity("Cube.mesh");

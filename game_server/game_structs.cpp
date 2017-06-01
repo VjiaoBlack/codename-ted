@@ -333,7 +333,7 @@ PiGameMap read_png_heightmap(string file_location,
 
             for (int ii = 0; ii < hm_x; ii++) {
                 for (int jj = 0; jj < hm_y; jj++) {
-                    if (height_map[startx + ii][starty + jj] > 120) {
+                    if (height_map[startx + ii][starty + jj] > 117) {
                         land_water = 1;
                         break;
                     }

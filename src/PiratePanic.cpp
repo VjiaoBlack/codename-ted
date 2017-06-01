@@ -52,8 +52,6 @@ bool BasicApp::updateCurrentGameState() {
         mMerchants[player->first].orientation
                 = (state.map.merchants[player->first].orientation - 90) * (3.1415926535 / 180.0);
 
-                // TODO fake
-        state.map.merchants[player->first].goldAmount = 500;
         // drop some gold if gold should be dropped
         if (state.map.merchants[player->first].goldAmount < mMerchants[player->first].goldAmount) {
             // drop gold
@@ -202,10 +200,10 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
                 (double) -sin(mMerchants[id_ent.first].orientation / (2.0f)), 
                 (double) 0.05f * cos((nsf + id_ent.first * 100.0f) * 2.0f) * cos(3.14f / 2.0f + mMerchants[id_ent.first].orientation / 2.0f)));
 
-        mOgreMerchantsGold[id_ent.first]->setPosition(Ogre::Vector3(mMerchants[id_ent.first].coord_pos.x- 16000.0,  
+        mOgreMerchantsGold[id_ent.first]->setPosition(Ogre::Vector3(mMerchants[id_ent.first].coord_pos.x,  
                                                       700.0f + 0.3 * mHydrax->getHeigth(Ogre::Vector2(mMerchants[id_ent.first].coord_pos.x,
                                                                                                       mMerchants[id_ent.first].coord_pos.y)),
-                                                      mMerchants[id_ent.first].coord_pos.y- 16000.0));
+                                                      mMerchants[id_ent.first].coord_pos.y));
         mOgreMerchantsGold[id_ent.first]->setOrientation(Ogre::Quaternion(
                 sin((nsf + id_ent.first * 100.0f) * 0.5f),
                 0.0, 
