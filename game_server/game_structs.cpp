@@ -314,8 +314,8 @@ PiGameMap read_png_heightmap(string file_location,
     }
 
     // Generate Map with randomly placed pirate
-    int rand_i = rand() % 25;
-    int rand_j = rand() % 25;
+    int rand_i = rand() % x_len;
+    int rand_j = rand() % y_len;
     vector< vector<PiMapTile> > tiles;
     vector<PiPirate> pirates;
     vector<PiMerchant> merchants;
@@ -326,6 +326,10 @@ PiGameMap read_png_heightmap(string file_location,
             int hm_x = 2048 / x_len;  
             int hm_y = 2048 / y_len;
             int land_water = height_map[hm_x][hm_y] > 120;
+            if (i == 0 || j == 0 || 
+                    i == x_len - 1 || j == y_len - 1) {
+                land_water = 1;
+            }
             PiMapTile curr_tile = PiMapTile(land_water);
             curr_row.push_back(curr_tile);
             if (i == rand_i && j == rand_j) {
