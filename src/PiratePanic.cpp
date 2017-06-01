@@ -26,11 +26,11 @@ bool BasicApp::updateCurrentGameState() {
             mMerchants[player->first] = PiMerchant();
 
             // create new merchant gold
-            ent = mSceneMgr->createEntity("sphere.mesh");
+            ent = mSceneMgr->createEntity("cube.mesh");
             Ogre::SharedPtr<Ogre::Material> m_pMat = ent->getSubEntity(0)->getMaterial();
-            m_pMat->getTechnique(0)->getPass(0)->setAmbient(Ogre::ColourValue(0.8, 0.4, 0.0, 1.0));
-            m_pMat->getTechnique(0)->getPass(0)->setDiffuse(Ogre::ColourValue(0.8, 0.4, 0.0, 1.0));
-            m_pMat->getTechnique(0)->getPass(0)->setEmissive(Ogre::ColourValue(0.8, 0.4, 0.0, 0.2));
+            m_pMat->getTechnique(0)->getPass(0)->setAmbient(Ogre::ColourValue(0.8, 0.5, 0.15, 1.0));
+            m_pMat->getTechnique(0)->getPass(0)->setDiffuse(Ogre::ColourValue(0.8, 0.5, 0.15, 1.0));
+            m_pMat->getTechnique(0)->getPass(0)->setEmissive(Ogre::ColourValue(0.8, 0.5, 0.15, 0.2));
             ent->setMaterialName(m_pMat->getName());
             mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
             mCurObject->setPosition(Ogre::Vector3(mMerchants[player->first].coord_pos.x, 930.0, mMerchants[player->first].coord_pos.y));
@@ -175,7 +175,7 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
 
     // whoo hoo i figured out quaternions yay neverforgetti pls
     mBikeObject->setPosition(Ogre::Vector3(mBike.x, 
-                                           -10.0f + mHydrax->getHeigth(Ogre::Vector2(mBike.x, mBike.y)) 
+                                           -15.0f + mHydrax->getHeigth(Ogre::Vector2(mBike.x, mBike.y)) 
                                                   + (2.0f * sin(nsf * 2.0f)),
                                            mBike.y));
 
@@ -190,7 +190,7 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
 
     for (auto id_ent : mOgreMerchants) {
         id_ent.second->setPosition(Ogre::Vector3(mMerchants[id_ent.first].coord_pos.x,  
-                                                 -10.0f + mHydrax->getHeigth(Ogre::Vector2(mMerchants[id_ent.first].coord_pos.x,
+                                                 -15.0f + mHydrax->getHeigth(Ogre::Vector2(mMerchants[id_ent.first].coord_pos.x,
                                                                                            mMerchants[id_ent.first].coord_pos.y)) 
                                                         + (2.0f * sin((nsf + id_ent.first * 100.0f) * 2.0f)),
                                                  mMerchants[id_ent.first].coord_pos.y));
@@ -205,6 +205,11 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
                                                       700.0f + 0.3 * mHydrax->getHeigth(Ogre::Vector2(mMerchants[id_ent.first].coord_pos.x,
                                                                                                       mMerchants[id_ent.first].coord_pos.y)),
                                                       mMerchants[id_ent.first].coord_pos.y));
+        mOgreMerchantsGold[id_ent.first]->setOrientation(Ogre::Quaternion(
+                sin((nsf + id_ent.first * 100.0f) * 0.5f),
+                0.0, 
+                cos((nsf + id_ent.first * 100.0f) * 0.5f), 
+                0.0));
     }
 
     mOgrePirate->setPosition(Ogre::Vector3(mPirate.coord_pos.x,  

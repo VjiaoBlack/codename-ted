@@ -75,18 +75,18 @@ public:
     double z;
 
     PiGoldBlock(Ogre::SceneManager* sceneMgr, double _x, double _y, double _z)
-        : vx(1.0), vy(1.0), vz(1.0), x(_x), y(_y), z(_z) {
+        : vx(1.0), vy(0.5), vz(1.0), x(_x), y(_y), z(_z) {
 
         float theta = (float) (rand() % 360) * (3.1415926535) / (180.0);
 
-        vx = 0.1 * sin(theta);
-        vz = 0.1 * cos(theta);
+        vx = 0.5 * sin(theta);
+        vz = 0.5 * cos(theta);
 
-        Ogre::Entity* ent = sceneMgr->createEntity("sphere.mesh");
+        Ogre::Entity* ent = sceneMgr->createEntity("cube.mesh");
         Ogre::SharedPtr<Ogre::Material> m_pMat = ent->getSubEntity(0)->getMaterial();
-        m_pMat->getTechnique(0)->getPass(0)->setAmbient(Ogre::ColourValue(0.8, 0.4, 0.0, 1.0));
-        m_pMat->getTechnique(0)->getPass(0)->setDiffuse(Ogre::ColourValue(0.8, 0.4, 0.0, 1.0));
-        m_pMat->getTechnique(0)->getPass(0)->setEmissive(Ogre::ColourValue(0.8, 0.4, 0.0, 0.2));
+        m_pMat->getTechnique(0)->getPass(0)->setAmbient(Ogre::ColourValue(0.8, 0.5, 0.15, 1.0));
+        m_pMat->getTechnique(0)->getPass(0)->setDiffuse(Ogre::ColourValue(0.8, 0.5, 0.15, 1.0));
+        m_pMat->getTechnique(0)->getPass(0)->setEmissive(Ogre::ColourValue(0.8, 0.5, 0.15, 0.2));
         ent->setMaterialName(m_pMat->getName());
         mSceneNode = sceneMgr->getRootSceneNode()->createChildSceneNode();
         mSceneNode->setPosition(Ogre::Vector3(x, y, z));
