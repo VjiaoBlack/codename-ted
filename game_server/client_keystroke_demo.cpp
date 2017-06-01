@@ -106,6 +106,11 @@ int main(int argc, char* argv[]) {
                     std::cout << "DOWN \n";
                 }
 
+                if (keysDown.count(SDLK_g)) {
+                    keystrokes.push_back(KC_G);
+                    std::cout << "GOLD\n";
+                }
+
                 if(keystrokes.size() > 0) {
                     loop_client.send_keystrokes(keystrokes);
 
