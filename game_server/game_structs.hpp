@@ -141,7 +141,7 @@ public:
     PiMerchant() : PiMerchant(vec2(0,0)) {}
 
     // Takes in a merchant name and gold amount
-    PiMerchant(string name, int gold=100)
+    PiMerchant(string name, int gold=500)
     : PiMerchant(name, vec2(0,0), vec2(-1,1), vec2(0,0), 0, 0, gold, true, vec2(0,0)) {}
 };
 
