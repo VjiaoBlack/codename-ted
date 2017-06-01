@@ -239,7 +239,7 @@ void shift_pirate(PiGameMap& map, vec2 coord1, vec2 coord2) {
 }
 
 // Shifts merchant from one coordinate location to another
-// DON'T USE, FOR AI TESTING 
+// DON'T USE, FOR AI TESTING
 void shift_merchant(PiGameMap& map, vec2 coord1, vec2 coord2) {
     if (coord2.x < 20 || coord2.x > map.size.x - 20 ||
         coord2.y < 20 || coord2.y > map.size.y - 20)
@@ -283,14 +283,14 @@ void move_merchant(PiGameMap& map, vec2 pos1, vec2 pos2) {
     map.mapTiles[pos2.x][pos2.y].is_ship = 1;
 }
 
-// GENERATES GAME MAP BY READING OGRE GENERATED 
-// HEIGHT MAP. PICK POWERS OF 2 for X_LEN and Y_LEN 
+// GENERATES GAME MAP BY READING OGRE GENERATED
+// HEIGHT MAP. PICK POWERS OF 2 for X_LEN and Y_LEN
 // AND MAKE SURE MAP_SIZE IS A MULTIPLE OF X/Y LEN.
-PiGameMap read_png_heightmap(string file_location, 
+PiGameMap read_png_heightmap(string file_location,
         int x_len, int y_len, int map_size) {
     // Read in PNG File
-    string curr_row; 
-    ifstream infile; 
+    string curr_row;
+    ifstream infile;
     infile.open(file_location);
     static int height_map[2048][2048];
     int map_x = 0;
@@ -299,7 +299,7 @@ PiGameMap read_png_heightmap(string file_location,
             int map_y = 0;
             for (int i = 0; i < curr_row.size(); i++) {
                 if (curr_row[i] != '\t') {
-                    string tempstr = ""; 
+                    string tempstr = "";
                     while(curr_row[i] != '\t') {
                         tempstr += curr_row[i];
                         i++;
@@ -323,7 +323,7 @@ PiGameMap read_png_heightmap(string file_location,
     for(int i = 0; i < x_len; i++) {
         vector<PiMapTile> curr_row;
         for (int j = 0; j < y_len; j++) {
-            int hm_x = 2048 / x_len;  
+            int hm_x = 2048 / x_len;
             int hm_y = 2048 / y_len;
             int land_water = 0;
 
@@ -335,14 +335,13 @@ PiGameMap read_png_heightmap(string file_location,
                     if (height_map[startx + ii][starty + jj] > 120) {
                         land_water = 1;
                         break;
-                    }   
+                    }
                 }
 
                 if (land_water == 1) {
                     break;
                 }
             }
-
 
 
 
@@ -380,5 +379,3 @@ PiGameMap read_png_heightmap(string file_location,
     PiGameMap start_map(tiles, x_len, y_len, pirates, merchants, size);
     return start_map;
 }
-
-
