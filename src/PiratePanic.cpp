@@ -89,7 +89,7 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
 
     // Update Sun-related variables every once in a while
     mCurFrameCounter++;
-    if (mCurFrameCounter > 3000) {
+    if (mCurFrameCounter > 1000) {
         Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
  
         mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
