@@ -13,7 +13,7 @@ float y_extension = 1;
 float x_extension = 2;
 
 float acceleration_cap = .01;
-float velocity_cap = .3;
+float velocity_cap = .06;
 
 int gold_cap = 1000;
 
@@ -959,8 +959,9 @@ int main(int argc, char* argv[]){
         if(verbose)
             printf("\n\n\n");
 
-        if(itera % 100 == 0)
+        if(itera % 99 == 0){
             run_astar(map);
+        }
 
         // Clear screen
         SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
