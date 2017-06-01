@@ -111,6 +111,8 @@ queue<unordered_map<string, vector<string> > > GameLoopServer::remove_all_keys()
 }
 
 void GameLoopServer::advance_timer() {
+    //if (!has_started_) {}
+
     queue<unordered_map<string, vector<string> > > objects_to_process = this->remove_all_keys();
     ++count_;
 

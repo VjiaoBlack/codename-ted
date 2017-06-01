@@ -232,6 +232,7 @@ public:
     unordered_map<int, PiPlayer> players;
     unordered_map<int, PiLobby> lobbies;
     float **heightMap;
+    bool has_started_;
 
     // Constructors
     PiGameState(PiGameMap map, PiPirate Pirate,

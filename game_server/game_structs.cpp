@@ -76,7 +76,7 @@ PiGameState::PiGameState(PiGameMap map, PiPirate Pirate,
     , Pirate(Pirate.pirate_name, Pirate.position, Pirate.coord_pos,
              Pirate.velocity, Pirate.orientation, Pirate.rudderRot,
              Pirate.goldAmount, Pirate.AI, Pirate.acceleration) {
-
+    has_started_ = false;
 }
 
 void PiGameState::add_player(int uID, float x,
