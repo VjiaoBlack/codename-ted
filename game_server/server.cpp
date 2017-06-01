@@ -23,7 +23,7 @@ void RegistrationServer::handle_accept(TCPConnection::pointer new_connection,
             registered_players_.push_back(current_registered_);
 
             // Start all players at same x but different y
-            currentGameState_->add_player(current_registered_, 100, (50 + current_registered_) * 3, true,
+            currentGameState_->add_player(current_registered_, 0, current_registered_ * 3, true,
                                           player_names[current_registered_]);
 
             // std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
@@ -142,7 +142,7 @@ int main(int argc, char *argv[1]) {
         int port = atoi(argv[1]);
         boost::asio::io_service io_service;
         PiGameState *coreGameState = new PiGameState();
-        coreGameState->map = PiGameMap::createStartMap(256, 256, 65536);
+        coreGameState->map = read_png_heightmap("../ai/height.csv", 32, 32, 32000);
         // Creates a pirate and a merchant
         RegistrationServer registration_server(io_service, port, coreGameState);
         GameLoopServer loop_server(io_service, port, coreGameState);
