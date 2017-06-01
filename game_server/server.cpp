@@ -122,6 +122,7 @@ void GameLoopServer::advance_timer() {
     //Process gamestate/ai
     while (!objects_to_process.empty())
     {
+        std::cout << "about to compute gamestate" << std::endl;
         currentGameState_->map = compute_gamestate(objects_to_process.front(), currentGameState_->map);
         std::cout << serialize_gamestate(*currentGameState_) << std::endl;
         objects_to_process.pop();
@@ -142,7 +143,7 @@ int main(int argc, char *argv[1]) {
         int port = atoi(argv[1]);
         boost::asio::io_service io_service;
         PiGameState *coreGameState = new PiGameState();
-        coreGameState->map = read_png_heightmap("../ai/height.csv", 32, 32, 32000);
+        coreGameState->map = read_png_heightmap("../ai/height.csv", 32, 32, 1024);
         // Creates a pirate and a merchant
         RegistrationServer registration_server(io_service, port, coreGameState);
         GameLoopServer loop_server(io_service, port, coreGameState);

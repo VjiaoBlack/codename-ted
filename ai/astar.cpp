@@ -150,7 +150,7 @@ vec2 get_target(vector<vec2> positions) {
     float min_dist = -1;
     for (vec2 pos : positions) {
         float curr_dist = distance(start_pos, pos);
-        if (curr_dist < min_dist || min_dist < 1) {
+        if ((curr_dist < min_dist || min_dist < 1) && (pos.x > 0 && pos.y > 0)) {
             min_dist = curr_dist;
             min_pos = pos;
         }
@@ -184,5 +184,5 @@ void update_pirate_physics(PiGameMap m, PiPirate &p, vec2 goal_node) {
     p.coord_pos.print_vec2();
     p.velocity.print_vec2();
     // Update Velocity
-    p.velocity = vec2(v_x, v_y); 
+    p.velocity = vec2(v_x, v_y);
 }
