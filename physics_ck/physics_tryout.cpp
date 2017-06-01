@@ -155,8 +155,6 @@ PiGameMap update_position(PiGameMap gm, int current_boat){
         printf("*****************************************************************find me Now\n");
     }
 
-    printf("maptile x: %f, maptile y: %f\n", gm.merchants[current_boat].position.x, gm.merchants[current_boat].position.y);
-
     // int mapTileIter = 0;
     // int anotherMapTileIter = 0;
     // for(mapTileIter = 0; mapTileIter<gm.mapTiles.size(); mapTileIter++){
@@ -171,7 +169,7 @@ PiGameMap update_position(PiGameMap gm, int current_boat){
     while(gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].land_water == 1){
         gm.merchants[current_boat].coord_pos.x -= gm.merchants[current_boat].velocity.x * engineMultiplier;
         gm.merchants[current_boat].coord_pos.y -= gm.merchants[current_boat].velocity.y * engineMultiplier;
-        printf("I'm on land\n\n");
+        //printf("I'm on land\n\n");
         vec2 landLocked = vec2(gm.merchants[current_boat].coord_pos.x,gm.merchants[current_boat].coord_pos.y);
         gm.merchants[current_boat].position = convert_coord_tile(gm, landLocked);
 
@@ -187,7 +185,9 @@ PiGameMap update_position(PiGameMap gm, int current_boat){
 PiGameMap update_position_pirate(PiGameMap gm, int pirate){
     //Manually setting new positions
 
-    //printf("Pirate Velocity x: %f, y: %f\n", gm.pirates[pirate].velocity.x, gm.pirates[pirate].velocity.y);
+    // printf("\n\n\n\n\nPirate Velocity x: %f, y: %f\n", gm.pirates[pirate].velocity.x, gm.pirates[pirate].velocity.y);
+    // printf("Pirate pos x: %f, y: %f\n\n\n\n\n\n\n", gm.pirates[pirate].coord_pos.x, gm.pirates[pirate].coord_pos.y);
+    
 
     gm.pirates[0].coord_pos.x += 25.0 * gm.pirates[0].velocity.Normalize().x * gold_vel_cap_pirate(gm,0) * engineMultiplier;
     gm.pirates[0].coord_pos.y += 25.0 * gm.pirates[0].velocity.Normalize().y * gold_vel_cap_pirate(gm,0) * engineMultiplier;
@@ -199,10 +199,10 @@ PiGameMap update_position_pirate(PiGameMap gm, int pirate){
         gm.pirates[0].coord_pos.y = 100;
     }
 
-    if(gm.pirates[0].coord_pos.x < 29950){
+    if(gm.pirates[0].coord_pos.x > 29950){
         gm.pirates[0].coord_pos.x = 29900;
     }
-    if(gm.pirates[0].coord_pos.y < 29950){
+    if(gm.pirates[0].coord_pos.y > 29950){
         gm.pirates[0].coord_pos.y = 29900;
     }
 

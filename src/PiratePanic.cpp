@@ -189,11 +189,11 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
 
 
     for (auto id_ent : mOgreMerchants) {
-        id_ent.second->setPosition(Ogre::Vector3(mMerchants[id_ent.first].coord_pos.x,  
+        id_ent.second->setPosition(Ogre::Vector3(mMerchants[id_ent.first].coord_pos.x - 16000.0,  
                                                  -15.0f + mHydrax->getHeigth(Ogre::Vector2(mMerchants[id_ent.first].coord_pos.x,
                                                                                            mMerchants[id_ent.first].coord_pos.y)) 
                                                         + (2.0f * sin((nsf + id_ent.first * 100.0f) * 2.0f)),
-                                                 mMerchants[id_ent.first].coord_pos.y));
+                                                 mMerchants[id_ent.first].coord_pos.y - 16000.0));
 
         id_ent.second->setOrientation(Ogre::Quaternion(
                 (double) cos(mMerchants[id_ent.first].orientation / (2.0f)),   
@@ -212,11 +212,11 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
                 0.0));
     }
 
-    mOgrePirate->setPosition(Ogre::Vector3(mPirate.coord_pos.x,  
+    mOgrePirate->setPosition(Ogre::Vector3(mPirate.coord_pos.x - 16000.0,  
                                            -10.0f + mHydrax->getHeigth(Ogre::Vector2(mPirate.coord_pos.x,
                                                                                      mPirate.coord_pos.y)) 
                                                   + (2.0f * sin((nsf + -1 * 100.0f) * 2.0f)),
-                                           mPirate.coord_pos.y));
+                                           mPirate.coord_pos.y - 16000.0));
 
     mOgrePirate->setOrientation(Ogre::Quaternion(
             (double) cos(mPirate.orientation / (2.0f)),   
@@ -256,7 +256,7 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
 
  
 void BasicApp::createScene() {
-    mCamera->setPosition(40, 900, 580);
+    mCamera->setPosition(-17000, 1200, -17000);
     mCamera->pitch(Ogre::Degree(-30));
     mCamera->yaw(Ogre::Degree(-45));
     mCamera->setNearClipDistance(0.1);

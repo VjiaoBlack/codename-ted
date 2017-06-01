@@ -327,14 +327,27 @@ PiGameMap read_png_heightmap(string file_location,
             int hm_y = 2048 / y_len;
             int land_water = 0;
 
-            // int startx;
-            // int starty;
+            int startx = i * hm_x;
+            int starty = j * hm_y;
+
+            for (int ii = 0; ii < hm_x; ii++) {
+                for (int jj = 0; jj < hm_y; jj++) {
+                    if (height_map[startx + ii][starty + jj] > 120) {
+                        land_water = 1;
+                        break;
+                    }   
+                }
+
+                if (land_water == 1) {
+                    break;
+                }
+            }
 
 
 
 
 
-            int land_water = height_map[hm_x * i][hm_y * j] > 120;
+            // int land_water = height_map[hm_x * i][hm_y * j] > 120;
             // if (land_water) {
             //     printf("%d\n", height_map[hm_x * i][hm_y * j])
             // }

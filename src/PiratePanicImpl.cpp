@@ -396,7 +396,7 @@ void BasicApp::setupTerrain(Ogre::Light* light) {
     mTerrainGlobals = OGRE_NEW Ogre::TerrainGlobalOptions();
     mTerrainGroup = OGRE_NEW Ogre::TerrainGroup(
         mSceneMgr,
-        Ogre::Terrain::ALIGN_X_Z, 513, 36000.0);
+        Ogre::Terrain::ALIGN_X_Z, 513, 32000.0);
     mTerrainGroup->setFilenameConvention(Ogre::String("terrain"),Ogre::String("dat"));
     mTerrainGroup->setOrigin(Ogre::Vector3::ZERO);
  
@@ -459,7 +459,7 @@ void BasicApp::configureTerrainDefaults(Ogre::Light* light) {
 
     Ogre::Terrain::ImportData& importData = mTerrainGroup->getDefaultImportSettings();
     importData.terrainSize = 513;
-    importData.worldSize = 36000.0f;
+    importData.worldSize = 32000.0f;
     importData.inputScale = 2000;
     importData.minBatchSize = 33; //33
     importData.maxBatchSize = 65; // 65
