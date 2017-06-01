@@ -127,6 +127,16 @@ void GameLoopServer::advance_timer() {
         objects_to_process.pop();
     }
 
+    if (objects_to_process.empty()) {
+        unordered_map<string, vector<string> > input_object;
+        vector<string> name;
+        name.push_back("Reppy");
+        vector<string> content;
+        input_object["player_name"] = name;
+        input_object["keystrokes"] = content;
+        currentGameState_->map = compute_gamestate(input_object, currentGameState_->map);
+    }
+
     timer_.expires_at(timer_.expires_at() + boost::posix_time::microseconds(10000));
     timer_.async_wait(boost::bind(&GameLoopServer::advance_timer, this));
 }

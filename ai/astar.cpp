@@ -28,7 +28,7 @@ void run_astar(PiGameMap &map) {
     main_q.push(q_elem(selected_pos, vec2(-1, -1), 0));
     while (!goal_reached) {
         iterations++;
-        if (iterations > 15000) {
+        if (iterations > 20) {
             return;
         }
         q_elem selected_q = main_q.top();
@@ -184,5 +184,5 @@ void update_pirate_physics(PiGameMap m, PiPirate &p, vec2 goal_node) {
     p.coord_pos.print_vec2();
     p.velocity.print_vec2();
     // Update Velocity
-    p.velocity = vec2(v_x, v_y); 
+    p.velocity = vec2(v_x, v_y);
 }
