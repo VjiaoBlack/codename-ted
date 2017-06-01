@@ -14,6 +14,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <math.h>
+#include <fstream>
 
 using namespace std;
 
@@ -76,7 +77,7 @@ PiGameState::PiGameState(PiGameMap map, PiPirate Pirate,
     , Pirate(Pirate.pirate_name, Pirate.position, Pirate.coord_pos,
              Pirate.velocity, Pirate.orientation, Pirate.rudderRot,
              Pirate.goldAmount, Pirate.AI, Pirate.acceleration) {
-
+    has_started_ = false;
 }
 
 void PiGameState::add_player(int uID, float x,
@@ -238,6 +239,7 @@ void shift_pirate(PiGameMap& map, vec2 coord1, vec2 coord2) {
 }
 
 // Shifts merchant from one coordinate location to another
+// DON'T USE, FOR AI TESTING 
 void shift_merchant(PiGameMap& map, vec2 coord1, vec2 coord2) {
     if (coord2.x < 20 || coord2.x > map.size.x - 20 ||
         coord2.y < 20 || coord2.y > map.size.y - 20)
@@ -280,3 +282,33 @@ void move_merchant(PiGameMap& map, vec2 pos1, vec2 pos2) {
     map.mapTiles[pos1.x][pos1.y].is_ship = 0;
     map.mapTiles[pos2.x][pos2.y].is_ship = 1;
 }
+
+
+PiGameMap read_png_heightmap(string file_location) {
+    string curr_row; 
+    ifstream infile; 
+    infile.open(file_location);
+    static int height_map[2048][2048];
+    int map_x = 0;
+    if (infile.is_open()) {
+        while(getline(infile, curr_row)) {
+            int map_y = 0;
+            for (int i = 0; i < curr_row.size(); i++) {
+                if (curr_row[i] != '\t') {
+                    string tempstr = ""; 
+                    while(curr_row[i] != '\t') {
+                        tempstr += curr_row[i];
+                        i++;
+                    }
+                    height_map[map_x][map_y] = stoi(tempstr);
+                    map_y++;
+                }
+            }
+            map_x++;
+        }
+        infile.close();
+    }
+    return NULL;
+}
+
+
