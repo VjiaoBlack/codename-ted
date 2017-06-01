@@ -127,7 +127,7 @@ void GameLoopServer::advance_timer() {
         objects_to_process.pop();
     }
 
-    timer_.expires_at(timer_.expires_at() + boost::posix_time::microseconds(100000));
+    timer_.expires_at(timer_.expires_at() + boost::posix_time::microseconds(10000));
     timer_.async_wait(boost::bind(&GameLoopServer::advance_timer, this));
 }
 
