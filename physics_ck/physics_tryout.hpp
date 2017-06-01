@@ -14,11 +14,13 @@
 #include <sys/time.h>
 #include <chrono>
 
+#include "../ai/astar.hpp"
+
 using namespace std;
 using namespace std::chrono;
 
 // Comment or uncomment to allow test physics
-// #define K_TEST_PHYSICS
+//#define K_TEST_PHYSICS
 
 
 PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object, PiGameMap gm);
