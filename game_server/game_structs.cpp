@@ -388,6 +388,7 @@ PiGameMap read_png_heightmap(string file_location,
     PiGameMap start_map(tiles, x_len, y_len, pirates, merchants, size);
 
     start_map.pirates[0].position = convert_coord_tile(start_map, newLoc);
+    start_map.mapTiles[2][2].start_finish = 2;
 
     return start_map;
 }
