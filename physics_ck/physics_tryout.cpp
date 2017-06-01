@@ -108,6 +108,13 @@ PiGameMap update_position(PiGameMap gm, int current_boat){
     gm.merchants[current_boat].coord_pos.x += gm.merchants[current_boat].velocity.x * engineMultiplier;
     gm.merchants[current_boat].coord_pos.y += gm.merchants[current_boat].velocity.y * engineMultiplier;
 
+    if(gm.merchants[current_boat].coord_pos.x < 0){
+        gm.merchants[current_boat].coord_pos.x = 0;
+    }
+    if(gm.merchants[current_boat].coord_pos.y < 0){
+        gm.merchants[current_boat].coord_pos.y = 0;
+    }
+
     //printf("x: %f, y: %f\n", gm.merchants[current_boat].coord_pos.x, gm.merchants[current_boat].coord_pos.y);
 
         //Moving the merchant to the appropriate tile
@@ -138,8 +145,6 @@ PiGameMap update_position(PiGameMap gm, int current_boat){
     //Here is the jankiest land collision code of all time!
 
     while(gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].land_water == 1){
-        printf("*************************Hitting land\n");
-
         gm.merchants[current_boat].coord_pos.x -= gm.merchants[current_boat].velocity.x * engineMultiplier;
         gm.merchants[current_boat].coord_pos.y -= gm.merchants[current_boat].velocity.y * engineMultiplier;
 
@@ -157,6 +162,13 @@ PiGameMap update_position_pirate(PiGameMap gm, int pirate){
 
     gm.pirates[0].coord_pos.x += gm.pirates[0].velocity.Normalize().x * gold_vel_cap_pirate(gm,0) * engineMultiplier;
     gm.pirates[0].coord_pos.y += gm.pirates[0].velocity.Normalize().y * gold_vel_cap_pirate(gm,0) * engineMultiplier;
+
+    if(gm.pirates[0].coord_pos.x < 0){
+        gm.pirates[0].coord_pos.x = 0;
+    }
+    if(gm.pirates[0].coord_pos.y < 0){
+        gm.pirates[0].coord_pos.y = 0;
+    }
 
     //Moving the pirate to the appropriate tile
     vec2 newLoc = vec2(gm.pirates[0].coord_pos.x,gm.pirates[0].coord_pos.y);
@@ -840,12 +852,14 @@ int main(int argc, char* argv[]){
 
     bool quit = false;
 
-    PiGameMap map = read_png_heightmap("../ai/height.csv", 32, 32, 64000);
+    PiGameMap map = read_png_heightmap("../ai/height.csv", 32, 32, 1024);
 
     // PiGameMap map(25);
     map.add_merchant(PiMerchant());
     // map.add_merchant(PiMerchant());
     map.merchants[0].merchant_name = "our_guy";
+
+    map.mapTiles[5][5].land_water = 1;
 
     map.merchants[0].coord_pos.x = 50;
     map.merchants[0].coord_pos.y = 50;
@@ -958,6 +972,18 @@ int main(int argc, char* argv[]){
         SDL_RenderDrawRect(renderer, &wholeRect);
 
         draw_boat(renderer,map, 0);
+
+        int mapTileIter = 0;
+        int anotherMapTileIter = 0;
+        for(mapTileIter = 0; mapTileIter<map.mapTiles.size(); mapTileIter++){
+            for(anotherMapTileIter = 0; anotherMapTileIter<map.mapTiles[mapTileIter].size(); anotherMapTileIter++){
+                if(map.mapTiles[mapTileIter][anotherMapTileIter].land_water == 1){
+                    SDL_Rect newRect = {(int)ceil(convert_tile_coord(map, vec2(mapTileIter,anotherMapTileIter)).x), 
+                                        (int)ceil(convert_tile_coord(map, vec2(mapTileIter,anotherMapTileIter)).y), 1024/32, 1024/32};
+                    SDL_RenderDrawRect(renderer, &newRect);
+                }
+            }
+        }
 
         // draw_boat(renderer,map, 1);
 
