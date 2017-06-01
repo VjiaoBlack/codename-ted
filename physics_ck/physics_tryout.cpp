@@ -924,8 +924,8 @@ int main(int argc, char* argv[]){
     // map.add_merchant(PiMerchant());
     map.merchants[0].merchant_name = "our_guy";
 
-    map.mapTiles[1][1].land_water = 1;
-    //map.mapTiles[1][1].start_finish = 2;
+    //map.mapTiles[1][1].land_water = 1;
+    map.mapTiles[1][1].start_finish = 2;
 
     // int mapTileIter = 0;
     //     int anotherMapTileIter = 0;

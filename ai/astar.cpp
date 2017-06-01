@@ -117,7 +117,9 @@ vector<vec2> retrieve_ship_coords(PiGameMap gm) {
         coords.push_back(p.coord_pos);
     }
     for(PiMerchant m: gm.merchants) {
-        coords.push_back(m.coord_pos);
+        if(m.AI==true){
+            coords.push_back(m.coord_pos);
+        }
     }
     return coords;
 }
