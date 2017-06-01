@@ -9,8 +9,8 @@ float pioveroneeighty = 0.01745329251;
 float turning_speed = .1 * 4.0;
 
 float firstOrderCollisionBuffer = 0.1;
-float y_extension = 1 * 3.0;
-float x_extension = 2 * 3.0;
+float y_extension = 1;
+float x_extension = 2;
 
 float acceleration_cap = .01 * 5.0;
 float velocity_cap = .06 * 5.0;
@@ -917,15 +917,18 @@ int main(int argc, char* argv[]){
 
     bool quit = false;
 
-    PiGameMap map = read_png_heightmap("../ai/height.csv", 48, 48, 32000);
+    PiGameMap map = read_png_heightmap("../ai/height.csv", 48, 48, 2048);
 
     // PiGameMap map(25);
     map.add_merchant(PiMerchant());
+
+    map.add_merchant(PiMerchant());
+
     // map.add_merchant(PiMerchant());
     map.merchants[0].merchant_name = "our_guy";
 
-    //map.mapTiles[1][1].land_water = 1;
-    map.mapTiles[1][1].start_finish = 2;
+    //map.mapTiles[15][2].land_water = 1;
+    map.mapTiles[15][2].start_finish = 2;
 
     // int mapTileIter = 0;
     //     int anotherMapTileIter = 0;
@@ -940,6 +943,9 @@ int main(int argc, char* argv[]){
     map.merchants[0].coord_pos.x = 150;
     map.merchants[0].coord_pos.y = 150;
 
+    map.merchants[1].coord_pos.x = 500;
+    map.merchants[1].coord_pos.y = 500;
+
     map.pirates[0].coord_pos.x = 200;
     map.pirates[0].coord_pos.y = 200;
 
@@ -948,11 +954,16 @@ int main(int argc, char* argv[]){
     // map.merchants[1].goldAmount = 1000;
     map.merchants[0].goldAmount = 1000;
 
+    map.merchants[1].goldAmount = 500;
+
     map.pirates[0].goldAmount = 0;
 
         //Moving the merchant to the appropriate tile
     vec2 newLoc = vec2(map.merchants[0].coord_pos.x,map.merchants[0].coord_pos.y);
     map.merchants[0].position = convert_coord_tile(map, newLoc);
+
+    vec2 newLoce = vec2(map.merchants[1].coord_pos.x,map.merchants[1].coord_pos.y);
+    map.merchants[1].position = convert_coord_tile(map, newLoce);
 
     // for(merchant m: map.merchants) { //Cycle through every merchant
     //   printf("%s\n", m.merchant_name.c_str());
@@ -1054,15 +1065,15 @@ int main(int argc, char* argv[]){
         int anotherMapTileIter = 0;
         for(mapTileIter = 0; mapTileIter<map.mapTiles.size(); mapTileIter++){
             for(anotherMapTileIter = 0; anotherMapTileIter<map.mapTiles[mapTileIter].size(); anotherMapTileIter++){
-                if(map.mapTiles[mapTileIter][anotherMapTileIter].land_water == 1){
+                if(map.mapTiles[mapTileIter][anotherMapTileIter].land_water == 1 || map.mapTiles[mapTileIter][anotherMapTileIter].start_finish == 2){
                     SDL_Rect newRect = {(int)ceil(convert_tile_coord(map, vec2(mapTileIter,anotherMapTileIter)).x), 
-                                        (int)ceil(convert_tile_coord(map, vec2(mapTileIter,anotherMapTileIter)).y), 32000/48, 32000/48};
+                                        (int)ceil(convert_tile_coord(map, vec2(mapTileIter,anotherMapTileIter)).y), 2048/48, 2048/48};
                     SDL_RenderDrawRect(renderer, &newRect);
                 }
             }
         }
 
-        // draw_boat(renderer,map, 1);
+        draw_boat(renderer,map, 1);
 
         draw_pirate(renderer,map, 0);
 

@@ -105,7 +105,9 @@ vector<vec2> retrieve_ship_positions(PiGameMap gm) {
         positions.push_back(p.position);
     }
     for(PiMerchant m: gm.merchants) {
-        positions.push_back(m.position);
+        if(m.AI==true){
+            positions.push_back(m.position);
+        }
     }
     return positions;
 }
