@@ -22,12 +22,12 @@ void RegistrationServer::handle_accept(TCPConnection::pointer new_connection,
             // Add players to registration queue
             registered_players_.push_back(current_registered_);
 
-            // If it is first registration, edit ship that was created by createRandomMap
+            // Start all players at same x but different y
+            currentGameState_->add_player(current_registered_, 0, current_registered_* 3, true,
+                                          player_names[current_registered_]);
 
-            currentGameState_->add_player(current_registered_, 0, 0, true, player_names[current_registered_]);
-
-            std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
-            //cout << serialized_gamestate << endl;
+            // std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
+            // cout << serialized_gamestate << endl;
             current_registered_++;
             new_connection->start();
         }
