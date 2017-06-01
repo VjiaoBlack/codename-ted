@@ -9,8 +9,8 @@ float pioveroneeighty = 0.01745329251;
 float turning_speed = .1 * 4.0;
 
 float firstOrderCollisionBuffer = 0.1;
-float y_extension = 1;
-float x_extension = 2;
+float y_extension = 1 * 3.0;
+float x_extension = 2 * 3.0;
 
 float acceleration_cap = .01 * 5.0;
 float velocity_cap = .06 * 5.0;
@@ -18,6 +18,8 @@ float velocity_cap = .06 * 5.0;
 int gold_cap = 1000;
 
 int verbose = 0;
+
+int tickCount = 0;
 
 int tunt = 1;
 
@@ -456,7 +458,7 @@ bool is_colliding_pirate_boat(PiGameMap gm, int boat_to_compare, int use_buffer)
     float buffer = 0;
 
     if(use_buffer == 1){
-        buffer = 5;
+        buffer = 10;
     }
 
     //Computing the four corners of the current_boat
@@ -681,9 +683,17 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
             gm = update_position(gm, current_boat);
 
             if(gm.mapTiles[gm.merchants[current_boat].position.x][gm.merchants[current_boat].position.y].start_finish == 2){
-                printf("woohoo\n");
                 gm.merchants[current_boat].AI = false;
             }
+
+            //Run this to see if the pirate is within however many units to lose gold
+            if(is_colliding_pirate_boat(gm, current_boat, 1) && (tickCount > 50) && gm.merchants[current_boat].AI == true){
+                gm.merchants[current_boat].goldAmount -= 1;
+                gm.pirates[0].goldAmount += 1;
+                tickCount = 0;
+                //printf("lost gold!  Merchant has: %d and pirate has: %d, tickcount is %d\n", gm.merchants[current_boat].goldAmount, gm.pirates[0].goldAmount, tickCount);
+            }
+            tickCount++;
 
             //Collision Detection.  This is barebones but I built it from the ground up! Blood and sweat!
             //First with the pirate
@@ -936,9 +946,9 @@ int main(int argc, char* argv[]){
     //map.merchants[1].velocity.x = .01;
 
     // map.merchants[1].goldAmount = 1000;
-    map.merchants[0].goldAmount = 0;
+    map.merchants[0].goldAmount = 1000;
 
-    map.pirates[0].goldAmount = 1000;
+    map.pirates[0].goldAmount = 0;
 
         //Moving the merchant to the appropriate tile
     vec2 newLoc = vec2(map.merchants[0].coord_pos.x,map.merchants[0].coord_pos.y);
