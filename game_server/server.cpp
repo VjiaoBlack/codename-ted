@@ -19,12 +19,11 @@ void RegistrationServer::handle_accept(TCPConnection::pointer new_connection,
     const boost::system::error_code &error) {
         int i = 0;
         if (!error) {
-
             // Add players to registration queue
             registered_players_.push_back(current_registered_);
 
             // Start all players at same x but different y
-            currentGameState_->add_player(current_registered_, 0, current_registered_* 3, true,
+            currentGameState_->add_player(current_registered_, 100, (50 + current_registered_) * 3, true,
                                           player_names[current_registered_]);
 
             // std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
@@ -56,11 +55,9 @@ void GameLoopServer::handle_receive(const boost::system::error_code& error,
         std::string gamestate_signal("gamestate");
 
         std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
-        //cout << serialized_gamestate << endl;
 
         if (!incoming_message.compare(gamestate_signal)) {
             std::string serialized_gamestate = serialize_gamestate(*currentGameState_);
-            //cout << serialized_gamestate << endl;
             boost::shared_ptr<std::string> message(new std::string(serialized_gamestate));
 
             socket_.async_send_to(boost::asio::buffer(*message), remote_endpoint_,
@@ -70,9 +67,9 @@ void GameLoopServer::handle_receive(const boost::system::error_code& error,
 
         } else {
             // We've got some keystrokes!
-            //std::cout << incoming_message << std::endl;
+            std::cout << incoming_message << std::endl;
             keystrokes_obj ks = deserialize_keystrokes(incoming_message);
-            //keystrokes added to queue, updated on timer!
+            // keystrokes added to queue, updated on timer!
             int queue_size = add_keys_to_queue(ks.keystrokes, player_names_[ks.unique_id]);
         }
 
@@ -101,10 +98,10 @@ queue<unordered_map<string, vector<string> > > GameLoopServer::remove_all_keys()
     while (!incoming_objects.empty())
     {
         all_objects.push(incoming_objects.front());
-        std::cout << "name: " << all_objects.front()["player_name"][0] << "\n";
+        /* std::cout << "name: " << all_objects.front()["player_name"][0] << "\n";
         for (int i = 0; i < all_objects.front()["keystrokes"].size(); ++i) {
             std::cout << "key: " << all_objects.front()["keystrokes"][i] << "\n";
-        }
+        } */
         incoming_objects.pop();
     }
 
@@ -116,28 +113,17 @@ void GameLoopServer::advance_timer() {
     ++count_;
 
     //run 'run_astar' every 5 ticks (interval TBD)
-    if(count_ % 100 == 0) {
-        //std::cout << "running astar" << std::endl;
-        //run_astar(currentGameState_->map);
-        //std::cout << "ran astar" << std::endl;
+    if (count_ % 100 == 0) {
+        std::cout << "running astar" << std::endl;
+        run_astar(currentGameState_->map);
+        std::cout << "ran astar" << std::endl;
     }
 
-    vec2 initial_pirate_pos = currentGameState_->map.pirates[0].coord_pos;
-    vec2 destination(initial_pirate_pos.x + currentGameState_->map.pirates[0].velocity.x,
-                    initial_pirate_pos.y + currentGameState_->map.pirates[0].velocity.y);
-//    currentGameState_->map.pirates[0].coord_pos.x += (currentGameState_->map.pirates[0].velocity.x);
-//    currentGameState_->map.pirates[0].coord_pos.y += (currentGameState_->map.pirates[0].velocity.y);
-
-
-    //std::cout << std::endl;
-    //initial_pirate_pos.print_vec2();
-
-    shift_pirate(currentGameState_->map, initial_pirate_pos, destination);
     //Process gamestate/ai
     while (!objects_to_process.empty())
     {
-        //currentGameState_->map = compute_gamestate(objects_to_process.front(), currentGameState_->map);
-        //std::cout << serialize_gamestate(*currentGameState_) << std::endl;
+        currentGameState_->map = compute_gamestate(objects_to_process.front(), currentGameState_->map);
+        std::cout << serialize_gamestate(*currentGameState_) << std::endl;
         objects_to_process.pop();
     }
 
@@ -156,9 +142,8 @@ int main(int argc, char *argv[1]) {
         int port = atoi(argv[1]);
         boost::asio::io_service io_service;
         PiGameState *coreGameState = new PiGameState();
-        // Creates a pirate and a merchant
         coreGameState->map = PiGameMap::createStartMap(256, 256, 65536);
-        // coreGameState->add_pirate(10, 10);
+        // Creates a pirate and a merchant
         RegistrationServer registration_server(io_service, port, coreGameState);
         GameLoopServer loop_server(io_service, port, coreGameState);
         io_service.run();
