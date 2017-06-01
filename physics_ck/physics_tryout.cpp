@@ -667,7 +667,9 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
                     gm.merchants[current_boat].rudderRot = gm.merchants[current_boat].orientation;
                     break;
                     case 'G':
-                    gm.merchants[current_boat].goldAmount -= 10;
+                    if(gm.merchants[current_boat].goldAmount > 10){
+                        gm.merchants[current_boat].goldAmount -= 10;
+                    }
                     break;
                 }
                 i++;
