@@ -23,7 +23,7 @@ void RegistrationServer::handle_accept(TCPConnection::pointer new_connection,
             registered_players_.push_back(current_registered_);
 
             // Start all players at same x but different y
-            currentGameState_->add_player(current_registered_, 100, (50 + current_registered_) * 3, true,
+            currentGameState_->add_player(current_registered_, 8000, 8000 + (50 + current_registered_) * 3, true,
                                           player_names[current_registered_]);
 
             // std::string serialized_gamestate = serialize_gamestate(*currentGameState_);

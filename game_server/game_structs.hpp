@@ -112,7 +112,7 @@ public:
     // MAKE SURE COORD IS IN LOC!!
     PiPirate(vec2 loc, vec2 coord) : PiPirate("Vader",
             loc,
-            vec2(-0.1,-0.1),
+            vec2(0.1,0.1),
             vec2(0,0),
             0, 0, 0, true,
             coord) {}
@@ -141,8 +141,8 @@ public:
     PiMerchant() : PiMerchant(vec2(0,0)) {}
 
     // Takes in a merchant name and gold amount
-    PiMerchant(string name, int gold=500)
-    : PiMerchant(name, vec2(0,0), vec2(-1,1), vec2(0,0), 0, 0, gold, true, vec2(0,0)) {}
+    PiMerchant(string name, float x, float y, int gold=500)
+    : PiMerchant(name, vec2(0,0), vec2(-1,1), vec2(0,0), 0, 0, gold, true, vec2(x,y)) {}
 };
 
 class PiLobby {

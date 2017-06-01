@@ -84,7 +84,8 @@ void PiGameState::add_player(int uID, float x,
         float y, bool registered, string name) {
     PiPlayer player = PiPlayer(uID, x, y, registered, name);
     players.insert(make_pair(uID, player));
-    map.add_merchant(PiMerchant(name));
+
+    map.add_merchant(PiMerchant(name, x, y));
 
 }
 
@@ -377,8 +378,8 @@ PiGameMap read_png_heightmap(string file_location,
         tiles.push_back(curr_row);
     }
 
-    pirates[0].coord_pos.x = 200.0;
-    pirates[0].coord_pos.y = 200.0;
+    pirates[0].coord_pos.x = 8000.0;
+    pirates[0].coord_pos.y = 8000.0;
 
     vec2 newLoc = vec2(pirates[0].coord_pos.x,pirates[0].coord_pos.y);
 
