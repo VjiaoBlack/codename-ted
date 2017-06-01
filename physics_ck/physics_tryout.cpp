@@ -668,7 +668,7 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
                     break;
                     case 'G':
                     if(gm.merchants[current_boat].goldAmount > 10){
-                        gm.merchants[current_boat].goldAmount -= 10;
+                        gm.merchants[current_boat].goldAmount -= 1;
                     }
                     break;
                 }
