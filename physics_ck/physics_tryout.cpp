@@ -6,14 +6,14 @@ using namespace std;
 float acceleration_normal_slowdown_factor = 0.05;
 float acceleration_increase = 0.001;
 float pioveroneeighty = 0.01745329251;
-float turning_speed = .1 * 8.0;
+float turning_speed = .1 * 4.0;
 
 float firstOrderCollisionBuffer = 0.1;
 float y_extension = 1;
 float x_extension = 2;
 
-float acceleration_cap = .01 * 25.0;
-float velocity_cap = .06 * 25.0;
+float acceleration_cap = .01 * 5.0;
+float velocity_cap = .06 * 5.0;
 
 int gold_cap = 1000;
 
@@ -185,18 +185,20 @@ PiGameMap update_position(PiGameMap gm, int current_boat){
 PiGameMap update_position_pirate(PiGameMap gm, int pirate){
     //Manually setting new positions
 
-    // printf("\n\n\n\n\nPirate Velocity x: %f, y: %f\n", gm.pirates[pirate].velocity.x, gm.pirates[pirate].velocity.y);
-    // printf("Pirate pos x: %f, y: %f\n\n\n\n\n\n\n", gm.pirates[pirate].coord_pos.x, gm.pirates[pirate].coord_pos.y);
+    printf("\n\n\n\n\nPirate Velocity x: %f, y: %f\n", gm.pirates[pirate].velocity.x, gm.pirates[pirate].velocity.y);
+    printf("Pirate pos x: %f, y: %f\n\n\n\n\n\n\n", gm.pirates[pirate].coord_pos.x, gm.pirates[pirate].coord_pos.y);
     
 
-    gm.pirates[0].coord_pos.x += 25.0 * gm.pirates[0].velocity.Normalize().x * gold_vel_cap_pirate(gm,0) * engineMultiplier;
-    gm.pirates[0].coord_pos.y += 25.0 * gm.pirates[0].velocity.Normalize().y * gold_vel_cap_pirate(gm,0) * engineMultiplier;
+    gm.pirates[0].coord_pos.x += gm.pirates[0].velocity.Normalize().x * gold_vel_cap_pirate(gm,0) * engineMultiplier;
+    gm.pirates[0].coord_pos.y += gm.pirates[0].velocity.Normalize().y * gold_vel_cap_pirate(gm,0) * engineMultiplier;
+
+
 
     if(gm.pirates[0].coord_pos.x < 50){
-        gm.pirates[0].coord_pos.x = 500;
+        gm.pirates[0].coord_pos.x = 100;
     }
     if(gm.pirates[0].coord_pos.y < 50){
-        gm.pirates[0].coord_pos.y = 500;
+        gm.pirates[0].coord_pos.y = 100;
     }
 
     if(gm.pirates[0].coord_pos.x > 29950){

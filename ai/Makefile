@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-std=c++11
+CFLAGS=-std=c++11 -O3
 INCLUDE=`pkg-config --cflags --libs sdl2`
 
 

@@ -28,7 +28,7 @@ void run_astar(PiGameMap &map) {
     main_q.push(q_elem(selected_pos, vec2(-1, -1), 0));
     while (!goal_reached) {
         iterations++;
-        if (iterations > 5000) {
+        if (iterations > 15000) {
             return;
         }
         q_elem selected_q = main_q.top();

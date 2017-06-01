@@ -176,9 +176,12 @@ PiGameState deserialize_gamestate(string JSON, bool withMapTiles) {
             pirate_temp["orientation"], pirate_temp["rudderRot"],
             pirate_temp["goldAmount"], pirate_temp["AI"],
             vec2(pirate_temp["coord_pos"][0], pirate_temp["coord_pos"][1]));
-
         gstate.map.pirates.push_back(p);
     }
+
+    printf("\n\n\n\n%f, %f \n\n\n\n", gstate.map.pirates[0].coord_pos.x, 
+                                      gstate.map.pirates[0].coord_pos.y);
+
 
     for(auto merchant_temp : j["map"]["merchants"]) {
         PiMerchant m = PiMerchant(merchant_temp["merchant_name"],

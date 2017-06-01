@@ -100,7 +100,7 @@ public:
              bool ai, vec2 cpos)
         : pirate_name(pname)
         , PiShip(pos, vel, acc, orien, rud, gold,
-                ai, pos) {
+                ai, cpos) {
     };
     // BAD CONSTRUCTOR - STOP USING EVENTUALLY
     PiPirate(vec2 loc) : PiPirate("Vader",

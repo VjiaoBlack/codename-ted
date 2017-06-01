@@ -42,18 +42,18 @@ bool BasicApp::updateCurrentGameState() {
 
         // update game state player coordinates based on
         mMerchants[player->first].coord_pos.x 
-                = state.map.merchants[player->first].coord_pos.x;
+                = state.map.merchants[player->first].coord_pos.x - 16000.0;
 
         mMerchants[player->first].coord_pos.y 
-                = state.map.merchants[player->first].coord_pos.y;
+                = state.map.merchants[player->first].coord_pos.y - 16000.0;
 
         // auto convert to radians
         // TODO fix the -90... its very hard though, be careful
         mMerchants[player->first].orientation
                 = (state.map.merchants[player->first].orientation - 90) * (3.1415926535 / 180.0);
 
-
-
+                // TODO fake
+        state.map.merchants[player->first].goldAmount = 500;
         // drop some gold if gold should be dropped
         if (state.map.merchants[player->first].goldAmount < mMerchants[player->first].goldAmount) {
             // drop gold
@@ -64,12 +64,12 @@ bool BasicApp::updateCurrentGameState() {
         }
 
         mMerchants[player->first].goldAmount = state.map.merchants[player->first].goldAmount;
-        mMerchants[player->first].goldAmount = 500;
     }
 
-    mPirate.coord_pos.x = state.map.pirates[0].coord_pos.x;
+    mPirate.coord_pos.x = state.map.pirates[0].coord_pos.x - 16000.0;
 
-    mPirate.coord_pos.y = state.map.pirates[0].coord_pos.y;
+
+    mPirate.coord_pos.y = state.map.pirates[0].coord_pos.y - 16000.0;
 
     // auto convert to radians
     mPirate.orientation = (state.map.pirates[0].orientation - 90) * (3.1415926535 / 180.0);
@@ -190,11 +190,11 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
 
 
     for (auto id_ent : mOgreMerchants) {
-        id_ent.second->setPosition(Ogre::Vector3(mMerchants[id_ent.first].coord_pos.x - 16000.0,  
+        id_ent.second->setPosition(Ogre::Vector3(mMerchants[id_ent.first].coord_pos.x,  
                                                  -15.0f + mHydrax->getHeigth(Ogre::Vector2(mMerchants[id_ent.first].coord_pos.x,
                                                                                            mMerchants[id_ent.first].coord_pos.y)) 
                                                         + (2.0f * sin((nsf + id_ent.first * 100.0f) * 2.0f)),
-                                                 mMerchants[id_ent.first].coord_pos.y - 16000.0));
+                                                 mMerchants[id_ent.first].coord_pos.y));
 
         id_ent.second->setOrientation(Ogre::Quaternion(
                 (double) cos(mMerchants[id_ent.first].orientation / (2.0f)),   
@@ -213,11 +213,11 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
                 0.0));
     }
 
-    mOgrePirate->setPosition(Ogre::Vector3(mPirate.coord_pos.x - 16000.0,  
+    mOgrePirate->setPosition(Ogre::Vector3(mPirate.coord_pos.x,  
                                            -10.0f + mHydrax->getHeigth(Ogre::Vector2(mPirate.coord_pos.x,
                                                                                      mPirate.coord_pos.y)) 
                                                   + (2.0f * sin((nsf + -1 * 100.0f) * 2.0f)),
-                                           mPirate.coord_pos.y - 16000.0));
+                                           mPirate.coord_pos.y));
 
     mOgrePirate->setOrientation(Ogre::Quaternion(
             (double) cos(mPirate.orientation / (2.0f)),   

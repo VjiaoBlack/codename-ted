@@ -377,7 +377,18 @@ PiGameMap read_png_heightmap(string file_location,
         }
         tiles.push_back(curr_row);
     }
+
+    pirates[0].coord_pos.x = 200.0;
+    pirates[0].coord_pos.y = 200.0;
+
+    vec2 newLoc = vec2(pirates[0].coord_pos.x,pirates[0].coord_pos.y);
+
+
+
     PiGameMap start_map(tiles, x_len, y_len, pirates, merchants, size);
+
+    start_map.pirates[0].position = convert_coord_tile(start_map, newLoc);
+
     return start_map;
 }
 
