@@ -53,6 +53,7 @@
 
 #define _def_SkyBoxNum 3
 
+// #define K_SERVER_STRING "10.150.110.106"
 #define K_SERVER_STRING "localhost"
 #define K_PORT_STRING "8888"
 
@@ -159,6 +160,9 @@ private:
 
     PiPirate mPirate;
     Ogre::SceneNode* mOgrePirate;
+
+    // for sky update shadows
+    int mCurFrameCounter;
 
     // broken
     // PiGameState mGameState;

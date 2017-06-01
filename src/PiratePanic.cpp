@@ -9,8 +9,9 @@
 
 bool BasicApp::updateCurrentGameState() {
     PiGameState state = mGameLoopClient->get_gamestate();
-    printf("%d\n", state.players.size());
     for (auto player = state.players.begin(); player != state.players.end(); player++) {
+
+        // needs to create new merchant
         if (mMerchants.find(player->first) == mMerchants.end()) {
             // create new merchant
             Ogre::Entity* ent = mSceneMgr->createEntity("Cube.mesh");
@@ -18,13 +19,25 @@ bool BasicApp::updateCurrentGameState() {
 
             mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
             mCurObject->setPosition(Ogre::Vector3(mMerchants[player->first].coord_pos.x, 800.0, mMerchants[player->first].coord_pos.y));
-            mCurObject->setScale(300.0, 300.0, 300.0);
+            mCurObject->setScale(30.0, 30.0, 30.0);
             mCurObject->attachObject(ent);
 
             mOgreMerchants[player->first] = mCurObject;
             mMerchants[player->first] = PiMerchant();
-        } else {
-            printf("ALREAY THERE\n");
+
+            // create new merchant gold
+            ent = mSceneMgr->createEntity("sphere.mesh");
+            Ogre::SharedPtr<Ogre::Material> m_pMat = ent->getSubEntity(0)->getMaterial();
+            m_pMat->getTechnique(0)->getPass(0)->setAmbient(Ogre::ColourValue(0.8, 0.4, 0.0, 1.0));
+            m_pMat->getTechnique(0)->getPass(0)->setDiffuse(Ogre::ColourValue(0.8, 0.4, 0.0, 1.0));
+            m_pMat->getTechnique(0)->getPass(0)->setEmissive(Ogre::ColourValue(0.8, 0.4, 0.0, 0.2));
+            ent->setMaterialName(m_pMat->getName());
+            mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+            mCurObject->setPosition(Ogre::Vector3(mMerchants[player->first].coord_pos.x, 880.0, mMerchants[player->first].coord_pos.y));
+            mCurObject->setScale(0.3, 0.3, 0.3);
+            mCurObject->attachObject(ent);
+
+            mOgreMerchantsGold[player->first] = mCurObject;
         }
 
         // update game state player coordinates based on
@@ -33,12 +46,25 @@ bool BasicApp::updateCurrentGameState() {
 
         mMerchants[player->first].coord_pos.y 
                 = state.map.merchants[player->first].coord_pos.y;
+
+
+
+        // drop some gold if gold should be dropped
+        // if (state.map.merchants[player->first].goldAmount < mMerchants[player->first.goldAmount]) {
+            // drop gold
+            
+        // }
+
+        // mMerchants[player->first.goldAmount = state.map.merchants[player->first].goldAmount;
     }
+
     mPirate.coord_pos.x 
             = state.map.pirates[0].coord_pos.x;
 
     mPirate.coord_pos.y 
             = state.map.pirates[0].coord_pos.y;
+
+    printf("Pirate pos: %d, %d\n",state.map.pirates[0].coord_pos.x,state.map.pirates[0].coord_pos.y);
 }
 
 bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
@@ -51,36 +77,9 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
     if (mWindow->isClosed())
         return false;
 
-    // Switch SkyX presets 
-    bool update = false;
-    if (mKeyboard->isKeyDown(OIS::KC_1)) {
-        mCurrentPreset = 0;
-        update = true;
-        setPreset(mPresets[mCurrentPreset], mCamera); 
-    } else if (mKeyboard->isKeyDown(OIS::KC_2)) {
-        mCurrentPreset = 1;
-        update = true;
-        setPreset(mPresets[mCurrentPreset], mCamera); 
-    } else if (mKeyboard->isKeyDown(OIS::KC_3)) {
-        mCurrentPreset = 2;
-        update = true;
-        setPreset(mPresets[mCurrentPreset], mCamera); 
-    } else if (mKeyboard->isKeyDown(OIS::KC_4)) {
-        mCurrentPreset = 3;
-        update = true;
-        setPreset(mPresets[mCurrentPreset], mCamera); 
-    } else if (mKeyboard->isKeyDown(OIS::KC_5)) {
-        mCurrentPreset = 4;
-        update = true;
-        setPreset(mPresets[mCurrentPreset], mCamera); 
-    } else if (mKeyboard->isKeyDown(OIS::KC_6)) {
-        mCurrentPreset = 5;
-        update = true;
-        setPreset(mPresets[mCurrentPreset], mCamera); 
-    }
-
-    // Update Sun-related variables, if the scene was changed.
-    if (update) {
+    // Update Sun-related variables every once in a while
+    mCurFrameCounter++;
+    if (mCurFrameCounter > 3000) {
         Ogre::Vector3 sunDir = mSkyX->getController()->getSunDirection();
  
         mSceneMgr->getLight("SceneLight")->setDirection(-sunDir);
@@ -99,8 +98,8 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
 
         mTerrainGroup->getTerrain(0,0)->dirtyLightmap();
         mTerrainGroup->getTerrain(0,0)->updateDerivedData();
-
-        update = false;
+        printf("UPDATE %d\n", mCurFrameCounter);
+        mCurFrameCounter = 0;
     }
 
     mBike.processInput(mKeyboard);
@@ -121,7 +120,6 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
     for (int i = 0; i < 256; i++) {
         if (mCurPressedKeys[i]) {
             pressedKeysToSend.push_back(i);
-            printf("\n\n\n\n\n\n\n\nSending: %d, %d\n\n\n\n\n\n\n", i, OIS::KC_I);
         }
     }
     
@@ -163,9 +161,10 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
     nsf /= 1000000000.0f;
 
     // whoo hoo i figured out quaternions yay neverforgetti pls
-    mBikeObject->setPosition(Ogre::Vector3(mBike.x, -10.0f + mHydrax->getHeigth(Ogre::Vector2(mBike.x, mBike.y)) + (2.0f * sin(nsf * 2.0f)), mBike.y));
-
-
+    mBikeObject->setPosition(Ogre::Vector3(mBike.x, 
+                                           -10.0f + mHydrax->getHeigth(Ogre::Vector2(mBike.x, mBike.y)) 
+                                                  + (2.0f * sin(nsf * 2.0f)),
+                                           mBike.y));
 
     // fake bob
     // TODO: create REAL bob physics WOW
@@ -178,21 +177,28 @@ bool BasicApp::frameRenderingQueued(const Ogre::FrameEvent& fe) {
 
     for (auto id_ent : mOgreMerchants) {
         id_ent.second->setPosition(Ogre::Vector3(mMerchants[id_ent.first].coord_pos.y,  
-                                                    -10.0f + mHydrax->getHeigth(Ogre::Vector2(mMerchants[id_ent.first].coord_pos.x,
-                                                                                              mMerchants[id_ent.first].coord_pos.y)) + (2.0f * sin((nsf + id_ent.first * 100.0f) * 2.0f)),
-                                                    mMerchants[id_ent.first].coord_pos.x));
+                                                 -10.0f + mHydrax->getHeigth(Ogre::Vector2(mMerchants[id_ent.first].coord_pos.x,
+                                                                                           mMerchants[id_ent.first].coord_pos.y)) 
+                                                        + (2.0f * sin((nsf + id_ent.first * 100.0f) * 2.0f)),
+                                                 mMerchants[id_ent.first].coord_pos.x));
 
         id_ent.second->setOrientation(Ogre::Quaternion(
                 (double) cos(0.0f / (2.0f)),   
                 (double) 0.05f * cos((nsf + id_ent.first * 100.0f) * 2.0f) * cos(0.0f / 2.0f), 
                 (double) sin(0.0f / (2.0f)), 
                 (double) 0.05f * cos((nsf + id_ent.first * 100.0f) * 2.0f) * cos(3.14f / 2.0f + 0.0f / 2.0f)));
+
+        mOgreMerchantsGold[id_ent.first]->setPosition(Ogre::Vector3(mMerchants[id_ent.first].coord_pos.y,  
+                                                      700.0f + 0.3 * mHydrax->getHeigth(Ogre::Vector2(mMerchants[id_ent.first].coord_pos.x,
+                                                                                                mMerchants[id_ent.first].coord_pos.y)),
+                                                      mMerchants[id_ent.first].coord_pos.x));
     }
 
     mOgrePirate->setPosition(Ogre::Vector3(mPirate.coord_pos.y,  
-                                                -10.0f + mHydrax->getHeigth(Ogre::Vector2(mPirate.coord_pos.x,
-                                                                                          mPirate.coord_pos.y)) + (2.0f * sin((nsf + -1 * 100.0f) * 2.0f)),
-                                                mPirate.coord_pos.x));
+                                           -10.0f + mHydrax->getHeigth(Ogre::Vector2(mPirate.coord_pos.x,
+                                                                                     mPirate.coord_pos.y)) 
+                                                  + (2.0f * sin((nsf + -1 * 100.0f) * 2.0f)),
+                                           mPirate.coord_pos.x));
 
     mOgrePirate->setOrientation(Ogre::Quaternion(
             (double) cos(0.0f / (2.0f)),   
@@ -255,7 +261,8 @@ void BasicApp::createScene() {
     light->setDiffuseColour(mSkyX->getVCloudsManager()->getVClouds()->getSunColor().x,
                             mSkyX->getVCloudsManager()->getVClouds()->getSunColor().y,
                             mSkyX->getVCloudsManager()->getVClouds()->getSunColor().z);
-    light->setSpecularColour(Ogre::ColourValue(0.2, 0.18, 0.18));
+    // light->setSpecularColour(Ogre::ColourValue(0.2, 0.18, 0.18));
+    light->setSpecularColour(Ogre::ColourValue(0.5, 0.5, 0.5));
     // light->setCastShadows(true);
 
     // mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_MODULATIVE);
@@ -317,7 +324,7 @@ void BasicApp::createScene() {
  
     mCurObject = mSceneMgr->getRootSceneNode()->createChildSceneNode();
     mCurObject->setPosition(Ogre::Vector3(0.0, 800.0, 0.0));
-    mCurObject->setScale(60.0, 60.0, 60.0);
+    mCurObject->setScale(30.0, 30.0, 30.0);
     mCurObject->attachObject(ent);
 
 
