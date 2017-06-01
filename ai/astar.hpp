@@ -1,3 +1,8 @@
+
+
+#ifndef _ASTAR_HPP_
+#define _ASTAR_HPP_
+
 #include <vector>
 #include "../game_server/game_structs.hpp"
 #include <iostream>
@@ -36,5 +41,7 @@ vec2 get_target(vector<vec2> positions);
 void merchant_moves(PiGameMap& gm);
 vector<vec2> retrieve_ship_coords(PiGameMap gm); 
 void update_pirate_physics(PiGameMap m, PiPirate &p, vec2 goal_node);
+
+#endif	
 
 

@@ -64,6 +64,57 @@ int mCurrentSkyBox = 0;
 
 char mCurPressedKeys[256] = {};
 
+class PiGoldBlock {
+public:
+    Ogre::SceneNode* mSceneNode;
+    double vx;
+    double vy;
+    double vz;
+    double x;
+    double y;
+    double z;
+
+    PiGoldBlock(Ogre::SceneManager* sceneMgr, double _x, double _y, double _z)
+        : vx(1.0), vy(1.0), vz(1.0), x(_x), y(_y), z(_z) {
+
+        float theta = (float) (rand() % 360) * (3.1415926535) / (180.0);
+
+        vx = 0.1 * sin(theta);
+        vz = 0.1 * cos(theta);
+
+        Ogre::Entity* ent = sceneMgr->createEntity("sphere.mesh");
+        Ogre::SharedPtr<Ogre::Material> m_pMat = ent->getSubEntity(0)->getMaterial();
+        m_pMat->getTechnique(0)->getPass(0)->setAmbient(Ogre::ColourValue(0.8, 0.4, 0.0, 1.0));
+        m_pMat->getTechnique(0)->getPass(0)->setDiffuse(Ogre::ColourValue(0.8, 0.4, 0.0, 1.0));
+        m_pMat->getTechnique(0)->getPass(0)->setEmissive(Ogre::ColourValue(0.8, 0.4, 0.0, 0.2));
+        ent->setMaterialName(m_pMat->getName());
+        mSceneNode = sceneMgr->getRootSceneNode()->createChildSceneNode();
+        mSceneNode->setPosition(Ogre::Vector3(x, y, z));
+
+        mSceneNode->setScale(0.03, 0.03, 0.03);
+        mSceneNode->attachObject(ent);
+    }
+
+    bool update(Ogre::SceneManager* sceneMgr) {
+        vy -= 0.02f;
+        vy *= 0.99;
+
+        x += vx;
+        y += vy;
+        z += vz;
+        mSceneNode->setPosition(Ogre::Vector3(x, y, z));
+
+        if (y < 600.0) {
+            mSceneNode->removeAndDestroyAllChildren();
+            sceneMgr->destroySceneNode(mSceneNode);
+
+            return false;
+        } else {
+            return true;
+        }
+    }       
+};
+
 
 class BasicApp
         : public Ogre::WindowEventListener
@@ -158,11 +209,15 @@ private:
     std::map<int, Ogre::SceneNode*> mOgreMerchants;
     std::map<int, Ogre::SceneNode*> mOgreMerchantsGold;
 
+    std::vector<PiGoldBlock> mGoldBlocks;
+
     PiPirate mPirate;
     Ogre::SceneNode* mOgrePirate;
 
     // for sky update shadows
     int mCurFrameCounter;
+
+    // gold blocks
 
     // broken
     // PiGameState mGameState;
