@@ -137,25 +137,28 @@ PiGameMap update_position(PiGameMap gm, int current_boat){
 
 PiGameMap update_position_pirate(PiGameMap gm, int pirate){
     //Manually setting new positions
-    gm.pirates[pirate].coord_pos.x += gm.pirates[pirate].velocity.Normalize().x * gold_vel_cap_pirate(gm,0) * engineMultiplier;
-    gm.pirates[pirate].coord_pos.y += gm.pirates[pirate].velocity.Normalize().y * gold_vel_cap_pirate(gm,0) * engineMultiplier;
+
+    //printf("Pirate Velocity x: %f, y: %f\n", gm.pirates[pirate].velocity.x, gm.pirates[pirate].velocity.y);
+
+    gm.pirates[0].coord_pos.x += gm.pirates[0].velocity.Normalize().x * gold_vel_cap_pirate(gm,0) * engineMultiplier;
+    gm.pirates[0].coord_pos.y += gm.pirates[0].velocity.Normalize().y * gold_vel_cap_pirate(gm,0) * engineMultiplier;
 
     //Moving the pirate to the appropriate tile
-    vec2 newLoc = vec2(gm.pirates[pirate].coord_pos.x,gm.pirates[pirate].coord_pos.y);
-    gm.pirates[pirate].position = convert_coord_tile(gm, newLoc);
+    vec2 newLoc = vec2(gm.pirates[0].coord_pos.x,gm.pirates[0].coord_pos.y);
+    gm.pirates[0].position = convert_coord_tile(gm, newLoc);
 
-    gm.pirates[pirate].rudderRot = atan2(gm.pirates[pirate].velocity.y, gm.pirates[pirate].velocity.x) * 1/pioveroneeighty;
+    gm.pirates[0].rudderRot = atan2(gm.pirates[0].velocity.y, gm.pirates[0].velocity.x) * 1/pioveroneeighty;
 
     //This code is for smoothing turns due to collisions.  The boat's true angle is orientation, and rudderRot is the goal.
-    if(gm.pirates[pirate].orientation != gm.pirates[pirate].rudderRot){
-        if(fabs(gm.pirates[pirate].orientation - gm.pirates[pirate].rudderRot) < 1){
-            gm.pirates[pirate].orientation = gm.pirates[pirate].rudderRot;
+    if(gm.pirates[0].orientation != gm.pirates[0].rudderRot){
+        if(fabs(gm.pirates[0].orientation - gm.pirates[0].rudderRot) < 1){
+            gm.pirates[0].orientation = gm.pirates[0].rudderRot;
         }
-        else if(gm.pirates[pirate].orientation < gm.pirates[pirate].rudderRot){
-            gm.pirates[pirate].orientation += 1;
+        else if(gm.pirates[0].orientation < gm.pirates[0].rudderRot){
+            gm.pirates[0].orientation += 1;
         }
-        else if(gm.pirates[pirate].orientation > gm.pirates[pirate].rudderRot){
-            gm.pirates[pirate].orientation -= 1;
+        else if(gm.pirates[0].orientation > gm.pirates[0].rudderRot){
+            gm.pirates[0].orientation -= 1;
         }
     }
     return gm;
@@ -505,7 +508,7 @@ void draw_boat(SDL_Renderer* renderer, PiGameMap gm, int current_boat) {
 
 void draw_pirate(SDL_Renderer* renderer, PiGameMap gm, int current_boat) {
 
-    vec2 boat_direction = turn_orient_to_vec(gm.pirates[current_boat].orientation);
+    vec2 boat_direction = turn_orient_to_vec(gm.pirates[0].orientation);
     boat_direction = boat_direction.Normalize();
 
     vec2 perpindicular_direction = vec2(-boat_direction.y, boat_direction.x);
@@ -516,17 +519,17 @@ void draw_pirate(SDL_Renderer* renderer, PiGameMap gm, int current_boat) {
     float yy = (y_extension * perpindicular_direction.y * 5);
     float yx = (y_extension * perpindicular_direction.x * 5);
 
-    int x1 = gm.pirates[current_boat].coord_pos.x + xx + yx;
-    int y1 = gm.pirates[current_boat].coord_pos.y + xy + yy;
+    int x1 = gm.pirates[0].coord_pos.x + xx + yx;
+    int y1 = gm.pirates[0].coord_pos.y + xy + yy;
 
-    int x2 = gm.pirates[current_boat].coord_pos.x + xx - yx;
-    int y2 = gm.pirates[current_boat].coord_pos.y + xy - yy;
+    int x2 = gm.pirates[0].coord_pos.x + xx - yx;
+    int y2 = gm.pirates[0].coord_pos.y + xy - yy;
 
-    int x3 = gm.pirates[current_boat].coord_pos.x - xx + yx;
-    int y3 = gm.pirates[current_boat].coord_pos.y - xy + yy;
+    int x3 = gm.pirates[0].coord_pos.x - xx + yx;
+    int y3 = gm.pirates[0].coord_pos.y - xy + yy;
 
-    int x4 = gm.pirates[current_boat].coord_pos.x - xx - yx;
-    int y4 = gm.pirates[current_boat].coord_pos.y - xy - yy;
+    int x4 = gm.pirates[0].coord_pos.x - xx - yx;
+    int y4 = gm.pirates[0].coord_pos.y - xy - yy;
 
     SDL_SetRenderDrawColor(renderer, 0xCC, 0x00, 0x00, 0xFF);
 
@@ -538,7 +541,7 @@ void draw_pirate(SDL_Renderer* renderer, PiGameMap gm, int current_boat) {
 
     SDL_RenderDrawLine(renderer, x3, y3, x4, y4);
 
-    SDL_RenderDrawPoint(renderer,gm.pirates[current_boat].coord_pos.x,gm.pirates[current_boat].coord_pos.y);
+    SDL_RenderDrawPoint(renderer,gm.pirates[0].coord_pos.x,gm.pirates[0].coord_pos.y);
 }
 
 PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object, PiGameMap gm){
@@ -595,8 +598,8 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
         //Collision Detection.  This is barebones but I built it from the ground up! Blood and sweat!
         //First with the pirate
         if(is_colliding_pirate_boat(gm, current_boat, 0) || is_colliding_boat_pirate(gm, current_boat, 0)){
-            if(verbose)
-                printf("Collided with pirate\n");
+            //if(1)
+                //printf("**************************************Collided with pirate\n");
             vec2 combined_dir = vec2(gm.merchants[current_boat].velocity.x + gm.pirates[0].velocity.x, 
                                     gm.merchants[current_boat].velocity.y + gm.pirates[0].velocity.y);
             float combined_magnitude = gm.merchants[current_boat].velocity.Length() + gm.pirates[0].velocity.Length();
@@ -614,10 +617,18 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
             float boat_to_compare_resulting_directionX = gm.pirates[0].velocity.x - 2 * 
                                                     dot_product(gm.pirates[0].velocity, combined_dir_ortho.Normalize()) * 
                                                     combined_dir_ortho.Normalize().x;
+
+            // printf("new thing: %f\n", gm.pirates[0].velocity.x);
+            // printf("subtract: %f\n", dot_product(gm.pirates[0].velocity, combined_dir_ortho.Normalize()) * combined_dir_ortho.Normalize().x);
+
             float boat_to_compare_resulting_directionY = gm.pirates[0].velocity.y - 2 * 
                                                     dot_product(gm.pirates[0].velocity, combined_dir_ortho.Normalize()) * 
                                                     combined_dir_ortho.Normalize().y;
             vec2 resulting_boat_to_compare_vel_dir = vec2(boat_to_compare_resulting_directionX, boat_to_compare_resulting_directionY);
+
+            // printf("collided instance ship Velocity x: %f, y: %f\n", resulting_current_boat_vel_dir.x, resulting_current_boat_vel_dir.y);
+            // printf("collided instance Pirate Velocity x: %f, y: %f\n", resulting_boat_to_compare_vel_dir.x, resulting_boat_to_compare_vel_dir.y);
+
             //Normalizing both and then giving them each half the velocity of the total
             resulting_boat_to_compare_vel_dir = resulting_boat_to_compare_vel_dir.Normalize();
             resulting_boat_to_compare_vel_dir.x *= combined_magnitude / 2;
@@ -627,6 +638,12 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
             resulting_current_boat_vel_dir.y *= combined_magnitude / 2;
 
             gm.merchants[current_boat].velocity = resulting_current_boat_vel_dir;
+
+            if(resulting_boat_to_compare_vel_dir.Length()<.00001){
+                // printf("This is a thing \n");
+                resulting_boat_to_compare_vel_dir = vec2(resulting_current_boat_vel_dir.x * 1.1, resulting_current_boat_vel_dir.y * 1.1);
+            }
+
             gm.pirates[0].velocity = resulting_boat_to_compare_vel_dir;
 
             gm.merchants[current_boat].rudderRot = atan2(gm.merchants[current_boat].velocity.y, gm.merchants[current_boat].velocity.x) * 1/pioveroneeighty;
@@ -690,7 +707,9 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
                     float boat_to_compare_resulting_directionY = gm.merchants[boat_to_compare].velocity.y - 2 * 
                                                             dot_product(gm.merchants[boat_to_compare].velocity, combined_dir_ortho.Normalize()) * 
                                                             combined_dir_ortho.Normalize().y;
+
                     vec2 resulting_boat_to_compare_vel_dir = vec2(boat_to_compare_resulting_directionX, boat_to_compare_resulting_directionY);
+
                     //Normalizing both and then giving them each half the velocity of the total
                     resulting_boat_to_compare_vel_dir = resulting_boat_to_compare_vel_dir.Normalize();
                     resulting_boat_to_compare_vel_dir.x *= combined_magnitude / 2;
@@ -734,6 +753,7 @@ PiGameMap compute_gamestate(unordered_map<string, vector<string> > input_object,
             }
         }
     }
+
     return gm;
 }
 
@@ -814,10 +834,10 @@ int main(int argc, char* argv[]){
     map.merchants[1].goldAmount = 1000;
     map.merchants[0].goldAmount = 0;
 
-    map.pirates[0].goldAmount = 0;
+    map.pirates[0].goldAmount = 1000;
 
-    map.pirates[0].velocity.x = 0;
-    map.pirates[0].velocity.y = 0;
+    map.pirates[0].velocity.x = 0.0;
+    map.pirates[0].velocity.y = 0.0;
 
         //Moving the merchant to the appropriate tile
     vec2 newLoc = vec2(map.merchants[1].coord_pos.x,map.merchants[1].coord_pos.y);
